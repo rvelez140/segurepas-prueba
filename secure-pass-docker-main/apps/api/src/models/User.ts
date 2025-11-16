@@ -14,14 +14,19 @@ const userSchema: Schema = new mongoose.Schema(
       },
       password: {
         type: String,
-        required: function (this: { googleId?: string }) {
-          return !this.googleId; // Requerido solo si no tiene googleId
+        required: function (this: { googleId?: string; microsoftId?: string }) {
+          return !this.googleId && !this.microsoftId; // Requerido solo si no tiene googleId ni microsoftId
         },
         minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
         select: false,
       },
     },
     googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Permite que sea null y único al mismo tiempo
+    },
+    microsoftId: {
       type: String,
       unique: true,
       sparse: true, // Permite que sea null y único al mismo tiempo

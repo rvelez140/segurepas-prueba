@@ -15,6 +15,7 @@ interface IUserInput {
   registerDate: Date; // Fecha de registro del usuario
   updateDate: Date; // Fecha en la que se le realizó el último cambio
   googleId?: string; // ID de Google para OAuth
+  microsoftId?: string; // ID de Microsoft para OAuth
 }
 
 interface BaseUser extends IUserInput, Document {

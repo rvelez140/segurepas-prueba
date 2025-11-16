@@ -23,6 +23,7 @@ Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
 - Node.js + Express
 - MongoDB Atlas
 - Autenticación JWT
+- Passport.js (Google OAuth, Microsoft OAuth)
 - Cloudinary (almacenamiento)
 - Nodemailer (notificaciones por email)
 
@@ -38,10 +39,33 @@ Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
 
 | Módulo               | Descripción |
 |----------------------|------------|
-| **Autenticación**    | Registro, login, gestión de roles (residente/guardia/admin) |
+| **Autenticación**    | Registro, login, gestión de roles (residente/guardia/admin), OAuth con Google y Microsoft |
 | **Visitas**          | Autorizaciones, registro de entradas/salidas, validación QR |
 | **Imágenes**         | Subida de fotos de vehículos/visitantes |
 | **Reportes**         | Historial de visitas y generación de PDFs |
+
+## 🔐 Autenticación OAuth
+
+SecurePass soporta múltiples métodos de autenticación:
+
+- **Email y Contraseña**: Login tradicional con JWT
+- **Google OAuth 2.0**: Autenticación con cuenta de Google
+- **Microsoft OAuth 2.0**: Autenticación con cuenta de Microsoft (personal o corporativa)
+
+### Configuración de OAuth
+
+Para configurar la autenticación con proveedores externos, consulta las siguientes guías:
+
+- **[Configuración de Google OAuth](./GOOGLE_AUTH_SETUP.md)**: Guía completa para configurar Google Cloud Console y las variables de entorno necesarias
+- **[Configuración de Microsoft OAuth](./MICROSOFT_AUTH_SETUP.md)**: Guía completa para configurar Azure Portal y las variables de entorno necesarias
+
+### Características de OAuth
+
+- ✅ Registro automático de nuevos usuarios
+- ✅ Login sin contraseña para usuarios de Google/Microsoft
+- ✅ Sincronización de email y nombre desde el proveedor
+- ✅ Soporte para cuentas personales y corporativas (Microsoft)
+- ✅ Integración con el sistema de roles existente
 
 ## 🏗️ Estructura del Monorepo
 

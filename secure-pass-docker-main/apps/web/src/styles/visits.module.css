@@ -891,6 +891,33 @@ html {
   flex-shrink: 0;
 }
 
+.microsoftButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  background-color: var(--white);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 1rem;
+}
+
+.microsoftButton:hover {
+  background-color: #f8f9fa;
+  border-color: #999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.microsoftButton svg {
+  flex-shrink: 0;
+}
+
 .registerLink {
   font-size: 0.9rem;
   text-align: center;

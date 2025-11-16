@@ -191,5 +191,51 @@ export const authController = {
     res.status(401).json({
       error: "Autenticación con Google fallida. Por favor, intenta nuevamente."
     });
+  },
+
+  async microsoftCallback(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: "Error en la autenticación con Microsoft" });
+        return;
+      }
+
+      const token = jwt.sign(
+        {
+          id: req.user._id,
+          role: req.user.role,
+          email: req.user.auth.email
+        },
+        `${process.env.JWT_SECRET}`,
+        { expiresIn: "1h" }
+      );
+
+      const userResponse = {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.auth.email,
+        role: req.user.role,
+        ...(req.user.role === 'residente' && {
+          apartment: req.user.apartment,
+          tel: req.user.tel
+        }),
+        ...(req.user.role === 'guardia' && {
+          shift: req.user.shift
+        }),
+        registerDate: req.user.registerDate
+      };
+
+      // Redirigir al frontend con el token
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      res.redirect(`${frontendUrl}/auth/microsoft/success?token=${token}&user=${encodeURIComponent(JSON.stringify(userResponse))}`);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || "Error en el callback de Microsoft" });
+    }
+  },
+
+  async microsoftFailure(req: AuthenticatedRequest, res: Response): Promise<void> {
+    res.status(401).json({
+      error: "Autenticación con Microsoft fallida. Por favor, intenta nuevamente."
+    });
   }
 };

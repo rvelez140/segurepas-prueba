@@ -39,4 +39,27 @@ router.get(
 // Ruta de error en caso de que falle la autenticación con Google
 router.get('/auth/google/failure', authController.googleFailure);
 
+// # Rutas de Microsoft OAuth
+// Inicia el proceso de autenticación con Microsoft
+router.get(
+  '/auth/microsoft',
+  passport.authenticate('microsoft', {
+    scope: ['user.read'],
+    session: false
+  })
+);
+
+// Callback de Microsoft OAuth
+router.get(
+  '/auth/microsoft/callback',
+  passport.authenticate('microsoft', {
+    session: false,
+    failureRedirect: '/auth/microsoft/failure'
+  }),
+  authController.microsoftCallback
+);
+
+// Ruta de error en caso de que falle la autenticación con Microsoft
+router.get('/auth/microsoft/failure', authController.microsoftFailure);
+
 export default router;

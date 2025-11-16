@@ -201,6 +201,23 @@ const Login: React.FC = () => {
             Continuar con Google
           </button>
 
+          <button
+            type="button"
+            className={style.microsoftButton}
+            onClick={() => {
+              const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+              window.location.href = `${backendUrl}/api/auth/microsoft`;
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0H9.5V9.5H0V0Z" fill="#F25022"/>
+              <path d="M10.5 0H20V9.5H10.5V0Z" fill="#7FBA00"/>
+              <path d="M0 10.5H9.5V20H0V10.5Z" fill="#00A4EF"/>
+              <path d="M10.5 10.5H20V20H10.5V10.5Z" fill="#FFB900"/>
+            </svg>
+            Continuar con Microsoft
+          </button>
+
           {errors.credentials && (
             <div className={style.credentialsMessage}>{errors.credentials}</div>
           )}
