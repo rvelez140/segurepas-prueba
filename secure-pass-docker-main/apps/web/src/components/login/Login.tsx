@@ -104,6 +104,13 @@ const Login: React.FC = () => {
 
       navigate("/home");
     } catch (error: any) {
+      // Verificar si es un error de email no verificado
+      if (error.response?.status === 403 && error.response?.data?.requiresVerification) {
+        // Redirigir a la página de verificación con el email
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+        return;
+      }
+
       // Manejo específico de errores de credenciales
       if (error.message.includes("Credenciales inválidas")) {
         setErrors((prev) => ({
@@ -114,6 +121,11 @@ const Login: React.FC = () => {
         setErrors((prev) => ({
           ...prev,
           credentials: "El usuario no puede ser guardia",
+        }));
+      } else if (error.response?.data?.error) {
+        setErrors((prev) => ({
+          ...prev,
+          credentials: error.response.data.error,
         }));
       } else {
         setErrors((prev) => ({

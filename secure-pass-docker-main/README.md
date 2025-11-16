@@ -67,6 +67,37 @@ Para configurar la autenticación con proveedores externos, consulta las siguien
 - ✅ Soporte para cuentas personales y corporativas (Microsoft)
 - ✅ Integración con el sistema de roles existente
 
+## 📧 Verificación de Email
+
+SecurePass requiere que todos los usuarios verifiquen su dirección de correo electrónico antes de poder acceder a la aplicación.
+
+### Características del Sistema de Verificación
+
+- ✅ **Verificación obligatoria**: Los usuarios deben verificar su email antes de iniciar sesión
+- ✅ **Doble método**: Código de 6 dígitos o enlace de activación
+- ✅ **Emails HTML profesionales**: Con branding de SecurePass
+- ✅ **Tokens con expiración**: Códigos válidos por 24 horas
+- ✅ **Reenvío de código**: Los usuarios pueden solicitar un nuevo email
+- ✅ **Excepción OAuth**: Usuarios de Google/Microsoft verificados automáticamente
+
+### Flujo de Verificación
+
+1. **Registro**: Usuario se registra con email y contraseña
+2. **Email enviado**: Recibe código de 6 dígitos y enlace de activación
+3. **Verificación**: Ingresa el código o hace clic en el enlace
+4. **Activación**: Cuenta activada, puede iniciar sesión
+
+### Configuración
+
+Para configurar el sistema de verificación de email:
+
+- **[Guía de Verificación de Email](./EMAIL_VERIFICATION_SETUP.md)**: Documentación completa del sistema de verificación
+
+**Requisitos:**
+- Cuenta de Gmail con App Password configurada
+- Variables de entorno `EMAIL_USER` y `EMAIL_PASSWORD`
+- Nodemailer configurado
+
 ## 🏗️ Estructura del Monorepo
 
 ```

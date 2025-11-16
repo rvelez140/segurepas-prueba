@@ -6,6 +6,7 @@ import passport from './config/passport';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import verificationRoutes from './routes/verificationRoutes';
 
 const app = express();
 
@@ -20,7 +21,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes,  userRoutes, authRoutes);
+app.use('/api', visitRoutes,  userRoutes, authRoutes, verificationRoutes);
 
 app.get('/', (req, res) => {
     res.send(

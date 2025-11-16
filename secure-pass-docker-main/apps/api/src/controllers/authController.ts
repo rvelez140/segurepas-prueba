@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { IUser, GuardShift } from "../interfaces/IUser";
+import { emailVerificationService } from "../services/EmailVerificationService";
 
 interface AuthenticatedRequest extends Request {
   user?: IUser;
@@ -38,25 +39,35 @@ export const authController = {
       };
 
       const user = await UserService.createUser(userData as IUser);
-      
+
+      // Enviar email de verificación
+      try {
+        await emailVerificationService.sendVerificationEmail(user);
+      } catch (emailError) {
+        console.error('Error al enviar email de verificación:', emailError);
+        // Continuar aunque falle el email
+      }
+
       const userResponse = {
         _id: user._id,
         name: user.name,
         email: user.auth.email,
         role: user.role,
-        ...(user.role === 'residente' && { 
+        emailVerified: user.emailVerified,
+        ...(user.role === 'residente' && {
           apartment: user.apartment,
-          tel: user.tel 
+          tel: user.tel
         }),
-        ...(user.role === 'guardia' && { 
-          shift: user.shift 
+        ...(user.role === 'guardia' && {
+          shift: user.shift
         }),
         registerDate: user.registerDate
       };
 
-      res.status(201).json({ 
-        message: "Usuario registrado exitosamente",
-        user: userResponse 
+      res.status(201).json({
+        message: "Usuario registrado exitosamente. Por favor, verifica tu email para activar tu cuenta.",
+        user: userResponse,
+        requiresVerification: true
       });
     } catch (error: any) {
       if (error.message.includes("duplicate key")) {
@@ -74,6 +85,16 @@ export const authController = {
       const user = await UserService.findByEmail(email);
       if (!user) {
         res.status(401).json({ error: "Credenciales inválidas" });
+        return;
+      }
+
+      // Verificar si el email está verificado (solo para usuarios con password, no OAuth)
+      if (!user.googleId && !user.microsoftId && !user.emailVerified) {
+        res.status(403).json({
+          error: "Por favor verifica tu email antes de iniciar sesión",
+          emailVerified: false,
+          requiresVerification: true
+        });
         return;
       }
 

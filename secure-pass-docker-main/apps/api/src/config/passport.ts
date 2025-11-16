@@ -44,6 +44,7 @@ passport.use(
           name: profile.displayName || profile.name?.givenName || 'Usuario',
           role: 'residente',
           googleId: profile.id,
+          emailVerified: true, // Google ya verificó el email
           registerDate: new Date(),
           updateDate: new Date(),
         };
@@ -97,6 +98,7 @@ passport.use(
           name: profile.displayName || profile.name?.givenName || 'Usuario',
           role: 'residente',
           microsoftId: profile.id,
+          emailVerified: true, // Microsoft ya verificó el email
           registerDate: new Date(),
           updateDate: new Date(),
         };
