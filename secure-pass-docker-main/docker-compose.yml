@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Base de datos MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: securepass-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-securepass2024}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-securepass}
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - securepass-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Backend
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: securepass-api
+    restart: always
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${API_PORT:-8000}
+      MONGODB_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-securepass2024}@mongodb:27017/${MONGO_DB_NAME:-securepass}?authSource=admin
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - securepass-network
+    volumes:
+      - ./apps/api/src:/backend/src
+      - api_node_modules:/backend/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Web
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: dockerfile
+      target: ${BUILD_TARGET:-development}
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8000/api}
+    container_name: securepass-web
+    restart: always
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8000/api}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+    networks:
+      - securepass-network
+    volumes:
+      - ./apps/web/src:/frontend/src
+      - web_node_modules:/frontend/node_modules
+    stdin_open: true
+    tty: true
+
+  # Nginx Reverse Proxy (Opcional - para producción)
+  nginx:
+    image: nginx:alpine
+    container_name: securepass-nginx
+    restart: always
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+      - web
+    networks:
+      - securepass-network
+
+networks:
+  securepass-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  api_node_modules:
+    driver: local
+  web_node_modules:
+    driver: local
