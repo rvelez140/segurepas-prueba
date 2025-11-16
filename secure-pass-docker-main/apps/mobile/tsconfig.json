@@ -1,0 +1,41 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./components/*"],
+      "@api/*": ["./api/*"],
+      "@assets/*": ["./assets/*"],
+      "@types/*": ["./types/*"]
+    },
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "target": "esnext",
+    "lib": ["esnext", "dom"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "App.tsx",
+    "index.ts",
+    "Navigation.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "expo",
+    "android",
+    "ios",
+    "web",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}

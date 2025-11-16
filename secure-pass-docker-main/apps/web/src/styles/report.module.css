@@ -1,0 +1,439 @@
+/* Estilos generales */
+.reportContainer {
+  width: 100%;
+  padding: 20px;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+}
+
+/* Secciones */
+.section {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 1rem;
+}
+
+.subsectionTitle {
+  margin: 1.5rem 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.dateRange {
+  font-size: 1rem;
+  color: var(--blue);
+  margin-bottom: 1.5rem;
+}
+
+/* Información de usuario */
+.userInfoContainer {
+  padding: 1rem;
+  background-color: var(--gray-light);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.userInfoTitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--blue);
+  margin-bottom: 0.8rem;
+}
+
+.userInfoGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.userInfoLabel {
+  font-weight: 500;
+  color: var(--gray-muted);
+  margin-right: 0.5rem;
+}
+
+/* Estadísticas */
+.statsGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  margin-top: 1rem;
+}
+
+.statCard {
+  padding: 1.5rem;
+  text-align: center;
+  background-color: var(--gray-light);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--blue-soft);
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: var(--gray-muted);
+}
+
+/* Tablas */
+.tableSection {
+  margin-bottom: 2rem;
+}
+
+.tableContainer {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  background-color: var(--white);
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 12px 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--gray-muted);
+  border-color: var(--border);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: 12px 15px;
+  color: var(--gray-muted);
+  border-color: var(--border);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background-color: var(--gray-light);
+}
+
+/* Elementos destacados */
+.highlightSection {
+  margin-bottom: 2rem;
+}
+
+.highlightCard {
+  display: grid;
+  padding: 1.5rem;
+  background-color: var(--gray-light);
+  border-radius: 8px;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  margin-top: 1rem;
+}
+
+.highlightLabel {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  margin-bottom: 0.3rem;
+}
+
+.highlightValue {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--blue-soft);
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .userInfoGrid,
+  .highlightCard {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (width <= 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.container {
+  padding: 1rem;
+  background-color: var(--blue-50);
+  min-height: 100vh;
+}
+
+@media (width >= 768px) {
+  .container {
+    padding: 2rem;
+  }
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: var(--blue-800);
+  margin-bottom: 1.5rem;
+}
+
+/* Estilos del formulario */
+.formContainer {
+  padding: 1.5rem;
+  background-color: var(--white);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%);
+  margin-bottom: 2rem;
+}
+
+.formTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 1rem;
+}
+
+.errorMessage {
+  color: var(--red);
+  margin-bottom: 1rem;
+}
+
+.formGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 768px) {
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.formLabel {
+  display: block;
+  color: var(--blue);
+  margin-bottom: 0.25rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #93c5fd;
+  border-radius: 0.25rem;
+}
+
+.formInput:focus {
+  border-color: var(--blue-hover);
+  outline: none;
+}
+
+.submitButton {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  font-weight: 500;
+  color: var(--white);
+  background-color: var(--blue);
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+  background-color: var(--blue-hover);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+}
+
+/* Tabla destacada */
+.tableHeader {
+  color: var(--white);
+  background-color: #2563eb;
+}
+
+.tableHeaderCell {
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+
+.tableRow:nth-child(even) {
+  background-color: #f0f8ff;
+}
+
+.tableCell {
+  padding: 0.5rem 1rem;
+  color: var(--blue-800);
+}
+
+/* Elementos destacados */
+.highlightContainer {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f0f8ff;
+  border-radius: 0.5rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Spinner styles */
+.spinnerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  flex-direction: column;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgb(0 0 0 / 10%);
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  border-top: 4px solid var(--blue);
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Select input styles */
+select.formInput {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  appearance: none;
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: 2rem;
+}
+
+/* Responsive table (mobile fallback) */
+@media (width <= 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tableContainer {
+    border: 1px solid #e5e7eb;
+  }
+
+  .table {
+    display: block;
+    width: 100%;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .table td {
+    position: relative;
+    padding: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-left: 50%;
+  }
+
+  .table td::before {
+    position: absolute;
+    left: 1rem;
+    width: 45%;
+    font-weight: 600;
+    text-align: left;
+    color: var(--blue);
+    content: attr(data-label);
+    padding-right: 1rem;
+  }
+
+  .table td:last-child {
+    border-bottom: none;
+  }
+
+  .tableHeader {
+    display: none;
+  }
+
+  .tableRow {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .tableCell {
+    position: relative;
+    display: block;
+    padding: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-left: 50%;
+  }
+
+  .tableCell::before {
+    position: absolute;
+    left: 1rem;
+    width: 45%;
+    font-weight: 600;
+    text-align: left;
+    color: var(--blue);
+    content: attr(data-label);
+    padding-right: 1rem;
+  }
+
+  .tableCell:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Estilos para pantallas muy pequeñas */
+@media (width <= 480px) {
+  .table td,
+  .tableCell {
+    padding-left: 40%;
+  }
+
+  .table td::before,
+  .tableCell::before {
+    width: 35%;
+    font-size: 0.8rem;
+  }
+}

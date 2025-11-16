@@ -1,0 +1,295 @@
+.card {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px 0;
+}
+
+.loadingSpinner {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.noSubscription {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.noSubscription h3 {
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.noSubscription p {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+/* Card Header */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.planTitle {
+  font-size: 1.5rem;
+  color: var(--text);
+  margin: 0 0 5px 0;
+  font-weight: 600;
+}
+
+.residentialName {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Status Badges */
+.statusBadge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.statusActive {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.statusTrial {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.statusCancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusSuspended {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusInactive {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.statusDefault {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+/* Card Body */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Price Section */
+.priceSection {
+  text-align: left;
+  padding: 15px 0;
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.period {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-left: 5px;
+}
+
+/* Usage Section */
+.usageSection {
+  background: var(--background);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.usageHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.usageCount {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+/* Features Section */
+.featuresSection {
+  margin-top: 10px;
+}
+
+.featuresSection h4 {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.featuresList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.featuresList li {
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+.enabled {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.disabled {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+/* Payment Info */
+.paymentInfo,
+.trialInfo {
+  background: var(--background);
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.trialInfo {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* Card Footer */
+.cardFooter {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.upgradeButton {
+  display: inline-block;
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.upgradeButton:hover {
+  background: var(--primary-dark);
+  transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: 20px;
+  }
+
+  .planTitle {
+    font-size: 1.3rem;
+  }
+
+  .price {
+    font-size: 2rem;
+  }
+
+  .featuresList {
+    grid-template-columns: 1fr;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .statusBadge {
+    align-self: flex-start;
+  }
+}
+
+/* Theme variables fallback */
+:root {
+  --background: #f5f7fa;
+  --card-background: #ffffff;
+  --text: #1a202c;
+  --text-secondary: #718096;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --border: #e2e8f0;
+}
+
+[data-theme="dark"] {
+  --background: #1a202c;
+  --card-background: #2d3748;
+  --text: #f7fafc;
+  --text-secondary: #cbd5e0;
+  --border: #4a5568;
+}
+
+[data-theme="dark"] .statusActive {
+  background: #064e3b;
+  color: #d1fae5;
+}
+
+[data-theme="dark"] .statusTrial {
+  background: #1e3a8a;
+  color: #dbeafe;
+}
+
+[data-theme="dark"] .statusCancelled {
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+
+[data-theme="dark"] .statusSuspended {
+  background: #78350f;
+  color: #fef3c7;
+}
