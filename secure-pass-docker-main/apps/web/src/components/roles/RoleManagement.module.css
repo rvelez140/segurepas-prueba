@@ -1,0 +1,565 @@
+/* Role Management Container */
+.roleManagement {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.managementHeader {
+  margin-bottom: 2rem;
+}
+
+.managementHeader h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* Tabs */
+.tabsContainer {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  color: #3b82f6;
+}
+
+.tabActive {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.tabContent {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Role List */
+.roleList {
+  width: 100%;
+}
+
+.roleListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.roleListHeader h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Role Card */
+.roleCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.roleCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.roleCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.roleColor {
+  width: 4px;
+  height: 48px;
+  border-radius: 2px;
+}
+
+.roleInfo h3 {
+  font-size: 1.25rem;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+}
+
+.systemBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.roleDescription {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+}
+
+.roleStats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.permissionCount {
+  font-size: 0.875rem;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.roleSlug {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-family: monospace;
+}
+
+.roleActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Buttons */
+.btnCreate,
+.btnEdit,
+.btnDelete,
+.btnAssign,
+.btnSubmit,
+.btnCancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btnCreate,
+.btnSubmit {
+  background: #3b82f6;
+  color: white;
+}
+
+.btnCreate:hover,
+.btnSubmit:hover {
+  background: #2563eb;
+}
+
+.btnEdit {
+  flex: 1;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btnEdit:hover {
+  background: #e5e7eb;
+}
+
+.btnDelete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btnDelete:hover {
+  background: #fecaca;
+}
+
+.btnAssign {
+  background: #10b981;
+  color: white;
+}
+
+.btnAssign:hover {
+  background: #059669;
+}
+
+.btnAssign:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.btnCancel {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.btnCancel:hover {
+  background: #e5e7eb;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modalHeader h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin: 0;
+}
+
+.btnClose {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.btnClose:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Form */
+.roleForm {
+  padding: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input[type="text"],
+.formGroup textarea,
+.roleSelect {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.roleSelect:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formGroup input:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.helpText {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.colorPicker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.colorPicker input[type="color"] {
+  width: 60px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.colorPicker span {
+  font-family: monospace;
+  color: #6b7280;
+}
+
+/* Permissions Grid */
+.permissionsGrid {
+  display: grid;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.resourceGroup {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+}
+
+.resourceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.resourceHeader h4 {
+  font-size: 1rem;
+  color: #1f2937;
+  margin: 0;
+}
+
+.btnSelectAll {
+  background: none;
+  border: 1px solid #d1d5db;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btnSelectAll:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.permissionsList {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.permissionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.permissionItem:hover {
+  background: #f9fafb;
+}
+
+.permissionItem input[type="checkbox"] {
+  margin-top: 0.25rem;
+  cursor: pointer;
+}
+
+.permissionLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.permissionLabel strong {
+  color: #1f2937;
+  font-size: 0.875rem;
+}
+
+.permissionLabel small {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* User Role Assignment */
+.userRoleAssignment {
+  width: 100%;
+}
+
+.assignmentHeader {
+  margin-bottom: 2rem;
+}
+
+.assignmentHeader h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.assignmentHeader p {
+  color: #6b7280;
+}
+
+.usersTable {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.usersTable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.usersTable thead {
+  background: #f9fafb;
+}
+
+.usersTable th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.usersTable td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.usersTable tbody tr:hover {
+  background: #f9fafb;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userIcon {
+  color: #6b7280;
+  font-size: 1.25rem;
+}
+
+.roleBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.legacyRole {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* Utility Classes */
+.loading,
+.error,
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.errorAlert {
+  padding: 1rem;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.emptyState p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
