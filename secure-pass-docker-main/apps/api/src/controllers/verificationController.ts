@@ -21,6 +21,16 @@ export const verificationController = {
         return;
       }
 
+      // Enviar email de bienvenida después de verificar exitosamente
+      if (result.user) {
+        try {
+          await emailVerificationService.sendWelcomeEmail(result.user);
+        } catch (emailError) {
+          console.error('Error al enviar email de bienvenida:', emailError);
+          // Continuar aunque falle el email de bienvenida
+        }
+      }
+
       res.status(200).json({
         message: result.message,
         emailVerified: true
@@ -47,6 +57,16 @@ export const verificationController = {
       if (!result.success) {
         res.status(400).json({ error: result.message });
         return;
+      }
+
+      // Enviar email de bienvenida después de verificar exitosamente
+      if (result.user) {
+        try {
+          await emailVerificationService.sendWelcomeEmail(result.user);
+        } catch (emailError) {
+          console.error('Error al enviar email de bienvenida:', emailError);
+          // Continuar aunque falle el email de bienvenida
+        }
       }
 
       res.status(200).json({

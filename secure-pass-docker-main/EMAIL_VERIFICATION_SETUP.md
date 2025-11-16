@@ -7,6 +7,7 @@ Este documento explica el sistema de verificación de email implementado en Secu
 ✅ **Verificación obligatoria**: Los usuarios deben verificar su email antes de poder iniciar sesión
 ✅ **Doble verificación**: Código de 6 dígitos y enlace de activación
 ✅ **Emails HTML**: Emails con formato profesional y branding
+✅ **Email de bienvenida**: Los usuarios reciben un email de bienvenida después de verificar su cuenta
 ✅ **Expiración de tokens**: Códigos y enlaces válidos por 24 horas
 ✅ **Reenvío de código**: Los usuarios pueden solicitar un nuevo código
 ✅ **Excepción para OAuth**: Usuarios de Google/Microsoft están verificados automáticamente
@@ -54,6 +55,21 @@ El usuario puede verificar de dos formas:
 4. Marca email como verificado
 5. Redirige al login
 
+### 4. Email de Bienvenida
+
+Después de la verificación exitosa:
+
+1. El sistema envía automáticamente un email de bienvenida
+2. El email incluye:
+   - Nombre del usuario
+   - Email del usuario
+   - Rol asignado
+   - Fecha de registro
+   - Características principales de SecurePass
+   - Enlace directo a la aplicación
+3. Si el envío del email falla, el proceso de verificación continúa normalmente
+4. El usuario puede acceder a la aplicación inmediatamente
+
 ## Rutas de API
 
 ### Backend (`apps/api`)
@@ -78,7 +94,9 @@ Desc:  Reenvía el email de verificación
 /verify-email?email=xxx    - Verificación manual con código
 ```
 
-## Estructura del Email
+## Estructura de los Emails
+
+### Email de Verificación
 
 El email de verificación incluye:
 
@@ -98,6 +116,36 @@ El email de verificación incluye:
 │  [Verificar mi cuenta]          │
 │                                 │
 │  ⚠️ Válido por 24 horas          │
+└─────────────────────────────────┘
+```
+
+### Email de Bienvenida
+
+El email de bienvenida incluye:
+
+```
+┌─────────────────────────────────┐
+│  🔐 SECUREPASS                   │
+│  ¡Bienvenido a SecurePass!      │
+├─────────────────────────────────┤
+│  ¡Tu cuenta está activada! 🎉   │
+│                                 │
+│  Hola [Nombre],                 │
+│                                 │
+│  📋 Información de tu cuenta:   │
+│  • Nombre: [Nombre]             │
+│  • Email: [Email]               │
+│  • Rol: [Rol]                   │
+│  • Fecha: [Fecha de registro]   │
+│                                 │
+│  ✨ Características:             │
+│  👥 Gestionar Visitantes         │
+│  📱 Códigos QR                   │
+│  📊 Historial                    │
+│  🔔 Notificaciones               │
+│  🛡️ Seguridad                    │
+│                                 │
+│  [Ir a SecurePass]              │
 └─────────────────────────────────┘
 ```
 
@@ -189,9 +237,9 @@ Si el usuario no recibe el email:
 apps/api/src/
 ├── controllers/
 │   ├── authController.ts          # Modificado: Login con verificación
-│   └── verificationController.ts  # NUEVO: Controlador de verificación
+│   └── verificationController.ts  # NUEVO: Controlador de verificación (incluye email de bienvenida)
 ├── services/
-│   └── EmailVerificationService.ts # NUEVO: Servicio de emails
+│   └── EmailVerificationService.ts # NUEVO: Servicio de emails (verificación + bienvenida)
 ├── routes/
 │   └── verificationRoutes.ts      # NUEVO: Rutas de verificación
 ├── models/

@@ -273,6 +273,217 @@ class EmailVerificationService {
     await this.sendVerificationEmail(user);
     return { success: true, message: 'Email de verificación reenviado' };
   }
+
+  /**
+   * Envía el email de bienvenida después de verificar la cuenta
+   */
+  async sendWelcomeEmail(user: IUser): Promise<void> {
+    const mailOptions = {
+      from: `"SecurePass" <${process.env.EMAIL_FROM || env.EMAIL_USER}>`,
+      to: user.auth.email,
+      subject: '¡Bienvenido a SecurePass! 🎉',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              color: #333;
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+            }
+            .container {
+              background-color: #f9f9f9;
+              border-radius: 10px;
+              padding: 30px;
+              border: 1px solid #e0e0e0;
+            }
+            .header {
+              text-align: center;
+              color: #0077b6;
+              margin-bottom: 30px;
+            }
+            .logo {
+              font-size: 48px;
+              margin-bottom: 10px;
+            }
+            .welcome-box {
+              background: linear-gradient(135deg, #0077b6 0%, #005f87 100%);
+              color: white;
+              padding: 30px;
+              border-radius: 8px;
+              text-align: center;
+              margin: 20px 0;
+            }
+            .welcome-box h2 {
+              margin: 0;
+              font-size: 28px;
+            }
+            .info-box {
+              background-color: white;
+              border-left: 4px solid #0077b6;
+              padding: 15px;
+              margin: 20px 0;
+              border-radius: 4px;
+            }
+            .info-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 10px 0;
+              border-bottom: 1px solid #e0e0e0;
+            }
+            .info-row:last-child {
+              border-bottom: none;
+            }
+            .info-label {
+              font-weight: bold;
+              color: #555;
+            }
+            .info-value {
+              color: #0077b6;
+            }
+            .button {
+              display: inline-block;
+              background-color: #0077b6;
+              color: white !important;
+              padding: 15px 30px;
+              text-decoration: none;
+              border-radius: 6px;
+              margin: 20px 0;
+              font-weight: bold;
+              text-align: center;
+            }
+            .button:hover {
+              background-color: #005f87;
+            }
+            .features {
+              margin: 30px 0;
+            }
+            .feature-item {
+              padding: 15px;
+              margin: 10px 0;
+              background-color: white;
+              border-radius: 6px;
+              border-left: 3px solid #0077b6;
+            }
+            .feature-icon {
+              font-size: 24px;
+              margin-right: 10px;
+            }
+            .footer {
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 1px solid #e0e0e0;
+              font-size: 12px;
+              color: #666;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo">🔐</div>
+              <h1>¡Bienvenido a SecurePass!</h1>
+            </div>
+
+            <div class="welcome-box">
+              <h2>¡Tu cuenta está activada!</h2>
+              <p style="margin: 10px 0 0 0; font-size: 16px;">Estamos emocionados de tenerte con nosotros</p>
+            </div>
+
+            <p>Hola <strong>${user.name}</strong>,</p>
+
+            <p>¡Felicidades! Tu cuenta ha sido verificada exitosamente y ya puedes comenzar a usar SecurePass, el sistema de gestión de visitantes más completo para residencias.</p>
+
+            <div class="info-box">
+              <h3 style="margin-top: 0; color: #0077b6;">📋 Información de tu cuenta</h3>
+              <div class="info-row">
+                <span class="info-label">Nombre:</span>
+                <span class="info-value">${user.name}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">${user.auth.email}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Rol:</span>
+                <span class="info-value">${user.role === 'residente' ? 'Residente' : user.role === 'guardia' ? 'Guardia' : 'Administrador'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Fecha de registro:</span>
+                <span class="info-value">${new Date(user.registerDate).toLocaleDateString('es-ES', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}</span>
+              </div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}" class="button">
+                Ir a SecurePass
+              </a>
+            </div>
+
+            <div class="features">
+              <h3 style="color: #0077b6;">✨ ¿Qué puedes hacer con SecurePass?</h3>
+
+              <div class="feature-item">
+                <span class="feature-icon">👥</span>
+                <strong>Gestionar Visitantes:</strong> Autoriza visitas de manera fácil y segura
+              </div>
+
+              <div class="feature-item">
+                <span class="feature-icon">📱</span>
+                <strong>Códigos QR:</strong> Genera códigos QR únicos para cada visitante
+              </div>
+
+              <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <strong>Historial:</strong> Consulta el historial completo de todas tus visitas
+              </div>
+
+              <div class="feature-item">
+                <span class="feature-icon">🔔</span>
+                <strong>Notificaciones:</strong> Recibe alertas por email de tus autorizaciones
+              </div>
+
+              <div class="feature-item">
+                <span class="feature-icon">🛡️</span>
+                <strong>Seguridad:</strong> Control de acceso completo y trazabilidad
+              </div>
+            </div>
+
+            <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
+              <strong>💡 Consejo:</strong> Asegúrate de completar tu perfil con toda la información necesaria para aprovechar al máximo todas las funcionalidades de SecurePass.
+            </div>
+
+            <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. Nuestro equipo está aquí para ayudarte.</p>
+
+            <p>¡Gracias por unirte a SecurePass!</p>
+
+            <p style="margin-top: 30px;">
+              Saludos cordiales,<br>
+              <strong>El equipo de SecurePass</strong>
+            </p>
+
+            <div class="footer">
+              <p>Este es un mensaje automático, por favor no responder.</p>
+              <p>&copy; ${new Date().getFullYear()} SecurePass - Sistema de Control de Acceso</p>
+              <p>Tu seguridad es nuestra prioridad</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
 }
 
 export const emailVerificationService = new EmailVerificationService();
