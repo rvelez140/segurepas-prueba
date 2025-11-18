@@ -1,6 +1,8 @@
 import { VisitService } from "./VisitService";
+import { UserService } from "./UserService";
 import { CloudinaryService } from "./CloudinaryService";
 import { IVisit } from "../interfaces/IVisit";
+import { IUser } from "../interfaces/IUser";
 
 export class StorageService {
   static async uploadVisitImage(
@@ -168,6 +170,120 @@ export class StorageService {
         message: `Error al eliminar visitas: ${error.message}`,
         deletedCount: 0,
         visits: null,
+      };
+    }
+  }
+
+  // Métodos para usuarios
+  static async uploadUserDocumentImage(
+    userId: string,
+    imageBuffer: Buffer
+  ): Promise<IUser | null> {
+    const user = await UserService.findById(userId);
+    if (!user) throw new Error("Usuario no encontrado");
+
+    // Eliminar imagen anterior si existe
+    if (user.role === "residente" && user.documentImage) {
+      await CloudinaryService.deleteImage(user.documentImage);
+    }
+
+    // Subir nueva imagen
+    const imageUrl = await CloudinaryService.uploadImage(
+      imageBuffer,
+      `users/${userId}/document`
+    );
+
+    // Actualizar usuario
+    const updatedUser = await UserService.updateUser(userId, {
+      documentImage: imageUrl,
+    });
+
+    return updatedUser;
+  }
+
+  static async uploadUserVehiclePlateImage(
+    userId: string,
+    imageBuffer: Buffer
+  ): Promise<IUser | null> {
+    const user = await UserService.findById(userId);
+    if (!user) throw new Error("Usuario no encontrado");
+
+    // Eliminar imagen anterior si existe
+    if (user.role === "residente" && user.vehiclePlateImage) {
+      await CloudinaryService.deleteImage(user.vehiclePlateImage);
+    }
+
+    // Subir nueva imagen
+    const imageUrl = await CloudinaryService.uploadImage(
+      imageBuffer,
+      `users/${userId}/vehicle-plate`
+    );
+
+    // Actualizar usuario
+    const updatedUser = await UserService.updateUser(userId, {
+      vehiclePlateImage: imageUrl,
+    });
+
+    return updatedUser;
+  }
+
+  static async deleteUserImages(userId: string): Promise<{
+    success: boolean;
+    message: string;
+    deletedCount: number;
+    details: {
+      document: { success: boolean; message: string };
+      vehiclePlate: { success: boolean; message: string };
+    };
+  }> {
+    try {
+      let totalDeleted = 0;
+
+      // Eliminar folder de documento
+      const documentResult = await CloudinaryService.deleteFolder(
+        `users/${userId}/document`
+      );
+      if (documentResult.success)
+        totalDeleted += documentResult.deletedCount || 0;
+
+      // Eliminar folder de placa
+      const vehiclePlateResult = await CloudinaryService.deleteFolder(
+        `users/${userId}/vehicle-plate`
+      );
+      if (vehiclePlateResult.success)
+        totalDeleted += vehiclePlateResult.deletedCount || 0;
+
+      // Actualizar usuario para remover URLs de imágenes
+      await UserService.updateUser(userId, {
+        documentImage: undefined,
+        vehiclePlateImage: undefined,
+      });
+
+      return {
+        success: documentResult.success && vehiclePlateResult.success,
+        message: `Eliminadas ${totalDeleted} imágenes del usuario ${userId}`,
+        deletedCount: totalDeleted,
+        details: {
+          document: {
+            success: documentResult.success,
+            message: documentResult.message,
+          },
+          vehiclePlate: {
+            success: vehiclePlateResult.success,
+            message: vehiclePlateResult.message,
+          },
+        },
+      };
+    } catch (error: any) {
+      console.error(`Error eliminando imágenes del usuario ${userId}:`, error);
+      return {
+        success: false,
+        message: `Error al eliminar imágenes: ${error}`,
+        deletedCount: 0,
+        details: {
+          document: { success: false, message: error.message },
+          vehiclePlate: { success: false, message: error.message },
+        },
       };
     }
   }

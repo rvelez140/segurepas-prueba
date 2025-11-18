@@ -24,6 +24,10 @@ export interface Resident extends BaseUser {
   role: 'residente';
   apartment: string; // Apartamento del residente (ex: A-2)
   tel: string; // Teléfono del residente (ex: +18095559999)
+  document: string; // Documento de identidad/cédula del residente
+  vehiclePlate: string; // Placa/matrícula del vehículo del residente
+  documentImage?: string; // URL de la foto del documento de identidad
+  vehiclePlateImage?: string; // URL de la foto de la placa del vehículo
 }
 
 export interface Guard extends BaseUser {

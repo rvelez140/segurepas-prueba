@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/UserService";
+import { StorageService } from "../services/StorageService";
 import { Admin, Guard, GuardShift, Resident } from "../interfaces/IUser";
 
 export const userController = {
@@ -16,6 +17,10 @@ export const userController = {
           email: resident.auth.email,
           apartment: resident.apartment,
           tel: resident.tel,
+          document: resident.document,
+          vehiclePlate: resident.vehiclePlate,
+          documentImage: resident.documentImage,
+          vehiclePlateImage: resident.vehiclePlateImage,
           registerDate: resident.registerDate,
         }))
       );
@@ -96,6 +101,10 @@ export const userController = {
               ...baseResponse,
               apartment: (user as Resident).apartment,
               tel: (user as Resident).tel,
+              document: (user as Resident).document,
+              vehiclePlate: (user as Resident).vehiclePlate,
+              documentImage: (user as Resident).documentImage,
+              vehiclePlateImage: (user as Resident).vehiclePlateImage,
             };
           case "guardia":
             return {
@@ -128,16 +137,31 @@ export const userController = {
       const updateData = req.body;
 
       // Validaciones específicas por rol
-      if (
-        updateData.role === "residente" &&
-        (!updateData.apartment || !updateData.tel)
-      ) {
-        res
-          .status(400)
-          .json({
-            message: "Apartamento y teléfono son requeridos para residentes",
-          });
-        return;
+      if (updateData.role === "residente") {
+        if (!updateData.apartment || !updateData.tel) {
+          res
+            .status(400)
+            .json({
+              message: "Apartamento y teléfono son requeridos para residentes",
+            });
+          return;
+        }
+        if (!updateData.document) {
+          res
+            .status(400)
+            .json({
+              message: "Documento de identidad es requerido para residentes",
+            });
+          return;
+        }
+        if (!updateData.vehiclePlate) {
+          res
+            .status(400)
+            .json({
+              message: "Placa del vehículo es requerida para residentes",
+            });
+          return;
+        }
       }
 
       if (updateData.role === "guardia" && !updateData.shift) {
@@ -159,14 +183,18 @@ export const userController = {
         email: updatedUser.auth.email,
         role: updatedUser.role,
         ...(updatedUser.role === "residente" && {
-          apartment: updatedUser.apartment,
-          tel: updatedUser.tel,
+          apartment: (updatedUser as Resident).apartment,
+          tel: (updatedUser as Resident).tel,
+          document: (updatedUser as Resident).document,
+          vehiclePlate: (updatedUser as Resident).vehiclePlate,
+          documentImage: (updatedUser as Resident).documentImage,
+          vehiclePlateImage: (updatedUser as Resident).vehiclePlateImage,
         }),
         ...(updatedUser.role === "guardia" && {
-          shift: updatedUser.shift,
+          shift: (updatedUser as Guard).shift,
         }),
         ...(updatedUser.role === "admin" && {
-          lastAccess: updatedUser.lastAccess,
+          lastAccess: (updatedUser as Admin).lastAccess,
         }),
         updateDate: updatedUser.updateDate,
       };
@@ -195,6 +223,78 @@ export const userController = {
       };
       res.json({ message: "Usuario eliminado correctamente", user });
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async uploadDocumentImage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!req.file) {
+        res.status(400).json({ message: "No se recibió ninguna imagen" });
+        return;
+      }
+
+      const updatedUser = await StorageService.uploadUserDocumentImage(
+        id,
+        req.file.buffer
+      );
+
+      if (!updatedUser) {
+        res.status(404).json({ message: "Usuario no encontrado" });
+        return;
+      }
+
+      res.json({
+        message: "Imagen de documento subida correctamente",
+        documentImage: (updatedUser as Resident).documentImage,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async uploadVehiclePlateImage(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+
+      if (!req.file) {
+        res.status(400).json({ message: "No se recibió ninguna imagen" });
+        return;
+      }
+
+      const updatedUser = await StorageService.uploadUserVehiclePlateImage(
+        id,
+        req.file.buffer
+      );
+
+      if (!updatedUser) {
+        res.status(404).json({ message: "Usuario no encontrado" });
+        return;
+      }
+
+      res.json({
+        message: "Imagen de placa subida correctamente",
+        vehiclePlateImage: (updatedUser as Resident).vehiclePlateImage,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async deleteUserImages(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const result = await StorageService.deleteUserImages(id);
+
+      res.json(result);
     } catch (error) {
       next(error);
     }
