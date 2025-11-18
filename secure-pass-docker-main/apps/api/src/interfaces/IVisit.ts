@@ -9,6 +9,7 @@ export enum VisitState {
 }
 
   export interface IVisitInput {
+  company: Types.ObjectId; // Id de la empresa a la que pertenece la visita
   visit: {
     name: string; // Nombre del visitante
     email: string; // Dirección email del visitante

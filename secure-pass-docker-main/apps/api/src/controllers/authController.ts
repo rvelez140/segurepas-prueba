@@ -16,15 +16,15 @@ export const authController = {
     try {
       // Validaciones específicas por rol
       if (role === 'residente' && (!apartment || !tel)) {
-        res.status(400).json({ 
-          error: "Apartamento y teléfono son requeridos para residentes" 
+        res.status(400).json({
+          error: "Apartamento y teléfono son requeridos para residentes"
         });
         return;
       }
 
       if (role === 'guardia' && !shift) {
-        res.status(400).json({ 
-          error: "Turno es requerido para guardias" 
+        res.status(400).json({
+          error: "Turno es requerido para guardias"
         });
         return;
       }
@@ -105,11 +105,11 @@ export const authController = {
       }
 
       const token = jwt.sign(
-        { 
-          id: user._id, 
+        {
+          id: user._id,
           role: user.role,
           email: user.auth.email
-        }, 
+        },
         `${process.env.JWT_SECRET}`,
         { expiresIn: "1h" }
       );
@@ -119,17 +119,17 @@ export const authController = {
         name: user.name,
         email: user.auth.email,
         role: user.role,
-        ...(user.role === 'residente' && { 
+        ...(user.role === 'residente' && {
           apartment: user.apartment,
-          tel: user.tel 
+          tel: user.tel
         }),
-        ...(user.role === 'guardia' && { 
-          shift: user.shift 
+        ...(user.role === 'guardia' && {
+          shift: user.shift
         }),
         registerDate: user.registerDate
       };
 
-      res.status(200).json({ 
+      res.status(200).json({
         token,
         user: userResponse,
         expiresIn: 3600

@@ -52,6 +52,12 @@ const userSchema: Schema = new mongoose.Schema(
       required: [true, "El nombre es requerido"],
       trim: true,
     },
+    company: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: [true, "La empresa es requerida"],
+      index: true,
+    },
     registerDate: {
       type: Date,
       default: Date.now,

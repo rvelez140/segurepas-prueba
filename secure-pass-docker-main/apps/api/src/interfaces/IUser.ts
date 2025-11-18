@@ -12,6 +12,7 @@ interface IUserInput {
     password: string; // Contraseña del usuario
   };
   name: string; // Nombre real del usuario
+  company: Types.ObjectId; // Referencia a la empresa a la que pertenece
   registerDate: Date; // Fecha de registro del usuario
   updateDate: Date; // Fecha en la que se le realizó el último cambio
   googleId?: string; // ID de Google para OAuth

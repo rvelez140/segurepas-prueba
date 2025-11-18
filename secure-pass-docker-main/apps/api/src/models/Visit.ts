@@ -3,6 +3,13 @@ import { IVisit, VisitState } from "../interfaces/IVisit";
 
 const visitSchema: Schema = new mongoose.Schema(
   {
+    // Empresa a la que pertenece
+    company: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: [true, "La empresa es requerida"],
+      index: true,
+    },
     // Información de la visita
     visit: {
       name: {
