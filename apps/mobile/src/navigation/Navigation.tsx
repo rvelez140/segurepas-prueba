@@ -11,25 +11,22 @@ import ResidentList from "../components/resident/ResidentList";
 import ResidentDetail from "../components/resident/ResidentDetail";
 import EntryForm from "@/components/main/EntryForm";
 
+// Resident screens
+import ResidentDashboard from "../components/resident/screens/ResidentDashboard";
+import AuthorizeVisit from "../components/resident/screens/AuthorizeVisit";
+import VisitHistory from "../components/resident/screens/VisitHistory";
+import QRDisplay from "../components/resident/screens/QRDisplay";
+
+// Admin screens
+import AdminDashboard from "../components/admin/screens/AdminDashboard";
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-/* function QRCodeScannerScreen({
-  navigation,
-}: NativeStackScreenProps<RootStackParamList, "Scanner">) {
-  const handleScanned = (data: string) => {
-    console.log("Contenido escaneado:", data);
-    navigation.goBack(); // Opcional: vuelve atrás después de escanear
-  };
-
-  return <QRCodeScanner />;
-}
- */
-//onScanned={handleScanned}
 
 export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
+        {/* Login Screen */}
         <Stack.Screen
           name="Login"
           options={{ headerShown: false }}
@@ -45,22 +42,24 @@ export default function Navigation() {
           )}
         </Stack.Screen>
 
+        {/* Guard Main Screen (legacy) */}
         <Stack.Screen
           name="Main"
           component={MainScreen}
-          options={{ 
+          options={{
             title: "SecurePass Control de Acceso",
-            headerBackVisible: false // Evita el botón de retroceso
+            headerBackVisible: false
           }}
         />
 
+        {/* Guard Screens */}
         <Stack.Screen
           name="Scanner"
           component={QRScannerScreen}
           options={{ title: "Escanear QR" }}
         />
 
-         <Stack.Screen
+        <Stack.Screen
           name="EntryForm"
           component={EntryForm}
           options={{ title: "Formulario de registrar acceso" }}
@@ -82,6 +81,87 @@ export default function Navigation() {
           name="ExitRegistration"
           component={ExitRegistrationScreen}
           options={{ title: "Registrar Salida" }}
+        />
+
+        {/* Resident Screens */}
+        <Stack.Screen
+          name="ResidentDashboard"
+          component={ResidentDashboard}
+          options={{
+            title: "Dashboard Residente",
+            headerBackVisible: false
+          }}
+        />
+
+        <Stack.Screen
+          name="AuthorizeVisit"
+          component={AuthorizeVisit}
+          options={{ title: "Autorizar Visita" }}
+        />
+
+        <Stack.Screen
+          name="VisitHistory"
+          component={VisitHistory}
+          options={{ title: "Historial de Visitas" }}
+        />
+
+        <Stack.Screen
+          name="QRDisplay"
+          component={QRDisplay}
+          options={{ title: "Código QR" }}
+        />
+
+        {/* Admin Screens */}
+        <Stack.Screen
+          name="AdminDashboard"
+          component={AdminDashboard}
+          options={{
+            title: "Panel de Administración",
+            headerBackVisible: false
+          }}
+        />
+
+        {/* Placeholder screens - to be implemented */}
+        <Stack.Screen
+          name="Analytics"
+          component={() => null}
+          options={{ title: "Analytics" }}
+        />
+
+        <Stack.Screen
+          name="UserManagement"
+          component={() => null}
+          options={{ title: "Gestión de Usuarios" }}
+        />
+
+        <Stack.Screen
+          name="Reports"
+          component={() => null}
+          options={{ title: "Reportes" }}
+        />
+
+        <Stack.Screen
+          name="ManageSubscription"
+          component={() => null}
+          options={{ title: "Gestionar Suscripción" }}
+        />
+
+        <Stack.Screen
+          name="PaymentHistory"
+          component={() => null}
+          options={{ title: "Historial de Pagos" }}
+        />
+
+        <Stack.Screen
+          name="CreateUser"
+          component={() => null}
+          options={{ title: "Crear Usuario" }}
+        />
+
+        <Stack.Screen
+          name="EditUser"
+          component={() => null}
+          options={{ title: "Editar Usuario" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

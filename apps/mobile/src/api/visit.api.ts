@@ -152,3 +152,116 @@ export const uploadImage = async (
     throw new Error("Error al subir la imagen");
   }
 };
+
+// Alias para mantener compatibilidad
+export const getVisitsFromResident = getVisitsByResidentId;
+
+// Obtener visita por ID
+export const getVisitById = async (id: string): Promise<VisitResponse> => {
+  try {
+    const response = await axios.get<VisitResponse>(`${API_URL}/visits/${id}`);
+    const visit = response.data;
+
+    return {
+      ...visit,
+      createdAt: new Date(visit.createdAt),
+      updatedAt: new Date(visit.updatedAt),
+      authorization: {
+        ...visit.authorization,
+        date: new Date(visit.authorization.date),
+        exp: new Date(visit.authorization.exp),
+      },
+      registry: visit.registry
+        ? {
+            ...visit.registry,
+            entry: visit.registry.entry
+              ? {
+                  ...visit.registry.entry,
+                  date: visit.registry.entry.date
+                    ? new Date(visit.registry.entry.date)
+                    : undefined,
+                }
+              : undefined,
+            exit: visit.registry.exit
+              ? {
+                  ...visit.registry.exit,
+                  date: visit.registry.exit.date
+                    ? new Date(visit.registry.exit.date)
+                    : undefined,
+                }
+              : undefined,
+          }
+        : undefined,
+    };
+  } catch (error: any) {
+    console.error("Error al obtener visita:", error);
+    if (error.response) {
+      throw new Error(error.response.data.error || "Error al obtener la visita");
+    } else if (error.request) {
+      throw new Error("No se recibió respuesta del servidor");
+    } else {
+      throw new Error("Error al configurar la solicitud");
+    }
+  }
+};
+
+// Autorizar nueva visita
+export const authorizeVisit = async (data: {
+  visitName: string;
+  visitEmail: string;
+  visitDocument: string;
+  resident: string;
+  exp: Date;
+  reason?: string;
+}): Promise<VisitResponse> => {
+  try {
+    const response = await axios.post<VisitResponse>(
+      `${API_URL}/visits/authorize`,
+      data
+    );
+    const visit = response.data;
+
+    return {
+      ...visit,
+      createdAt: new Date(visit.createdAt),
+      updatedAt: new Date(visit.updatedAt),
+      authorization: {
+        ...visit.authorization,
+        date: new Date(visit.authorization.date),
+        exp: new Date(visit.authorization.exp),
+      },
+      registry: visit.registry
+        ? {
+            ...visit.registry,
+            entry: visit.registry.entry
+              ? {
+                  ...visit.registry.entry,
+                  date: visit.registry.entry.date
+                    ? new Date(visit.registry.entry.date)
+                    : undefined,
+                }
+              : undefined,
+            exit: visit.registry.exit
+              ? {
+                  ...visit.registry.exit,
+                  date: visit.registry.exit.date
+                    ? new Date(visit.registry.exit.date)
+                    : undefined,
+                }
+              : undefined,
+          }
+        : undefined,
+    };
+  } catch (error: any) {
+    console.error("Error al autorizar visita:", error);
+    if (error.response) {
+      throw new Error(
+        error.response.data.error || "Error al autorizar la visita"
+      );
+    } else if (error.request) {
+      throw new Error("No se recibió respuesta del servidor");
+    } else {
+      throw new Error("Error al configurar la solicitud");
+    }
+  }
+};

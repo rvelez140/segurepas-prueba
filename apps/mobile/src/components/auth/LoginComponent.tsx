@@ -41,9 +41,16 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
     const validateLogedOnUser = async () => {
       try {
         setAuthToken(await loadToken());
-        await getAuthenticatedUser();
+        const user = await getAuthenticatedUser();
 
-        navigation.replace("Main");
+        // Redirigir según el rol del usuario
+        if (user.role === "residente") {
+          navigation.replace("ResidentDashboard");
+        } else if (user.role === "admin") {
+          navigation.replace("AdminDashboard");
+        } else if (user.role === "guardia") {
+          navigation.replace("Main");
+        }
       } catch (error) {
         console.log("Sesión anterior no encontrada o expirada");
       } finally {
@@ -94,10 +101,16 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
       // api/auth/me
       const verifiedUser = await getAuthenticatedUser();
 
-      if (verifiedUser.role == "residente")
-        throw new Error("Usuario no puede ser residente");
-
-      navigation.replace("Main");
+      // Redirigir según el rol del usuario
+      if (verifiedUser.role === "residente") {
+        navigation.replace("ResidentDashboard");
+      } else if (verifiedUser.role === "admin") {
+        navigation.replace("AdminDashboard");
+      } else if (verifiedUser.role === "guardia") {
+        navigation.replace("Main");
+      } else {
+        throw new Error("Rol de usuario no reconocido");
+      }
     } catch (error: any) {
       // Manejo específico de errores de credenciales
       if (error.message.includes("Credenciales inválidas")) {
@@ -105,10 +118,10 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
           ...errors,
           credentials: "Email o contraseña incorrectos",
         });
-      } else if (error.message.includes("Usuario no puede ser residente")) {
+      } else if (error.message.includes("Rol de usuario no reconocido")) {
         setErrors({
           ...errors,
-          credentials: "El usuario no puede ser residente",
+          credentials: "Rol de usuario no válido",
         });
       } else {
         Alert.alert("Error", error.message || "Error al iniciar sesión");

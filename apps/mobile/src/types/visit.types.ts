@@ -59,3 +59,17 @@ export interface RegistryData{
     qrId: string;
     guardId: string;
 }
+
+export interface CreateVisitData {
+  visitName: string;
+  visitEmail: string;
+  visitDocument: string;
+  exp: Date;
+  reason?: string;
+}
+
+export interface VisitHistoryItem extends VisitResponse {
+  residentName?: string;
+  guardEntryName?: string;
+  guardExitName?: string;
+}
