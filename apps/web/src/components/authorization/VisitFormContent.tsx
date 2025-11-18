@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../../styles/visitForm.module.css";
 import { VisitResponse } from "../../types/visit.types";
+import ImageUploadOCR from "../common/ImageUploadOCR";
 
 type VisitFormContentProps = {
   formData: {
@@ -8,6 +9,7 @@ type VisitFormContentProps = {
     email: string;
     document: string;
     reason: string;
+    vehiclePlate: string;
   };
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -28,6 +30,8 @@ type VisitFormContentProps = {
   lastVisits: VisitResponse[] | null;
   resetError: () => void;
   resetSuccess: () => void;
+  onCedulaExtracted: (text: string, type: "cedula" | "placa") => void;
+  onPlacaExtracted: (text: string, type: "cedula" | "placa") => void;
 };
 
 const VisitFormContent: React.FC<VisitFormContentProps> = ({
@@ -43,6 +47,8 @@ const VisitFormContent: React.FC<VisitFormContentProps> = ({
   lastVisits,
   resetError,
   resetSuccess,
+  onCedulaExtracted,
+  onPlacaExtracted,
 }) => {
   const setCustomRequired = (e: React.FormEvent<Element>) => {
     (e.target as HTMLInputElement | HTMLSelectElement).setCustomValidity(
@@ -151,6 +157,36 @@ const VisitFormContent: React.FC<VisitFormContentProps> = ({
             className={styles.input}
           />
         </div>
+
+        <ImageUploadOCR
+          type="cedula"
+          label="Foto de Cédula (Opcional - Auto-rellena documento)"
+          onTextExtracted={onCedulaExtracted}
+          currentValue={formData.document}
+        />
+
+        <div className={styles.formGroup}>
+          <label htmlFor="vehiclePlate" className={styles.label}>
+            Placa del Vehículo (Opcional):
+          </label>
+          <input
+            type="text"
+            id="vehiclePlate"
+            name="vehiclePlate"
+            value={formData.vehiclePlate}
+            onChange={onChange}
+            placeholder="ABC123"
+            className={styles.input}
+            maxLength={6}
+          />
+        </div>
+
+        <ImageUploadOCR
+          type="placa"
+          label="Foto de Placa (Opcional - Auto-rellena placa)"
+          onTextExtracted={onPlacaExtracted}
+          currentValue={formData.vehiclePlate}
+        />
 
         <div className={styles.formGroup}>
           <label htmlFor="reason" className={styles.label}>

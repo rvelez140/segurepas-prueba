@@ -66,6 +66,20 @@ export class VisitService {
     return this.getLatestVisitByDocument(document);
   }
 
+  static async updateVisitsByDocument(
+    document: string,
+    updateData: Record<string, any>
+  ): Promise<IVisit[]> {
+    const result = await Visit.updateMany(
+      { "visit.document": document },
+      { $set: updateData }
+    );
+
+    if (result.modifiedCount === 0) return [];
+
+    return this.getVisitsByDocument(document);
+  }
+
   static async registerEntry(
     qrId: string,
     guardId: Types.ObjectId,

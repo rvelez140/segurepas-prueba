@@ -40,6 +40,15 @@ router.get('/visits/document', visitController.getAllLatestVisitsGroupedByDocume
 // Realiza una consulta de la ultima visita por su documento
 router.get('/visits/document/:document', visitController.getLatestVisitByDocument);
 
+// Procesamiento de imagen con OCR
+router.post('/visits/ocr/process', upload.single("image"), visitController.processImageOCR);
+
+// Subida de imagen de visita con OCR
+router.post('/visits/ocr/upload-visit/:document', upload.single("image"), visitController.uploadVisitImageWithOCR);
+
+// Subida de imagen de vehiculo con OCR
+router.post('/visits/ocr/upload-vehicle/:document', upload.single("image"), visitController.uploadVehicleImageWithOCR);
+
 // Subida de imagen de visita
 router.post('/visits/upload-visit/:document', upload.single("image"), visitController.uploadVisitImage);
 
