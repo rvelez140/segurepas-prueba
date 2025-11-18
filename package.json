@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start:web": "cd apps/web && npm start",
+    "start:mobile": "cd apps/mobile && npm start",
+    "start:api": "cd apps/api && npm run dev",
+    "start:all": "concurrently \"npm:start:api\" \"npm:start:web\" \"npm:start:mobile\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  }
+}
