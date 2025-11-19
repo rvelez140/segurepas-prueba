@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AccessListService } from "../services/AccessListService";
 import { ListType } from "../interfaces/IAccessList";
+import { getPaginationOptions } from "../utils/pagination";
 
 export const accessListController = {
   /**
@@ -143,12 +144,15 @@ export const accessListController = {
   ): Promise<void> {
     try {
       const { includeInactive } = req.query;
-      const list = await AccessListService.getList(
+      const paginationOptions = getPaginationOptions(req.query);
+
+      const result = await AccessListService.getList(
         ListType.BLACKLIST,
-        includeInactive === "true"
+        includeInactive === "true",
+        paginationOptions
       );
 
-      res.status(200).json(list);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
@@ -164,12 +168,15 @@ export const accessListController = {
   ): Promise<void> {
     try {
       const { includeInactive } = req.query;
-      const list = await AccessListService.getList(
+      const paginationOptions = getPaginationOptions(req.query);
+
+      const result = await AccessListService.getList(
         ListType.WHITELIST,
-        includeInactive === "true"
+        includeInactive === "true",
+        paginationOptions
       );
 
-      res.status(200).json(list);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

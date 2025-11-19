@@ -7,6 +7,7 @@ import {
   ParkingStatus,
 } from "../interfaces/IParking";
 import { Types } from "mongoose";
+import { paginate, PaginationOptions, PaginatedResult } from "../utils/pagination";
 
 export class ParkingService {
   // === PARKING SPACES ===
@@ -47,13 +48,28 @@ export class ParkingService {
   }
 
   /**
+   * Obtener espacio por ID
+   */
+  static async getSpaceById(id: string): Promise<IParkingSpace | null> {
+    return await ParkingSpace.findById(id).populate("resident", "name apartment");
+  }
+
+  /**
    * Actualizar espacio
    */
   static async updateSpace(
-    id: Types.ObjectId,
+    id: string,
     updates: Partial<IParkingSpace>
   ): Promise<IParkingSpace | null> {
     return await ParkingSpace.findByIdAndUpdate(id, { $set: updates }, { new: true });
+  }
+
+  /**
+   * Eliminar espacio
+   */
+  static async deleteSpace(id: string): Promise<boolean> {
+    const result = await ParkingSpace.findByIdAndDelete(id);
+    return !!result;
   }
 
   /**
@@ -76,14 +92,14 @@ export class ParkingService {
    * Asignar espacio de parqueo
    */
   static async assignSpace(data: {
-    parkingSpaceId: Types.ObjectId;
+    parkingSpace: Types.ObjectId | string;
     vehiclePlate: string;
-    visitId?: Types.ObjectId;
-    assignedBy: Types.ObjectId;
+    visit?: Types.ObjectId | string;
+    assignedBy: Types.ObjectId | string;
     notes?: string;
   }): Promise<IParkingAssignment> {
     // Verificar que el espacio esté disponible
-    const space = await ParkingSpace.findById(data.parkingSpaceId);
+    const space = await ParkingSpace.findById(data.parkingSpace);
     if (!space) {
       throw new Error("Espacio de parqueo no encontrado");
     }
@@ -94,8 +110,8 @@ export class ParkingService {
 
     // Crear asignación
     const assignment = await ParkingAssignment.create({
-      parkingSpace: data.parkingSpaceId,
-      visit: data.visitId,
+      parkingSpace: data.parkingSpace,
+      visit: data.visit,
       vehiclePlate: data.vehiclePlate,
       entryTime: new Date(),
       assignedBy: data.assignedBy,
@@ -103,7 +119,7 @@ export class ParkingService {
     });
 
     // Marcar espacio como ocupado
-    await ParkingSpace.findByIdAndUpdate(data.parkingSpaceId, {
+    await ParkingSpace.findByIdAndUpdate(data.parkingSpace, {
       $set: { status: ParkingStatus.OCCUPIED },
     });
 
@@ -118,7 +134,7 @@ export class ParkingService {
    * Registrar salida de parqueo
    */
   static async recordExit(
-    assignmentId: Types.ObjectId
+    assignmentId: string
   ): Promise<IParkingAssignment | null> {
     const assignment = await ParkingAssignment.findById(assignmentId);
     if (!assignment) {
@@ -158,28 +174,43 @@ export class ParkingService {
   /**
    * Obtener historial de asignaciones
    */
-  static async getAssignmentHistory(filters?: {
-    startDate?: Date;
-    endDate?: Date;
-    vehiclePlate?: string;
-  }): Promise<IParkingAssignment[]> {
-    const query: any = {};
+  static async getAssignmentHistory(
+    filters?: {
+      parkingSpace?: string;
+      visit?: string;
+      startDate?: Date;
+      endDate?: Date;
+      vehiclePlate?: string;
+    },
+    paginationOptions?: PaginationOptions
+  ): Promise<PaginatedResult<IParkingAssignment>> {
+    const queryFilter: any = {};
+
+    if (filters?.parkingSpace) queryFilter.parkingSpace = filters.parkingSpace;
+    if (filters?.visit) queryFilter.visit = filters.visit;
 
     if (filters?.startDate || filters?.endDate) {
-      query.entryTime = {};
-      if (filters.startDate) query.entryTime.$gte = filters.startDate;
-      if (filters.endDate) query.entryTime.$lte = filters.endDate;
+      queryFilter.entryTime = {};
+      if (filters.startDate) queryFilter.entryTime.$gte = filters.startDate;
+      if (filters.endDate) queryFilter.entryTime.$lte = filters.endDate;
     }
 
     if (filters?.vehiclePlate) {
-      query.vehiclePlate = filters.vehiclePlate.toUpperCase();
+      queryFilter.vehiclePlate = filters.vehiclePlate.toUpperCase();
     }
 
-    return await ParkingAssignment.find(query)
+    const query = ParkingAssignment.find(queryFilter)
       .populate("parkingSpace")
       .populate("visit")
-      .populate("assignedBy", "name role")
-      .sort({ entryTime: -1 });
+      .populate("assignedBy", "name role");
+
+    const countQuery = ParkingAssignment.countDocuments(queryFilter);
+
+    return await paginate(query, countQuery, {
+      ...paginationOptions,
+      sortBy: paginationOptions?.sortBy || "entryTime",
+      sortOrder: paginationOptions?.sortOrder || "desc",
+    });
   }
 
   /**

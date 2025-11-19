@@ -6,6 +6,7 @@ import {
   AccessStatus,
 } from "../interfaces/IAccessList";
 import { Types } from "mongoose";
+import { paginate, PaginationOptions, PaginatedResult } from "../utils/pagination";
 
 export class AccessListService {
   /**
@@ -94,17 +95,25 @@ export class AccessListService {
    */
   static async getList(
     type: ListType,
-    includeInactive: boolean = false
-  ): Promise<IAccessList[]> {
-    const query: any = { type };
+    includeInactive: boolean = false,
+    paginationOptions?: PaginationOptions
+  ): Promise<PaginatedResult<IAccessList>> {
+    const queryFilter: any = { type };
 
     if (!includeInactive) {
-      query.status = AccessStatus.ACTIVE;
+      queryFilter.status = AccessStatus.ACTIVE;
     }
 
-    return await AccessList.find(query)
-      .populate("addedBy", "name auth.email role")
-      .sort({ createdAt: -1 });
+    const query = AccessList.find(queryFilter)
+      .populate("addedBy", "name auth.email role");
+
+    const countQuery = AccessList.countDocuments(queryFilter);
+
+    return await paginate(query, countQuery, {
+      ...paginationOptions,
+      sortBy: paginationOptions?.sortBy || "createdAt",
+      sortOrder: paginationOptions?.sortOrder || "desc",
+    });
   }
 
   /**

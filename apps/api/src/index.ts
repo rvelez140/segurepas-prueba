@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
+import http from 'http';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
@@ -10,8 +11,10 @@ import paymentRoutes from './routes/paymentRoutes';
 import auditRoutes from './routes/auditRoutes';
 import accessListRoutes from './routes/accessListRoutes';
 import recurringVisitRoutes from './routes/recurringVisitRoutes';
+import parkingRoutes from './routes/parkingRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
+import { webSocketService } from './services/WebSocketService';
 
 const app = express();
 
@@ -31,7 +34,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes);
 
 app.get('/', (req, res) => {
     res.send(
@@ -95,6 +98,13 @@ app.get('/', (req, res) => {
 }); 
 
 
-app.listen(PORT, () => {
+// Crear servidor HTTP
+const server = http.createServer(app);
+
+// Inicializar WebSocket
+webSocketService.initialize(server);
+
+// Iniciar servidor
+server.listen(PORT, () => {
     console.log('Servidor corriendo en Puerto: ', PORT);
 });
