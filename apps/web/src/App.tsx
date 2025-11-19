@@ -7,21 +7,24 @@ import { SidebarProvider } from "./contexts/SidebarContext";
 import Home from "./pages/login/Home";
 import Report from "./pages/main/Report";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { FeatureToggleProvider } from "./contexts/FeatureToggleContext";
 import "./styles/theme.css";
 
 const App = () => {
   return (
     <ThemeProvider>
-      <SidebarProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Dashboard />} />
-          <Route path="/authorizations" element={<Authorizations />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/visit-history" element={<History />} />
-          <Route path="/admin/report" element={<Report />} />
-        </Routes>
-      </SidebarProvider>
+      <FeatureToggleProvider>
+        <SidebarProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Dashboard />} />
+            <Route path="/authorizations" element={<Authorizations />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/visit-history" element={<History />} />
+            <Route path="/admin/report" element={<Report />} />
+          </Routes>
+        </SidebarProvider>
+      </FeatureToggleProvider>
     </ThemeProvider>
   );
 };

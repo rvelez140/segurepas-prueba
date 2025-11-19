@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import featureToggleRoutes from './routes/featureToggleRoutes';
 
 const app = express();
 
@@ -22,6 +23,7 @@ mongoose.connect(MONGODB_URI)
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
 app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes);
+app.use('/api/features', featureToggleRoutes);
 
 app.get('/', (req, res) => {
     res.send(

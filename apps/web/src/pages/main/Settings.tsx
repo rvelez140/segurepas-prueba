@@ -14,6 +14,7 @@ import { LogoutModal } from "../../components/login/LogoutModal";
 import Profile from "../../components/settings/Profile";
 import { getAuthenticatedUser } from "../../api/auth.api";
 import RegisterForm from "../../components/settings/RegisterForm";
+import FeatureToggleManagement from "../../components/settings/FeatureToggleManagement";
 import { User } from "../../types/user.types";
 import Header from "../../components/visits/Header";
 
@@ -58,6 +59,7 @@ const Settings: React.FC = () => {
           <Header />
           <Profile token={getAuthToken()} />
           {isAdmin && <RegisterForm />}
+          {isAdmin && <FeatureToggleManagement />}
         </div>
         <LogoutModal
           visible={showLogoutModal}
