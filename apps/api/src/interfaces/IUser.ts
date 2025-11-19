@@ -6,6 +6,13 @@ export enum GuardShift {
   NIGHT = 'nocturna'
 }
 
+export enum AccountStatus {
+  ACTIVE = 'active',
+  SUSPENDED = 'suspended',
+  BLOCKED = 'blocked',
+  PENDING_PAYMENT = 'pending_payment'
+}
+
 interface IUserInput {
   auth: {
     email: string; // Email del usuario
@@ -14,6 +21,13 @@ interface IUserInput {
   name: string; // Nombre real del usuario
   registerDate: Date; // Fecha de registro del usuario
   updateDate: Date; // Fecha en la que se le realizó el último cambio
+  accountStatus?: AccountStatus; // Estado de la cuenta
+  suspendedAt?: Date; // Fecha de suspensión
+  suspensionReason?: string; // Razón de suspensión
+  stripeCustomerId?: string; // ID del cliente en Stripe
+  paymentDueDate?: Date; // Fecha límite de pago
+  customBillingDate?: number; // Día del mes para facturación (1-31)
+  pendingBalance?: number; // Saldo pendiente en centavos
 }
 
 interface BaseUser extends IUserInput, Document {

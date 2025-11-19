@@ -76,6 +76,34 @@ const userSchema: Schema = new mongoose.Schema(
       },
       default: Date.now,
     },
+
+    // Campos de billing y estado de cuenta
+    accountStatus: {
+      type: String,
+      enum: ["active", "suspended", "blocked", "pending_payment"],
+      default: "active",
+    },
+    suspendedAt: {
+      type: Date,
+    },
+    suspensionReason: {
+      type: String,
+    },
+    stripeCustomerId: {
+      type: String,
+    },
+    paymentDueDate: {
+      type: Date,
+    },
+    customBillingDate: {
+      type: Number, // Día del mes (1-31)
+      min: 1,
+      max: 31,
+    },
+    pendingBalance: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: false,
