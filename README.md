@@ -51,6 +51,56 @@ Repositorio monorepo que contiene las cuatro aplicaciones del proyecto SecurePas
 | **Imágenes**         | Subida de fotos de vehículos/visitantes |
 | **Reportes**         | Historial de visitas y generación de PDFs |
 
+## 💾 Descargar Aplicación Desktop
+
+¿Solo quieres usar la aplicación? Descarga el instalador para tu sistema operativo:
+
+### 📥 Última Versión
+
+Visita la página de [**Releases**](../../releases/latest) para descargar la última versión estable.
+
+#### Windows
+- **Instalador NSIS** (.exe) - Instalación tradicional con accesos directos
+- **Versión Portable** (.exe) - No requiere instalación, ejecuta directamente
+
+#### Linux
+- **AppImage** (.AppImage) - Universal para todas las distribuciones
+  ```bash
+  chmod +x SecurePass-*.AppImage
+  ./SecurePass-*.AppImage
+  ```
+- **Paquete Debian** (.deb) - Para Ubuntu, Debian y derivados
+  ```bash
+  sudo dpkg -i securepass-desktop_*.deb
+  ```
+- **Paquete RPM** (.rpm) - Para Fedora, RHEL, CentOS y derivados
+  ```bash
+  sudo rpm -i securepass-desktop-*.rpm
+  ```
+
+### 📋 Requisitos del Sistema
+
+**Windows:**
+- Windows 10 o superior (64-bit)
+- 4 GB de RAM mínimo
+- 200 MB de espacio en disco
+
+**Linux:**
+- Kernel 3.10 o superior
+- 4 GB de RAM mínimo
+- 200 MB de espacio en disco
+- Entorno de escritorio (GNOME, KDE, XFCE, etc.)
+
+### ⚙️ Instalación Rápida
+
+1. Descarga el instalador correspondiente a tu sistema operativo
+2. Ejecuta el instalador
+3. Sigue las instrucciones en pantalla
+4. Abre SecurePass desde el menú de inicio o escritorio
+5. La aplicación se conectará automáticamente al servidor
+
+---
+
 ## 🏗️ Estructura del Monorepo
 
 ```
