@@ -2,15 +2,18 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import passport from './config/passport';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import verificationRoutes from './routes/verificationRoutes';
 import companyRoutes from './routes/companyRoutes';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
@@ -19,7 +22,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes,  userRoutes, authRoutes);
+app.use('/api', visitRoutes,  userRoutes, authRoutes, verificationRoutes);
 app.use('/api/companies', companyRoutes);
 
 app.get('/', (req, res) => {
