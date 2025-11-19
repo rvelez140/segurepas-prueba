@@ -6,6 +6,10 @@ export interface User {
     role: string;
     apartment?: string;
     tel?: string;
+    document?: string;
+    vehiclePlate?: string;
+    documentImage?: string;
+    vehiclePlateImage?: string;
     shift?: string;
     registerDate: string;
 }

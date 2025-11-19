@@ -13,6 +13,10 @@ export interface RegisterData {
     role: 'residente' | 'guardia' | 'admin';
     apartment?: string;
     tel?: string;
+    document?: string;
+    vehiclePlate?: string;
+    documentImage?: string;
+    vehiclePlateImage?: string;
     shift?: 'matutina' | 'vespertina' | 'nocturna';
 }
 

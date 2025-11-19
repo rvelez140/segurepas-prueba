@@ -5,11 +5,17 @@ import { flattenObject } from "../types/express.types";
 
 export class UserService {
   static async createUser(userData: IUser): Promise<IUser> {
-    if (
-      userData.role === "residente" &&
-      (!userData.apartment || !userData.tel)
-    ) {
-      throw new Error("Apartamento y teléfono son requeridos para residentes");
+    if (userData.role === "residente") {
+      const resident = userData as Resident;
+      if (!resident.apartment || !resident.tel) {
+        throw new Error("Apartamento y teléfono son requeridos para residentes");
+      }
+      if (!resident.document) {
+        throw new Error("Documento de identidad es requerido para residentes");
+      }
+      if (!resident.vehiclePlate) {
+        throw new Error("Placa del vehículo es requerida para residentes");
+      }
     }
 
     if (userData.role === "guardia" && !userData.shift) {
@@ -57,12 +63,20 @@ export class UserService {
       (updateData.role === undefined &&
         (updateData as Resident).apartment !== undefined)
     ) {
-      if (
-        !(updateData as Resident).apartment ||
-        !(updateData as Resident).tel
-      ) {
+      const resident = updateData as Resident;
+      if (!resident.apartment || !resident.tel) {
         throw new Error(
           "Apartamento y teléfono son requeridos para residentes"
+        );
+      }
+      if (!resident.document) {
+        throw new Error(
+          "Documento de identidad es requerido para residentes"
+        );
+      }
+      if (!resident.vehiclePlate) {
+        throw new Error(
+          "Placa del vehículo es requerida para residentes"
         );
       }
     }
