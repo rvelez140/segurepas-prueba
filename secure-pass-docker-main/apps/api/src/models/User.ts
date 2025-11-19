@@ -110,6 +110,13 @@ const userSchema: Schema = new mongoose.Schema(
       },
       default: Date.now,
     },
+    subscription: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subscription",
+      required: function (this: { role: string }) {
+        return this.role === "admin";
+      },
+    },
   },
   {
     timestamps: false,

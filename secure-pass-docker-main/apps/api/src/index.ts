@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import verificationRoutes from './routes/verificationRoutes';
 import companyRoutes from './routes/companyRoutes';
+import subscriptionRoutes from './routes/subscriptionRoutes';
 
 const app = express();
 
@@ -22,7 +23,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes,  userRoutes, authRoutes, verificationRoutes);
+app.use('/api', visitRoutes,  userRoutes, authRoutes, verificationRoutes, subscriptionRoutes);
 app.use('/api/companies', companyRoutes);
 
 app.get('/', (req, res) => {

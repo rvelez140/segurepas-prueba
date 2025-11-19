@@ -6,6 +6,7 @@ import History from "./pages/main/History";
 import { SidebarProvider } from "./contexts/SidebarContext";
 import Home from "./pages/login/Home";
 import Report from "./pages/main/Report";
+import Pricing from "./pages/main/Pricing";
 import GoogleCallback from "./components/login/GoogleCallback";
 import MicrosoftCallback from "./components/login/MicrosoftCallback";
 import EmailVerification from "./pages/verification/EmailVerification";
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/visit-history" element={<History />} />
           <Route path="/admin/report" element={<Report />} />
+          <Route path="/pricing" element={<Pricing />} />
         </Routes>
       </SidebarProvider>
     </ThemeProvider>

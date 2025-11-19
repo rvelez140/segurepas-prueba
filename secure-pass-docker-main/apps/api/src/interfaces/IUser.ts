@@ -41,6 +41,7 @@ export interface Guard extends BaseUser {
 export interface Admin extends BaseUser {
   role: 'admin';
   lastAccess: Date; // Fecha de último logout del admin (O vencimiento de Token)
+  subscription: Types.ObjectId; // Referencia a la suscripción del residencial
 }
 
 export type IUser = Resident | Guard | Admin;
