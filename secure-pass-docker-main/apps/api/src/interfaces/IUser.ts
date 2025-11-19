@@ -12,8 +12,15 @@ interface IUserInput {
     password: string; // Contraseña del usuario
   };
   name: string; // Nombre real del usuario
+  company: Types.ObjectId; // Referencia a la empresa a la que pertenece
   registerDate: Date; // Fecha de registro del usuario
   updateDate: Date; // Fecha en la que se le realizó el último cambio
+  googleId?: string; // ID de Google para OAuth
+  microsoftId?: string; // ID de Microsoft para OAuth
+  emailVerified: boolean; // Si el email ha sido verificado
+  verificationToken?: string; // Token para verificación de email
+  verificationCode?: string; // Código de 6 dígitos para verificación
+  verificationTokenExpires?: Date; // Fecha de expiración del token de verificación
 }
 
 interface BaseUser extends IUserInput, Document {

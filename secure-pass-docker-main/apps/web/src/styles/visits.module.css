@@ -843,6 +843,81 @@ html {
   background-color: #005f87;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+}
+
+.divider span {
+  padding: 0 10px;
+  font-size: 0.875rem;
+}
+
+.googleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  background-color: var(--white);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 1rem;
+}
+
+.googleButton:hover {
+  background-color: #f8f9fa;
+  border-color: #999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.googleButton svg {
+  flex-shrink: 0;
+}
+
+.microsoftButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  background-color: var(--white);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 1rem;
+}
+
+.microsoftButton:hover {
+  background-color: #f8f9fa;
+  border-color: #999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.microsoftButton svg {
+  flex-shrink: 0;
+}
+
 .registerLink {
   font-size: 0.9rem;
   text-align: center;
@@ -878,6 +953,17 @@ html {
   text-align: left;
   color: #fb3636;
   margin-bottom: 4px;
+}
+
+.successMessage {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+  color: #28a745;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 12px;
+  border-radius: 6px;
 }
 
 .credentialsMessage {

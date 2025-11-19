@@ -20,6 +20,13 @@ export class UserService {
     return await user.save();
   }
 
+  static async createUserWithGoogle(userData: IUser): Promise<IUser> {
+    // Para usuarios de Google, no requerimos apartamento y teléfono inicialmente
+    // Se pueden agregar después
+    const user = new User(userData);
+    return await user.save();
+  }
+
   static async findByEmail(email: string): Promise<IUser | null> {
     return await User.findOne({ "auth.email": email })
       .select("+auth.password")
