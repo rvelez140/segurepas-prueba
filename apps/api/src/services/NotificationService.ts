@@ -5,6 +5,9 @@ import { UserService } from "./UserService";
 import { IUser } from "../interfaces/IUser";
 import { ISubscription } from "../interfaces/ISubscription";
 import { IPayment } from "../interfaces/IPayment";
+import { Notification } from "../models/Notification";
+import { NotificationType, INotification } from "../interfaces/INotification";
+import { Types } from "mongoose";
 
 class NotificationService {
   public transporter;
@@ -180,6 +183,23 @@ class NotificationService {
       await this.transporter.sendMail(residentMailOptions),
       await this.transporter.sendMail(visitMailOptions),
     ];
+
+    // Guardar notificación en la base de datos para el residente
+    await Notification.create({
+      recipient: visitData.authorization.resident,
+      type: NotificationType.VISITOR_ENTRY,
+      title: `Entrada registrada - Visitante ${visitData.visit.name}`,
+      message: `Su visitante ${visitData.visit.name} ha ingresado al recinto. Registrado por ${guardName}.`,
+      relatedVisit: visitData._id,
+      metadata: {
+        visitorName: visitData.visit.name,
+        visitorDocument: visitData.visit.document,
+        guardName: guardName,
+        entryDate: entryDate,
+        note: visitData.registry?.entry?.note,
+      },
+      isRead: false,
+    });
 
     return emailInfo;
   }
