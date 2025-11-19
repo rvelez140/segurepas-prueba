@@ -9,6 +9,7 @@ import analyticsRoutes from './routes/analyticsRoutes';
 import paymentRoutes from './routes/paymentRoutes';
 import auditRoutes from './routes/auditRoutes';
 import accessListRoutes from './routes/accessListRoutes';
+import recurringVisitRoutes from './routes/recurringVisitRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
 
@@ -30,7 +31,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes);
 
 app.get('/', (req, res) => {
     res.send(
