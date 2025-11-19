@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { IUser, GuardShift } from "../interfaces/IUser";
+import { AuditLogService } from "../services/AuditLogService";
 
 interface AuthenticatedRequest extends Request {
   user?: IUser;
@@ -73,22 +74,26 @@ export const authController = {
     try {
       const user = await UserService.findByEmail(email);
       if (!user) {
+        // Registrar login fallido
+        await AuditLogService.logLoginFailure(req, email, "Usuario no encontrado");
         res.status(401).json({ error: "Credenciales inválidas" });
         return;
       }
 
       const isPasswordValid = await UserService.comparePasswords(user._id, password);
       if (!isPasswordValid) {
+        // Registrar login fallido
+        await AuditLogService.logLoginFailure(req, email, "Contraseña incorrecta");
         res.status(401).json({ error: "Credenciales inválidas" });
         return;
       }
 
       const token = jwt.sign(
-        { 
-          id: user._id, 
+        {
+          id: user._id,
           role: user.role,
           email: user.auth.email
-        }, 
+        },
         `${process.env.JWT_SECRET}`,
         { expiresIn: "1h" }
       );
@@ -98,17 +103,20 @@ export const authController = {
         name: user.name,
         email: user.auth.email,
         role: user.role,
-        ...(user.role === 'residente' && { 
+        ...(user.role === 'residente' && {
           apartment: user.apartment,
-          tel: user.tel 
+          tel: user.tel
         }),
-        ...(user.role === 'guardia' && { 
-          shift: user.shift 
+        ...(user.role === 'guardia' && {
+          shift: user.shift
         }),
         registerDate: user.registerDate
       };
 
-      res.status(200).json({ 
+      // Registrar login exitoso
+      await AuditLogService.logLoginSuccess(req, user._id, user.auth.email);
+
+      res.status(200).json({
         token,
         user: userResponse,
         expiresIn: 3600

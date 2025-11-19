@@ -1,18 +1,26 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import auditRoutes from './routes/auditRoutes';
+import { configureSecurity } from './middlewares/securityMiddleware';
+import { generalLimiter } from './middlewares/rateLimitMiddleware';
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// Aplicar configuración de seguridad (Helmet, CORS, Sanitización, etc.)
+configureSecurity(app);
+
+// Rate limiting general
+app.use(generalLimiter);
+
+// Body parser
+app.use(express.json({ limit: '10mb' }));
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
@@ -21,7 +29,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes);
 
 app.get('/', (req, res) => {
     res.send(
