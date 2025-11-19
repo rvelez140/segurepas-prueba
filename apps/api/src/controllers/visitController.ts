@@ -8,6 +8,7 @@ import { IUser } from "../interfaces/IUser";
 import { ReportService } from "../services/ReportService";
 import { StorageService } from "../services/StorageService";
 import { OCRService } from "../services/OCRService";
+import { AccessListService } from "../services/AccessListService";
 
 export const visitController = {
   async authorizeVisit(
@@ -25,6 +26,16 @@ export const visitController = {
       reason,
     } = req.body;
     try {
+      // Verificar si el documento está en lista negra
+      const isBlacklisted = await AccessListService.isBlacklisted(document);
+      if (isBlacklisted) {
+        res.status(403).json({
+          error: "El documento está en lista negra. No se puede autorizar la visita.",
+          document,
+        });
+        return;
+      }
+
       const visitData = {
         visit: { name, email, document, visitImage, vehicleImage },
         authorization: { resident, reason },
