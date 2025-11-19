@@ -1,4 +1,5 @@
 import { Document, Types } from 'mongoose';
+import { IModuleConfig } from './IFeatures';
 
 export interface ICompanyInput {
   name: string; // Nombre de la empresa/organización
@@ -21,6 +22,14 @@ export interface ICompanyInput {
     startDate: Date; // Fecha de inicio de la suscripción
     endDate?: Date; // Fecha de fin de la suscripción (si aplica)
     isActive: boolean; // Estado de la suscripción
+  };
+  features?: {
+    modules: IModuleConfig[]; // Módulos/servicios habilitados para esta empresa
+    customModules?: {
+      name: string;
+      enabled: boolean;
+      settings?: any;
+    }[];
   };
   createdAt: Date; // Fecha de creación
   updatedAt: Date; // Fecha de actualización

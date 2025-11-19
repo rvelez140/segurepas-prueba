@@ -98,6 +98,54 @@ const companySchema: Schema = new mongoose.Schema(
         default: true,
       },
     },
+    features: {
+      modules: [
+        {
+          module: {
+            type: String,
+            required: true,
+          },
+          enabled: {
+            type: Boolean,
+            default: true,
+          },
+          settings: {
+            type: Schema.Types.Mixed,
+            default: {},
+          },
+          enabledAt: {
+            type: Date,
+          },
+          disabledAt: {
+            type: Date,
+          },
+          enabledBy: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+          disabledBy: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+        },
+      ],
+      customModules: [
+        {
+          name: {
+            type: String,
+            required: true,
+          },
+          enabled: {
+            type: Boolean,
+            default: true,
+          },
+          settings: {
+            type: Schema.Types.Mixed,
+            default: {},
+          },
+        },
+      ],
+    },
   },
   {
     timestamps: true,

@@ -6,6 +6,7 @@ import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import companyRoutes from './routes/companyRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 const app = express();
 
@@ -21,6 +22,7 @@ mongoose.connect(MONGODB_URI)
 
 app.use('/api', visitRoutes,  userRoutes, authRoutes);
 app.use('/api/companies', companyRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
     res.send(
