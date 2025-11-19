@@ -2,9 +2,10 @@
 
 ## 📌 Sistema de Gestión de Visitantes para Residencias
 
-Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
+Repositorio monorepo que contiene las cuatro aplicaciones del proyecto SecurePass:
 - **Frontend Web** (React)
 - **Aplicación Móvil** (React Native + Expo)
+- **Aplicación Desktop** (Electron - Windows y Linux)
 - **Backend API** (Node.js + Express + MongoDB)
 
 ## 🚀 Tecnologías
@@ -18,6 +19,13 @@ Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
 - Typescript
 - React Native + Expo
 - Axios para conexión API
+
+### Aplicación Desktop
+- Typescript
+- Electron (multiplataforma)
+- Integración con aplicación web
+- Soporte para Windows y Linux
+- Actualizaciones automáticas
 
 ### Backend API
 - Node.js + Express
@@ -49,6 +57,7 @@ Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
 securepass/
 ├── apps/
 │   ├── api/         # Backend (Node.js + Express)
+│   ├── desktop/     # Aplicación desktop (Electron)
 │   ├── mobile/      # Aplicación móvil (React Native)
 │   └── web/         # Frontend web (React)
 ├── packages/        # Código compartido
@@ -90,6 +99,43 @@ cd apps/mobile
 npm install
 npx expo start --tunnel
 ```
+
+**Aplicación Desktop** (Windows/Linux):
+```bash
+cd apps/desktop
+npm install
+npm run dev
+```
+
+O desde la raíz (ejecuta API, Web y Desktop juntos):
+```bash
+npm run start:desktop-full
+```
+
+## 📦 Compilar Instaladores Desktop
+
+Para generar instaladores de la aplicación desktop:
+
+**Para Windows**:
+```bash
+npm run dist:desktop:win
+```
+Genera: Instalador NSIS (.exe) y versión portable
+
+**Para Linux**:
+```bash
+npm run dist:desktop:linux
+```
+Genera: AppImage, paquete .deb (Ubuntu/Debian), paquete .rpm (Fedora/RHEL)
+
+**Para todas las plataformas**:
+```bash
+npm run dist:desktop
+```
+
+Los instaladores se generarán en `apps/desktop/release/`
+
+Ver [apps/desktop/README.md](apps/desktop/README.md) para más detalles sobre la aplicación desktop.
 
 ## 🤝 Cómo Contribuir
 
