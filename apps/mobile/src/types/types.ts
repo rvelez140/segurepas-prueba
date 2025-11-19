@@ -1,4 +1,6 @@
 import { User } from "./user.types";
+import { CommonSpace } from "../api/booking.api";
+import { CommunityEvent } from "../api/events.api";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -53,4 +55,43 @@ export type RootStackParamList = {
   // Pantallas compartidas
   Profile: undefined;
   Settings: undefined;
+
+  // Reservas de Espacios Comunes
+  BookingList: undefined;
+  BookingDetail: {
+    space: CommonSpace;
+  };
+  MyBookings: undefined;
+
+  // Chat
+  ChatList: undefined;
+  ChatConversation: {
+    chatId: string;
+    recipientName: string;
+  };
+
+  // Gestión de Paquetes
+  PackageList: undefined;
+  PackageDetail: {
+    packageId: string;
+  };
+  RegisterPackage: undefined;
+
+  // Gestión de Vehículos/Parqueadero
+  VehicleList: undefined;
+  RegisterVehicle: undefined;
+  ParkingManagement: undefined;
+
+  // Eventos Comunitarios
+  EventList: undefined;
+  EventDetail: {
+    event: CommunityEvent;
+  };
+
+  // Búsqueda Avanzada
+  AdvancedSearch: undefined;
+  SearchResults: {
+    query: string;
+    filters?: any;
+  };
 };
