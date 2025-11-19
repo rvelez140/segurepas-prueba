@@ -5,6 +5,7 @@ import { UserService } from "./UserService";
 import { IUser } from "../interfaces/IUser";
 import { IReport } from "../interfaces/IReport";
 import { flattenObject } from "../types/express.types";
+import { notificationService } from "./NotificationService";
 
 export class VisitService {
   static async createVisit(visitData: IVisitInput): Promise<IVisit> {
@@ -91,7 +92,7 @@ export class VisitService {
 
     if (!validState(status)) throw new Error("Estado introducido no válido");
 
-    return await Visit.findByIdAndUpdate(
+    const updatedVisit = await Visit.findByIdAndUpdate(
       visit._id,
       {
         $set: {
@@ -109,6 +110,27 @@ export class VisitService {
       },
       { new: true }
     ).populate("authorization.resident", "name apartment");
+
+    // Enviar notificación por correo si la entrada fue aprobada
+    if (updatedVisit && status === VisitState.APPROVED) {
+      try {
+        const residentData = (await UserService.findById(
+          updatedVisit.authorization.resident
+        )) as IUser;
+
+        await notificationService.sendEntryRegistrationNotification(
+          residentData.auth.email,
+          updatedVisit.visit.email,
+          updatedVisit,
+          guard.name
+        );
+      } catch (emailError) {
+        // Log del error pero no fallar el registro de entrada
+        console.error("Error al enviar notificación de entrada:", emailError);
+      }
+    }
+
+    return updatedVisit;
   }
 
   static async registerExit(
