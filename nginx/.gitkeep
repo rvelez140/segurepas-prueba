@@ -1,0 +1,2 @@
+# Este archivo mantiene el directorio nginx/ssl en git
+# Los certificados SSL reales no se deben commitear
