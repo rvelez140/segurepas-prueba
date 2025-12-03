@@ -30,6 +30,17 @@ export enum AuditAction {
   UNAUTHORIZED_ACCESS = "unauthorized_access",
   RATE_LIMIT_EXCEEDED = "rate_limit_exceeded",
   SUSPICIOUS_ACTIVITY = "suspicious_activity",
+
+  // Parqueo
+  PARKING_ASSIGN = "parking_assign",
+  PARKING_EXIT = "parking_exit",
+  PARKING_CREATE = "parking_create",
+  PARKING_UPDATE = "parking_update",
+  PARKING_DELETE = "parking_delete",
+
+  // Sistema
+  SYSTEM_UPDATE = "system_update",
+  SYSTEM_CONFIG = "system_config",
 }
 
 export enum AuditSeverity {

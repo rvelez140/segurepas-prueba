@@ -1,7 +1,7 @@
 import mongoose, { Schema, Model } from "mongoose";
 import { IAccessList, ListType, AccessStatus } from "../interfaces/IAccessList";
 
-const accessListSchema: Schema = new mongoose.Schema(
+const accessListSchema = new mongoose.Schema<IAccessList>(
   {
     document: {
       type: String,

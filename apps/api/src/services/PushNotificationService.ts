@@ -78,24 +78,29 @@ export class PushNotificationService {
         throw new Error("Firebase no está configurado");
       }
 
-      const message = {
-        notification: {
-          title: notification.title,
-          body: notification.body,
-          ...(notification.imageUrl && { imageUrl: notification.imageUrl }),
-        },
-        data: notification.data || {},
-        tokens: deviceTokens,
-      };
+      // Enviar notificaciones individualmente
+      const promises = deviceTokens.map((token) =>
+        this.sendToDevice(token, notification)
+      );
 
-      const response = await admin.messaging().sendMulticast(message);
+      const results = await Promise.allSettled(promises);
+
+      const successCount = results.filter(
+        (r) => r.status === "fulfilled" && r.value.success
+      ).length;
+      const failureCount = results.length - successCount;
+      const errors = results
+        .filter((r) => r.status === "rejected" || (r.status === "fulfilled" && !r.value.success))
+        .map((r) =>
+          r.status === "rejected"
+            ? r.reason?.message || "Unknown error"
+            : (r as PromiseFulfilledResult<{ success: boolean; error?: string }>).value.error || "Unknown error"
+        );
 
       return {
-        successCount: response.successCount,
-        failureCount: response.failureCount,
-        errors: response.responses
-          .filter((r) => !r.success)
-          .map((r) => r.error?.message || "Unknown error"),
+        successCount,
+        failureCount,
+        errors,
       };
     } catch (error: any) {
       console.error("Error enviando notificaciones múltiples:", error);

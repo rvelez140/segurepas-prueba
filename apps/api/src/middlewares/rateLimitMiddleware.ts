@@ -1,5 +1,4 @@
 import rateLimit from "express-rate-limit";
-import { Request, Response } from "express";
 
 // Rate limiter general para todas las rutas
 export const generalLimiter = rateLimit({
@@ -10,12 +9,6 @@ export const generalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req: Request, res: Response) => {
-    res.status(429).json({
-      error: "Demasiadas peticiones desde esta IP, por favor intente más tarde.",
-      retryAfter: req.rateLimit?.resetTime,
-    });
-  },
 });
 
 // Rate limiter estricto para autenticación (login)
@@ -29,13 +22,6 @@ export const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req: Request, res: Response) => {
-    res.status(429).json({
-      error:
-        "Demasiados intentos de inicio de sesión. Por favor intente más tarde.",
-      retryAfter: req.rateLimit?.resetTime,
-    });
-  },
 });
 
 // Rate limiter para creación de recursos (visitas, usuarios, etc.)
