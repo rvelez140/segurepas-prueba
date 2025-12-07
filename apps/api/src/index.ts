@@ -1,19 +1,32 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
+import http from 'http';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import auditRoutes from './routes/auditRoutes';
+import accessListRoutes from './routes/accessListRoutes';
+import recurringVisitRoutes from './routes/recurringVisitRoutes';
+import parkingRoutes from './routes/parkingRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import { configureSecurity } from './middlewares/securityMiddleware';
+import { generalLimiter } from './middlewares/rateLimitMiddleware';
+import { webSocketService } from './services/WebSocketService';
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// Aplicar configuración de seguridad (Helmet, CORS, Sanitización, etc.)
+configureSecurity(app);
+
+// Rate limiting general
+app.use(generalLimiter);
+
+// Body parser
+app.use(express.json({ limit: '10mb' }));
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
@@ -38,7 +51,7 @@ mongoose.connect(MONGODB_URI, mongooseOptions)
         process.exit(1);
     });
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, notificationRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes, notificationRoutes);
 
 app.get('/', (req, res) => {
     res.send(
@@ -58,7 +71,7 @@ app.get('/', (req, res) => {
             height: 100vh;
             margin: 0;
         }
-        
+
         .securepass-container {
             border: 2px solid #3498db;
             border-radius: 10px;
@@ -69,20 +82,20 @@ app.get('/', (req, res) => {
             max-width: 300px;
             width: 100%;
         }
-        
+
         .securepass-title {
             color: #2c3e50;
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
         }
-        
+
         .securepass-logo {
             color: #3498db;
             font-size: 36px;
             margin-bottom: 15px;
         }
-        
+
         .securepass-description {
             color: #7f8c8d;
             font-size: 14px;
@@ -99,9 +112,16 @@ app.get('/', (req, res) => {
 </body>
 </html>`
     );
-}); 
+});
 
 
-app.listen(PORT, () => {
+// Crear servidor HTTP
+const server = http.createServer(app);
+
+// Inicializar WebSocket
+webSocketService.initialize(server);
+
+// Iniciar servidor
+server.listen(PORT, () => {
     console.log('Servidor corriendo en Puerto: ', PORT);
 });

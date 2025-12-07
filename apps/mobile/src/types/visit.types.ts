@@ -5,6 +5,7 @@ export interface VisitData {
   resident: string;
   visitImage?: string;
   vehicleImage?: string;
+  vehiclePlate?: string;
   reason?: string;
 }
 
@@ -24,6 +25,7 @@ interface Visit {
     document: string;
     visitImage?: string;
     vehicleImage?: string;
+    vehiclePlate?: string;
 }
 
 interface Authorization {

@@ -7,6 +7,8 @@ import { UserService } from "../services/UserService";
 import { IUser } from "../interfaces/IUser";
 import { ReportService } from "../services/ReportService";
 import { StorageService } from "../services/StorageService";
+import { OCRService } from "../services/OCRService";
+import { AccessListService } from "../services/AccessListService";
 
 export const visitController = {
   async authorizeVisit(
@@ -24,6 +26,16 @@ export const visitController = {
       reason,
     } = req.body;
     try {
+      // Verificar si el documento está en lista negra
+      const isBlacklisted = await AccessListService.isBlacklisted(document);
+      if (isBlacklisted) {
+        res.status(403).json({
+          error: "El documento está en lista negra. No se puede autorizar la visita.",
+          document,
+        });
+        return;
+      }
+
       const visitData = {
         visit: { name, email, document, visitImage, vehicleImage },
         authorization: { resident, reason },
@@ -443,6 +455,126 @@ export const visitController = {
 
       res.status(200).json(result);
     } catch (error) {
+      next(error);
+    }
+  },
+
+  async processImageOCR(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.file?.buffer) {
+        res.status(400).json({ message: "No se proporcionó ninguna imagen" });
+        return;
+      }
+
+      const ocrResult = await OCRService.processImage(req.file.buffer);
+
+      res.status(200).json({
+        message: "Imagen procesada con éxito",
+        data: ocrResult,
+      });
+    } catch (error) {
+      console.error("Error procesando imagen con OCR:", error);
+      next(error);
+    }
+  },
+
+  async uploadVisitImageWithOCR(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { document } = req.params;
+      if (!req.file?.buffer) {
+        res.status(400).json({ message: "No se proporcionó ninguna imagen" });
+        return;
+      }
+
+      // Procesar imagen con OCR
+      const ocrResult = await OCRService.processImage(req.file.buffer);
+
+      // Si se detecta una cédula y no se proporcionó documento, usar el extraído
+      let finalDocument = document;
+      if (
+        ocrResult.type === "cedula" &&
+        ocrResult.extractedValue &&
+        OCRService.isValidCedula(ocrResult.extractedValue)
+      ) {
+        finalDocument = OCRService.formatCedula(ocrResult.extractedValue);
+      }
+
+      // Subir imagen
+      const updatedVisits = await StorageService.uploadVisitImage(
+        finalDocument,
+        req.file.buffer
+      );
+
+      if (!updatedVisits || updatedVisits.length === 0) {
+        res.status(404).json({ message: "Visita no encontrada" });
+        return;
+      }
+
+      res.status(200).json({
+        message: "Imagen de visita actualizada con éxito",
+        data: updatedVisits,
+        ocr: ocrResult,
+      });
+    } catch (error) {
+      console.error("Error subiendo imagen con OCR:", error);
+      next(error);
+    }
+  },
+
+  async uploadVehicleImageWithOCR(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { document } = req.params;
+      if (!req.file?.buffer) {
+        res.status(400).json({ message: "No se proporcionó ninguna imagen" });
+        return;
+      }
+
+      // Procesar imagen con OCR
+      const ocrResult = await OCRService.processImage(req.file.buffer);
+
+      // Subir imagen
+      const updatedVisits = await StorageService.uploadVehicleImage(
+        document,
+        req.file.buffer
+      );
+
+      if (!updatedVisits || updatedVisits.length === 0) {
+        res.status(404).json({ message: "Visita no encontrada" });
+        return;
+      }
+
+      // Si se detectó una placa válida, actualizar el campo vehiclePlate
+      if (
+        ocrResult.type === "placa" &&
+        ocrResult.extractedValue &&
+        OCRService.isValidPlaca(ocrResult.extractedValue)
+      ) {
+        const formattedPlate = OCRService.formatPlaca(ocrResult.extractedValue);
+        // Actualizar todas las visitas con este documento para agregar la placa
+        await VisitService.updateVisitsByDocument(document, {
+          "visit.vehiclePlate": formattedPlate,
+        });
+      }
+
+      res.status(200).json({
+        message: "Imagen de vehículo actualizada con éxito",
+        data: updatedVisits,
+        ocr: ocrResult,
+      });
+    } catch (error) {
+      console.error("Error subiendo imagen de vehículo con OCR:", error);
       next(error);
     }
   },

@@ -41,6 +41,17 @@ const visitSchema: Schema = new mongoose.Schema(
           message: "URL de imagen de vehículo no válida",
         },
       },
+      vehiclePlate: {
+        type: String,
+        trim: true,
+        uppercase: true,
+        maxlength: [10, "La placa no puede exceder 10 caracteres"],
+        validate: {
+          validator: (v: string) =>
+            !v || /^[A-Z]{3}\d{3}$/.test(v.replace(/\s+/g, "")),
+          message: "Formato de placa inválido (debe ser ABC123)",
+        },
+      },
     },
 
     // Información de la autorización

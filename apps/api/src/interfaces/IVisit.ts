@@ -15,6 +15,7 @@ export enum VisitState {
     document: string; // Cédula o pasaporte de la visita
     visitImage?: string; // Url de imagen de la visita
     vehicleImage?: string; // Url de imagen del vehículo de la visita
+    vehiclePlate?: string; // Placa del vehículo de la visita
   };
   authorization: {
     resident: Types.ObjectId; // Id del residente autorizante
