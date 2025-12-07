@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8000;
 // Opciones de conexión para MongoDB (soporta tanto local como MongoDB Atlas)
 const mongooseOptions = {
     retryWrites: true,
-    w: 'majority',
+    w: 'majority' as const,
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000,
 };
