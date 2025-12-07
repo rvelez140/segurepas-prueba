@@ -18,9 +18,25 @@ app.use(express.json());
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
 
-mongoose.connect(MONGODB_URI)
-    .then(() => console.log('Se ha realizado la conexión con MongoDB'))
-    .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
+// Opciones de conexión para MongoDB (soporta tanto local como MongoDB Atlas)
+const mongooseOptions = {
+    retryWrites: true,
+    w: 'majority',
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+};
+
+mongoose.connect(MONGODB_URI, mongooseOptions)
+    .then(() => {
+        console.log('✓ Se ha realizado la conexión con MongoDB');
+        const isAtlas = MONGODB_URI.includes('mongodb+srv://');
+        console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
+    })
+    .catch((err: Error) => {
+        console.error('✗ Error al conectar a MongoDB:', err.message);
+        console.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
+        process.exit(1);
+    });
 
 app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, notificationRoutes);
 
