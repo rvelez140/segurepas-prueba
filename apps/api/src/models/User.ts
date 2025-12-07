@@ -60,6 +60,32 @@ const userSchema: Schema = new mongoose.Schema(
         message: "Número de teléfono inválido (Ejemplo: '+1809-000-0000') ",
       },
     },
+    document: {
+      type: String,
+      required: function (this: { role: string }) {
+        return this.role === "residente";
+      },
+      validate: {
+        validator: (v: string) => /^\d{11}$/.test(v),
+        message: "El documento de identidad debe tener 11 dígitos",
+      },
+    },
+    vehiclePlate: {
+      type: String,
+      required: function (this: { role: string }) {
+        return this.role === "residente";
+      },
+      trim: true,
+      uppercase: true,
+    },
+    documentImage: {
+      type: String,
+      required: false,
+    },
+    vehiclePlateImage: {
+      type: String,
+      required: false,
+    },
     // Campos específicos de guardia
     shift: {
       type: String,

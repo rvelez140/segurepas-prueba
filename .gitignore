@@ -199,3 +199,30 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Deployment and Production
+backups/
+*.backup
+*.sql
+*.dump
+
+# SSL Certificates
+nginx/ssl/*.pem
+nginx/ssl/*.crt
+nginx/ssl/*.key
+!nginx/ssl/.gitkeep
+
+# Production environment
+.env.production
+!.env.production.example
+
+# Docker volumes and data
+mongodb_data/
+mongodb_config/
+api_node_modules/
+web_node_modules/
+
+# Logs
+nginx/logs/
+*.access.log
+*.error.log

@@ -2,8 +2,14 @@
   "scripts": {
     "start:web": "cd apps/web && npm start",
     "start:mobile": "cd apps/mobile && npm start",
+    "start:desktop": "cd apps/desktop && npm run dev",
     "start:api": "cd apps/api && npm run dev",
-    "start:all": "concurrently \"npm:start:api\" \"npm:start:web\" \"npm:start:mobile\""
+    "start:all": "concurrently \"npm:start:api\" \"npm:start:web\" \"npm:start:mobile\"",
+    "start:desktop-full": "concurrently \"npm:start:api\" \"npm:start:web\" \"npm:start:desktop\"",
+    "build:desktop": "cd apps/desktop && npm run build",
+    "dist:desktop:win": "cd apps/desktop && npm run dist:win",
+    "dist:desktop:linux": "cd apps/desktop && npm run dist:linux",
+    "dist:desktop": "cd apps/desktop && npm run dist"
   },
   "devDependencies": {
     "concurrently": "^8.2.1"

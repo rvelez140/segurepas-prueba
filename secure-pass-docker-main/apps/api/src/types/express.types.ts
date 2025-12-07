@@ -1,10 +1,12 @@
 import { IUser } from '../interfaces/IUser';
+import { ISubscription } from '../interfaces/ISubscription';
 
 type PlainObject = Record<string, any>;
 
 declare module 'express-serve-static-core' {
   interface Request {
     user?: IUser;
+    subscription?: ISubscription;
   }
 }
 

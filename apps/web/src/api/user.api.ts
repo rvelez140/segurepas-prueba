@@ -36,3 +36,39 @@ export const updateUser = async (id: string, data: Partial<User> ): Promise<User
     throw error;
   }
 }
+
+// Subir imagen de documento de identidad
+export const uploadUserDocumentImage = async (userId: string, imageFile: File): Promise<{ message: string; documentImage: string }> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await axios.post(`${API_URL}/users/${userId}/upload-document`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al subir imagen de documento:`, error);
+    throw error;
+  }
+};
+
+// Subir imagen de placa de vehículo
+export const uploadUserVehiclePlateImage = async (userId: string, imageFile: File): Promise<{ message: string; vehiclePlateImage: string }> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await axios.post(`${API_URL}/users/${userId}/upload-vehicle-plate`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al subir imagen de placa:`, error);
+    throw error;
+  }
+};

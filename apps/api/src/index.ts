@@ -12,6 +12,7 @@ import auditRoutes from './routes/auditRoutes';
 import accessListRoutes from './routes/accessListRoutes';
 import recurringVisitRoutes from './routes/recurringVisitRoutes';
 import parkingRoutes from './routes/parkingRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
 import { webSocketService } from './services/WebSocketService';
@@ -30,11 +31,27 @@ app.use(express.json({ limit: '10mb' }));
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
 
-mongoose.connect(MONGODB_URI)
-    .then(() => console.log('Se ha realizado la conexión con MongoDB'))
-    .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
+// Opciones de conexión para MongoDB (soporta tanto local como MongoDB Atlas)
+const mongooseOptions = {
+    retryWrites: true,
+    w: 'majority' as const,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+};
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes);
+mongoose.connect(MONGODB_URI, mongooseOptions)
+    .then(() => {
+        console.log('✓ Se ha realizado la conexión con MongoDB');
+        const isAtlas = MONGODB_URI.includes('mongodb+srv://');
+        console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
+    })
+    .catch((err: Error) => {
+        console.error('✗ Error al conectar a MongoDB:', err.message);
+        console.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
+        process.exit(1);
+    });
+
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes, notificationRoutes);
 
 app.get('/', (req, res) => {
     res.send(
@@ -54,7 +71,7 @@ app.get('/', (req, res) => {
             height: 100vh;
             margin: 0;
         }
-        
+
         .securepass-container {
             border: 2px solid #3498db;
             border-radius: 10px;
@@ -65,20 +82,20 @@ app.get('/', (req, res) => {
             max-width: 300px;
             width: 100%;
         }
-        
+
         .securepass-title {
             color: #2c3e50;
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
         }
-        
+
         .securepass-logo {
             color: #3498db;
             font-size: 36px;
             margin-bottom: 15px;
         }
-        
+
         .securepass-description {
             color: #7f8c8d;
             font-size: 14px;
@@ -95,7 +112,7 @@ app.get('/', (req, res) => {
 </body>
 </html>`
     );
-}); 
+});
 
 
 // Crear servidor HTTP

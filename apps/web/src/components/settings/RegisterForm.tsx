@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import styles from "../../styles/registerForm.module.css";
 import { RegisterData } from "../../types/auth.types";
 import { getAuthenticatedUser, registerUser } from "../../api/auth.api";
+import { uploadUserDocumentImage, uploadUserVehiclePlateImage } from "../../api/user.api";
 import { loadToken, setAuthToken } from "../../services/auth.service";
 import { useNavigate } from "react-router-dom";
 
@@ -19,9 +20,15 @@ const RegisterForm: React.FC = () => {
     name: "",
     apartment: "",
     tel: "",
+    document: "",
+    vehiclePlate: "",
     shift: "",
     general: "",
   });
+  const [documentImageFile, setDocumentImageFile] = useState<File | null>(null);
+  const [vehiclePlateImageFile, setVehiclePlateImageFile] = useState<File | null>(null);
+  const [documentImagePreview, setDocumentImagePreview] = useState<string>("");
+  const [vehiclePlateImagePreview, setVehiclePlateImagePreview] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
 
@@ -46,6 +53,8 @@ const RegisterForm: React.FC = () => {
       name: "",
       apartment: "",
       tel: "",
+      document: "",
+      vehiclePlate: "",
       shift: "",
       general: "",
     };
@@ -76,25 +85,38 @@ const RegisterForm: React.FC = () => {
 
     // Validaciones específicas por rol
     if (formData.role === "residente") {
-      if (formData.role === "residente") {
-        // Validación de apartamento
-        if (!formData.apartment?.trim()) {
-          newErrors.apartment = "El apartamento es requerido";
-          valid = false;
-        } else if (!/^[A-Za-z]-\d{1,3}$/.test(formData.apartment)) {
-          newErrors.apartment =
-            "El apartamento introducido es inválido. Ej: A-1";
-          valid = false;
-        }
+      // Validación de apartamento
+      if (!formData.apartment?.trim()) {
+        newErrors.apartment = "El apartamento es requerido";
+        valid = false;
+      } else if (!/^[A-Za-z]-\d{1,3}$/.test(formData.apartment)) {
+        newErrors.apartment =
+          "El apartamento introducido es inválido. Ej: A-1";
+        valid = false;
+      }
 
-        // Validación de teléfono
-        if (!formData.tel?.trim()) {
-          newErrors.tel = "El teléfono es requerido";
-          valid = false;
-        } else if (!/^\+\d{1,3}[-\s]?\d{1,4}([-\s]?\d+)*$/.test(formData.tel)) {
-          newErrors.tel = "El teléfono introducido es inválido";
-          valid = false;
-        }
+      // Validación de teléfono
+      if (!formData.tel?.trim()) {
+        newErrors.tel = "El teléfono es requerido";
+        valid = false;
+      } else if (!/^\+\d{1,3}[-\s]?\d{1,4}([-\s]?\d+)*$/.test(formData.tel)) {
+        newErrors.tel = "El teléfono introducido es inválido";
+        valid = false;
+      }
+
+      // Validación de documento
+      if (!formData.document?.trim()) {
+        newErrors.document = "El documento de identidad es requerido";
+        valid = false;
+      } else if (!/^\d{11}$/.test(formData.document)) {
+        newErrors.document = "El documento debe tener 11 dígitos";
+        valid = false;
+      }
+
+      // Validación de placa de vehículo
+      if (!formData.vehiclePlate?.trim()) {
+        newErrors.vehiclePlate = "La placa del vehículo es requerida";
+        valid = false;
       }
     } else if (formData.role === "guardia") {
       if (!formData.shift) {
@@ -126,6 +148,34 @@ const RegisterForm: React.FC = () => {
     }
   };
 
+  const handleChangeDocument = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (value === "" || /^\d+$/.test(value)) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>, type: 'document' | 'vehiclePlate') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (type === 'document') {
+        setDocumentImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setDocumentImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setVehiclePlateImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setVehiclePlateImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -145,7 +195,26 @@ const RegisterForm: React.FC = () => {
     }
 
     try {
-      await registerUser(formData);
+      const response = await registerUser(formData);
+
+      // Si el usuario es residente y hay imágenes, subirlas
+      if (formData.role === "residente" && response._id) {
+        try {
+          if (documentImageFile) {
+            await uploadUserDocumentImage(response._id, documentImageFile);
+          }
+          if (vehiclePlateImageFile) {
+            await uploadUserVehiclePlateImage(response._id, vehiclePlateImageFile);
+          }
+        } catch (uploadError) {
+          console.error("Error al subir imágenes:", uploadError);
+          setErrors((prev) => ({
+            ...prev,
+            general: "Usuario creado, pero hubo un error al subir las imágenes",
+          }));
+        }
+      }
+
       setSuccess(true);
       setFormData({
         email: "",
@@ -155,7 +224,13 @@ const RegisterForm: React.FC = () => {
         apartment: "",
         shift: "matutina",
         tel: "",
+        document: "",
+        vehiclePlate: "",
       });
+      setDocumentImageFile(null);
+      setVehiclePlateImageFile(null);
+      setDocumentImagePreview("");
+      setVehiclePlateImagePreview("");
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
@@ -284,6 +359,77 @@ const RegisterForm: React.FC = () => {
                 />
                 {errors.tel && (
                   <span className={styles.errorText}>{errors.tel}</span>
+                )}
+              </div>
+
+              {/* Document */}
+              <div className={styles.formGroup}>
+                <input
+                  name="document"
+                  type="text"
+                  placeholder="Documento de Identidad (11 dígitos)"
+                  value={formData.document || ""}
+                  maxLength={11}
+                  className={`${styles.input} ${
+                    errors.document ? styles.error : ""
+                  }`}
+                  onChange={handleChangeDocument}
+                />
+                {errors.document && (
+                  <span className={styles.errorText}>{errors.document}</span>
+                )}
+              </div>
+
+              {/* Vehicle Plate */}
+              <div className={styles.formGroup}>
+                <input
+                  name="vehiclePlate"
+                  type="text"
+                  placeholder="Placa del Vehículo"
+                  value={formData.vehiclePlate || ""}
+                  className={`${styles.input} ${
+                    errors.vehiclePlate ? styles.error : ""
+                  }`}
+                  onChange={handleChange}
+                />
+                {errors.vehiclePlate && (
+                  <span className={styles.errorText}>{errors.vehiclePlate}</span>
+                )}
+              </div>
+
+              {/* Document Image Upload */}
+              <div className={styles.formGroup}>
+                <label className={styles.imageLabel}>
+                  Foto del Documento de Identidad (Opcional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, 'document')}
+                  className={styles.fileInput}
+                />
+                {documentImagePreview && (
+                  <div className={styles.imagePreview}>
+                    <img src={documentImagePreview} alt="Preview documento" />
+                  </div>
+                )}
+              </div>
+
+              {/* Vehicle Plate Image Upload */}
+              <div className={styles.formGroup}>
+                <label className={styles.imageLabel}>
+                  Foto de la Placa del Vehículo (Opcional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, 'vehiclePlate')}
+                  className={styles.fileInput}
+                />
+                {vehiclePlateImagePreview && (
+                  <div className={styles.imagePreview}>
+                    <img src={vehiclePlateImagePreview} alt="Preview placa" />
+                  </div>
                 )}
               </div>
             </>

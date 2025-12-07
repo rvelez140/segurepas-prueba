@@ -5,6 +5,9 @@ import { UserService } from "./UserService";
 import { IUser } from "../interfaces/IUser";
 import { ISubscription } from "../interfaces/ISubscription";
 import { IPayment } from "../interfaces/IPayment";
+import { Notification } from "../models/Notification";
+import { NotificationType, INotification } from "../interfaces/INotification";
+import { Types } from "mongoose";
 
 class NotificationService {
   public transporter;
@@ -88,6 +91,115 @@ class NotificationService {
       await this.transporter.sendMail(residentMailOptions),
       await this.transporter.sendMail(visitMailOptions),
     ];
+
+    return emailInfo;
+  }
+
+  /**
+   * Envía notificación cuando se registra la entrada de un visitante
+   */
+  async sendEntryRegistrationNotification(
+    toResident: string,
+    toVisit: string,
+    visitData: IVisit,
+    guardName: string
+  ): Promise<nodemailer.SentMessageInfo[]> {
+    const residentData = (await UserService.findById(
+      visitData.authorization.resident
+    )) as IUser;
+
+    const entryDate = visitData.registry?.entry?.date || new Date();
+
+    const residentMailOptions = {
+      from: `${process.env.EMAIL_FROM}`,
+      sender: process.env.EMAIL_SENDER,
+      replyTo: process.env.EMAIL_REPLY,
+      to: toResident,
+      subject: `Entrada registrada - Visitante ${visitData.visit.name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #27ae60;">Entrada de Visitante Registrada</h1>
+          <p>Estimado ${residentData.name},</p>
+          <p>Le informamos que su visitante ha ingresado al recinto.</p>
+
+          <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h2 style="color: #2c3e50; margin-top: 0;">Detalles de la entrada</h2>
+            <p><strong>Visitante:</strong> ${visitData.visit.name}</p>
+            <p><strong>Documento de Identidad:</strong> ${visitData.visit.document}</p>
+            <p><strong>Motivo de Visita:</strong> ${visitData.authorization.reason}</p>
+            <p><strong>Fecha y Hora de Entrada:</strong> ${entryDate.toLocaleString('es-ES', {
+              dateStyle: 'full',
+              timeStyle: 'short'
+            })}</p>
+            <p><strong>Registrado por:</strong> ${guardName}</p>
+            ${visitData.registry?.entry?.note ? `<p><strong>Nota:</strong> ${visitData.registry.entry.note}</p>` : ''}
+          </div>
+
+          <p>Este es un mensaje automático para mantenerlo informado sobre las visitas a su residencia.</p>
+
+          <p>Saludos,<br/>El equipo de SecurePass</p>
+
+          <p style="font-size: 12px; color: #7f8c8d; margin-top: 30px;">Este es un mensaje automático, no responder.</p>
+        </div>
+      `,
+    };
+
+    const visitMailOptions = {
+      from: `${process.env.EMAIL_FROM}`,
+      sender: process.env.EMAIL_SENDER,
+      replyTo: process.env.EMAIL_REPLY,
+      to: toVisit,
+      subject: `Bienvenido - Entrada registrada`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #27ae60;">¡Bienvenido!</h1>
+          <p>Estimado ${visitData.visit.name},</p>
+          <p>Su entrada al recinto ha sido registrada exitosamente.</p>
+
+          <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h2 style="color: #2c3e50; margin-top: 0;">Detalles de su visita</h2>
+            <p><strong>Visitante:</strong> ${visitData.visit.name}</p>
+            <p><strong>Documento de Identidad:</strong> ${visitData.visit.document}</p>
+            <p><strong>Residente que lo autoriza:</strong> ${residentData.name}${residentData.role === 'residente' ? ` - ${(residentData as any).apartment}` : ''}</p>
+            <p><strong>Fecha y Hora de Entrada:</strong> ${entryDate.toLocaleString('es-ES', {
+              dateStyle: 'full',
+              timeStyle: 'short'
+            })}</p>
+            <p><strong>Registrado por:</strong> ${guardName}</p>
+          </div>
+
+          <p>Por favor, conserve su código QR para registrar su salida al finalizar la visita.</p>
+
+          <p>Que tenga una excelente visita.</p>
+
+          <p>Saludos,<br/>El equipo de SecurePass</p>
+
+          <p style="font-size: 12px; color: #7f8c8d; margin-top: 30px;">Este es un mensaje automático, no responder.</p>
+        </div>
+      `,
+    };
+
+    const emailInfo: nodemailer.SentMessageInfo[] = [
+      await this.transporter.sendMail(residentMailOptions),
+      await this.transporter.sendMail(visitMailOptions),
+    ];
+
+    // Guardar notificación en la base de datos para el residente
+    await Notification.create({
+      recipient: visitData.authorization.resident,
+      type: NotificationType.VISITOR_ENTRY,
+      title: `Entrada registrada - Visitante ${visitData.visit.name}`,
+      message: `Su visitante ${visitData.visit.name} ha ingresado al recinto. Registrado por ${guardName}.`,
+      relatedVisit: visitData._id,
+      metadata: {
+        visitorName: visitData.visit.name,
+        visitorDocument: visitData.visit.document,
+        guardName: guardName,
+        entryDate: entryDate,
+        note: visitData.registry?.entry?.note,
+      },
+      isRead: false,
+    });
 
     return emailInfo;
   }
