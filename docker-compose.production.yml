@@ -72,11 +72,17 @@ services:
       NODE_ENV: production
       REACT_APP_API_URL: ${REACT_APP_API_URL}
     ports:
-      - "127.0.0.1:${WEB_PORT:-3000}:3000"  # Solo accesible localmente (nginx hace proxy)
+      - "127.0.0.1:${WEB_PORT:-3000}:80"  # El contenedor web ahora usa puerto 80 (nginx interno)
     depends_on:
       - api
     networks:
       - securepass-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     logging:
       driver: "json-file"
       options:
