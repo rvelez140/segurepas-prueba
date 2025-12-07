@@ -8,7 +8,7 @@ const accessListSchema = new mongoose.Schema<IAccessList>(
       required: true,
       index: true,
       validate: {
-        validator: (v: string) => v && v.length >= 8 && v.length <= 11,
+        validator: (v: string) => !!(v && v.length >= 8 && v.length <= 11),
         message: "El documento debe tener entre 8 y 11 caracteres",
       },
     },

@@ -193,10 +193,10 @@ export class StorageService {
       `users/${userId}/document`
     );
 
-    // Actualizar usuario
+    // Actualizar usuario (solo residentes tienen documentImage)
     const updatedUser = await UserService.updateUser(userId, {
       documentImage: imageUrl,
-    });
+    } as any);
 
     return updatedUser;
   }
@@ -219,10 +219,10 @@ export class StorageService {
       `users/${userId}/vehicle-plate`
     );
 
-    // Actualizar usuario
+    // Actualizar usuario (solo residentes tienen vehiclePlateImage)
     const updatedUser = await UserService.updateUser(userId, {
       vehiclePlateImage: imageUrl,
-    });
+    } as any);
 
     return updatedUser;
   }
@@ -253,11 +253,11 @@ export class StorageService {
       if (vehiclePlateResult.success)
         totalDeleted += vehiclePlateResult.deletedCount || 0;
 
-      // Actualizar usuario para remover URLs de imágenes
+      // Actualizar usuario para remover URLs de imágenes (solo residentes)
       await UserService.updateUser(userId, {
         documentImage: undefined,
         vehiclePlateImage: undefined,
-      });
+      } as any);
 
       return {
         success: documentResult.success && vehiclePlateResult.success,
