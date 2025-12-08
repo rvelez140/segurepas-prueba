@@ -16,8 +16,13 @@ import notificationRoutes from './routes/notificationRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
 import { webSocketService } from './services/WebSocketService';
+import { setupSwagger } from './config/swagger';
+import { initSentry, setupSentryErrorHandler } from './config/sentry';
 
 const app = express();
+
+// Inicializar Sentry para monitoreo de errores (debe ser lo primero)
+initSentry(app);
 
 // Aplicar configuración de seguridad (Helmet, CORS, Sanitización, etc.)
 configureSecurity(app);
@@ -28,34 +33,54 @@ app.use(generalLimiter);
 // Body parser
 app.use(express.json({ limit: '10mb' }));
 
+// Swagger Documentation
+setupSwagger(app);
+
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
 
 // Opciones de conexión para MongoDB (soporta tanto local como MongoDB Atlas)
 const mongooseOptions = {
-    retryWrites: true,
-    w: 'majority' as const,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
+  retryWrites: true,
+  w: 'majority' as const,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
 };
 
-mongoose.connect(MONGODB_URI, mongooseOptions)
-    .then(() => {
-        console.log('✓ Se ha realizado la conexión con MongoDB');
-        const isAtlas = MONGODB_URI.includes('mongodb+srv://');
-        console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
-    })
-    .catch((err: Error) => {
-        console.error('✗ Error al conectar a MongoDB:', err.message);
-        console.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
-        process.exit(1);
-    });
+mongoose
+  .connect(MONGODB_URI, mongooseOptions)
+  .then(() => {
+    console.log('✓ Se ha realizado la conexión con MongoDB');
+    const isAtlas = MONGODB_URI.includes('mongodb+srv://');
+    console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
+  })
+  .catch((err: Error) => {
+    console.error('✗ Error al conectar a MongoDB:', err.message);
+    console.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
+    process.exit(1);
+  });
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes, notificationRoutes);
+app.use(
+  '/api',
+  visitRoutes,
+  userRoutes,
+  authRoutes,
+  subscriptionRoutes,
+  analyticsRoutes,
+  paymentRoutes,
+  auditRoutes,
+  accessListRoutes,
+  recurringVisitRoutes,
+  parkingRoutes,
+  notificationRoutes
+);
+
+// Configurar error handler de Sentry (debe ser después de las rutas)
+setupSentryErrorHandler(app);
 
 app.get('/', (req, res) => {
-    res.send(
-        `<!DOCTYPE html>
+  res.send(
+    `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -111,9 +136,8 @@ app.get('/', (req, res) => {
     </div>
 </body>
 </html>`
-    );
+  );
 });
-
 
 // Crear servidor HTTP
 const server = http.createServer(app);
@@ -123,5 +147,5 @@ webSocketService.initialize(server);
 
 // Iniciar servidor
 server.listen(PORT, () => {
-    console.log('Servidor corriendo en Puerto: ', PORT);
+  console.log('Servidor corriendo en Puerto: ', PORT);
 });

@@ -3,24 +3,76 @@
 ## 📌 Sistema de Gestión de Visitantes para Residencias
 
 Repositorio monorepo que contiene las cuatro aplicaciones del proyecto SecurePass:
+
 - **Frontend Web** (React)
 - **Aplicación Móvil** (React Native + Expo)
 - **Aplicación Desktop** (Electron - Windows y Linux)
 - **Backend API** (Node.js + Express + MongoDB)
 
+## 🛡️ Infraestructura de Calidad y Testing
+
+Este proyecto cuenta con una infraestructura completa de calidad de código, testing y monitoreo:
+
+### ✅ Calidad de Código
+
+- **ESLint + Prettier**: Análisis y formateo automático de código
+- **Husky**: Git hooks para validación pre-commit
+- **lint-staged**: Linters solo en archivos modificados
+
+```bash
+npm run lint              # Analizar código
+npm run lint:fix          # Corregir problemas
+npm run format            # Formatear código
+```
+
+### 🧪 Testing
+
+- **Jest + Testing Library**: Framework de testing completo
+- **Cobertura de código**: Configurada con umbrales del 50%
+
+```bash
+npm run test:api          # Tests de la API
+npm run test:web          # Tests de la web
+npm run test:all          # Todos los tests
+```
+
+### 🔒 Validación y Seguridad
+
+- **Zod**: Validación de esquemas TypeScript-first
+- **Helmet.js**: Seguridad HTTP (CSP, HSTS, XSS Protection)
+- **express-mongo-sanitize**: Prevención de inyección NoSQL
+- **Rate limiting y CORS**: Configurados
+
+### 📚 Documentación de API
+
+- **Swagger UI**: Disponible en `/api-docs`
+- Documentación interactiva con autenticación JWT
+- Esquemas de datos y ejemplos
+
+### 📊 Monitoreo
+
+- **Sentry**: Monitoreo de errores y performance
+- Session replay y profiling
+- Configuración para API y Web
+
+Para más detalles sobre la infraestructura de calidad, consulta la sección "Flujo de Desarrollo" más abajo.
+
 ## 🚀 Tecnologías
 
 ### Frontend Web
+
 - Typescript, HTML, CSS
 - React
 - Axios para conexión API
 
 ### Aplicación Móvil
+
 - Typescript
 - React Native + Expo
 - Axios para conexión API
 
 ### Aplicación Desktop
+
 - Typescript
 - Electron (multiplataforma)
 - Integración con aplicación web
@@ -28,6 +80,7 @@ Repositorio monorepo que contiene las cuatro aplicaciones del proyecto SecurePas
 - Actualizaciones automáticas
 
 ### Backend API
+
 - Node.js + Express
 - MongoDB Atlas
 - Autenticación JWT
@@ -36,20 +89,20 @@ Repositorio monorepo que contiene las cuatro aplicaciones del proyecto SecurePas
 
 ## 👥 Roles de Usuarios
 
-| Usuario              | Funcionalidades |
-|----------------------|----------------|
-| **Residente**        | Crear/autorizar visitas, Generar QR's, Editar autorizaciones, Ver historial de visitas |
-| **Guardia**          | Escanear QR's, Registrar entradas/salidas, Ver residentes y sus historiales |
-| **Administrador**    | Gestionar usuarios, Generar reportes, Configurar sistema, Cambiar roles |
+| Usuario           | Funcionalidades                                                                        |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| **Residente**     | Crear/autorizar visitas, Generar QR's, Editar autorizaciones, Ver historial de visitas |
+| **Guardia**       | Escanear QR's, Registrar entradas/salidas, Ver residentes y sus historiales            |
+| **Administrador** | Gestionar usuarios, Generar reportes, Configurar sistema, Cambiar roles                |
 
 ## 🛠️ Funcionalidades Principales
 
-| Módulo               | Descripción |
-|----------------------|------------|
-| **Autenticación**    | Registro, login, gestión de roles (residente/guardia/admin) |
-| **Visitas**          | Autorizaciones, registro de entradas/salidas, validación QR |
-| **Imágenes**         | Subida de fotos de vehículos/visitantes |
-| **Reportes**         | Historial de visitas y generación de PDFs |
+| Módulo            | Descripción                                                 |
+| ----------------- | ----------------------------------------------------------- |
+| **Autenticación** | Registro, login, gestión de roles (residente/guardia/admin) |
+| **Visitas**       | Autorizaciones, registro de entradas/salidas, validación QR |
+| **Imágenes**      | Subida de fotos de vehículos/visitantes                     |
+| **Reportes**      | Historial de visitas y generación de PDFs                   |
 
 ## 💾 Descargar Aplicación Desktop
 
@@ -60,10 +113,12 @@ Repositorio monorepo que contiene las cuatro aplicaciones del proyecto SecurePas
 Visita la página de [**Releases**](../../releases/latest) para descargar la última versión estable.
 
 #### Windows
+
 - **Instalador NSIS** (.exe) - Instalación tradicional con accesos directos
 - **Versión Portable** (.exe) - No requiere instalación, ejecuta directamente
 
 #### Linux
+
 - **AppImage** (.AppImage) - Universal para todas las distribuciones
   ```bash
   chmod +x SecurePass-*.AppImage
@@ -81,11 +136,13 @@ Visita la página de [**Releases**](../../releases/latest) para descargar la úl
 ### 📋 Requisitos del Sistema
 
 **Windows:**
+
 - Windows 10 o superior (64-bit)
 - 4 GB de RAM mínimo
 - 200 MB de espacio en disco
 
 **Linux:**
+
 - Kernel 3.10 o superior
 - 4 GB de RAM mínimo
 - 200 MB de espacio en disco
@@ -130,6 +187,7 @@ npm run start:all
 ### Opción 2: Ejecutar cada aplicación por separado
 
 **Backend API**:
+
 ```bash
 cd apps/api
 npm install
@@ -137,6 +195,7 @@ npm start
 ```
 
 **Frontend Web**:
+
 ```bash
 cd apps/web
 npm install
@@ -144,6 +203,7 @@ npm start
 ```
 
 **Aplicación Móvil**:
+
 ```bash
 cd apps/mobile
 npm install
@@ -151,6 +211,7 @@ npx expo start --tunnel
 ```
 
 **Aplicación Desktop** (Windows/Linux):
+
 ```bash
 cd apps/desktop
 npm install
@@ -158,6 +219,7 @@ npm run dev
 ```
 
 O desde la raíz (ejecuta API, Web y Desktop juntos):
+
 ```bash
 npm run start:desktop-full
 ```
@@ -167,18 +229,23 @@ npm run start:desktop-full
 Para generar instaladores de la aplicación desktop:
 
 **Para Windows**:
+
 ```bash
 npm run dist:desktop:win
 ```
+
 Genera: Instalador NSIS (.exe) y versión portable
 
 **Para Linux**:
+
 ```bash
 npm run dist:desktop:linux
 ```
+
 Genera: AppImage, paquete .deb (Ubuntu/Debian), paquete .rpm (Fedora/RHEL)
 
 **Para todas las plataformas**:
+
 ```bash
 npm run dist:desktop
 ```
@@ -229,10 +296,40 @@ git merge upstream/main
 git push origin main
 ```
 
+## 🔧 Flujo de Desarrollo
+
+### Antes de hacer commit
+
+Husky ejecutará automáticamente:
+
+1. ESLint para verificar calidad del código
+2. Prettier para formatear código
+3. Solo se commitearán archivos que pasen validaciones
+
+### Ejecutar tests
+
+```bash
+npm run test:all          # Todos los tests
+npm run test:coverage     # Con reporte de cobertura
+```
+
+### Configurar Sentry (opcional)
+
+En `.env`:
+
+```env
+SENTRY_DSN=tu-dsn-aqui
+REACT_APP_SENTRY_DSN=tu-dsn-aqui
+```
+
+### Ver documentación de API
+
+Una vez iniciado el servidor: http://localhost:8000/api-docs
+
 ## 🌐 Configuración de Entornos
 
-- Configurar variables de entorno en `.env`:
-
+- Configurar variables de entorno en `.env` (ver `.env.example`):
 
 ## 📄 Licencia
+
 [MIT License] - Ver archivo LICENSE para más detalles.
