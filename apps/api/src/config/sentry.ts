@@ -84,7 +84,7 @@ export const sentryTracingHandler = Sentry.Handlers.tracingHandler();
 export const sentryErrorHandler = Sentry.Handlers.errorHandler({
   shouldHandleError(error) {
     // Capturar todos los errores 500 y superiores
-    if (error.status && error.status >= 500) {
+    if (error.status && typeof error.status === 'number' && error.status >= 500) {
       return true;
     }
     // Capturar errores no controlados
