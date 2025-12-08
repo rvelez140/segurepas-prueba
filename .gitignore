@@ -224,5 +224,13 @@ web_node_modules/
 
 # Logs
 nginx/logs/
+apps/api/logs/
 *.access.log
 *.error.log
+
+# Test coverage
+apps/*/coverage/
+apps/*/.nyc_output/
+
+# Husky
+.husky/_

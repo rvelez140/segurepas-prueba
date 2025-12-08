@@ -2,6 +2,15 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import logger, { httpLogger } from './utils/logger';
+import {
+  initSentry,
+  sentryRequestHandler,
+  sentryTracingHandler,
+  sentryErrorHandler,
+} from './config/sentry';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
@@ -12,8 +21,59 @@ import notificationRoutes from './routes/notificationRoutes';
 
 const app = express();
 
+// Inicializar Sentry (debe ser lo primero)
+initSentry(app);
+
+// Sentry request handler (debe estar antes de las rutas)
+app.use(sentryRequestHandler);
+app.use(sentryTracingHandler);
+
+// HTTP request logging
+app.use(httpLogger);
+
+// Configuración de seguridad con Helmet
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+  })
+);
+
+// Rate limiting global - 100 requests por 15 minutos
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // Límite de 100 requests por ventana
+  message: 'Demasiadas solicitudes desde esta IP, por favor intenta de nuevo más tarde.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+
+// Rate limiting estricto para rutas de autenticación - 5 requests por 15 minutos
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: 'Demasiados intentos de autenticación, por favor intenta de nuevo más tarde.',
+  skipSuccessfulRequests: true,
+});
+
+// CORS configurado
 app.use(cors());
-app.use(express.json());
+
+// Body parser con límite de tamaño
+app.use(express.json({ limit: '10mb' }));
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
@@ -28,17 +88,20 @@ const mongooseOptions = {
 
 mongoose.connect(MONGODB_URI, mongooseOptions)
     .then(() => {
-        console.log('✓ Se ha realizado la conexión con MongoDB');
+        logger.info('✓ Se ha realizado la conexión con MongoDB');
         const isAtlas = MONGODB_URI.includes('mongodb+srv://');
-        console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
+        logger.info(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
     })
     .catch((err: Error) => {
-        console.error('✗ Error al conectar a MongoDB:', err.message);
-        console.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
+        logger.error('✗ Error al conectar a MongoDB:', { error: err.message });
+        logger.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
         process.exit(1);
     });
 
 app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, notificationRoutes);
+
+// Sentry error handler (debe estar después de las rutas)
+app.use(sentryErrorHandler);
 
 app.get('/', (req, res) => {
     res.send(
@@ -103,5 +166,6 @@ app.get('/', (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log('Servidor corriendo en Puerto: ', PORT);
+    logger.info(`🚀 Servidor corriendo en Puerto: ${PORT}`);
+    logger.info(`📝 Entorno: ${process.env.NODE_ENV || 'development'}`);
 });

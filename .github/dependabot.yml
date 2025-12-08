@@ -1,0 +1,131 @@
+version: 2
+updates:
+  # Dependencias del API (Backend)
+  - package-ecosystem: "npm"
+    directory: "/apps/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "rvelez140"
+    assignees:
+      - "rvelez140"
+    labels:
+      - "dependencies"
+      - "api"
+      - "security"
+    versioning-strategy: "increase"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
+  # Dependencias del Web Frontend
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "rvelez140"
+    assignees:
+      - "rvelez140"
+    labels:
+      - "dependencies"
+      - "web"
+      - "security"
+    versioning-strategy: "increase"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
+  # Dependencias del Mobile App
+  - package-ecosystem: "npm"
+    directory: "/apps/mobile"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "rvelez140"
+    assignees:
+      - "rvelez140"
+    labels:
+      - "dependencies"
+      - "mobile"
+      - "security"
+    versioning-strategy: "increase"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
+  # Dependencias del Desktop App
+  - package-ecosystem: "npm"
+    directory: "/apps/desktop"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "rvelez140"
+    assignees:
+      - "rvelez140"
+    labels:
+      - "dependencies"
+      - "desktop"
+      - "security"
+    versioning-strategy: "increase"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
+  # Dependencias raíz
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "rvelez140"
+    assignees:
+      - "rvelez140"
+    labels:
+      - "dependencies"
+      - "root"
+      - "security"
+    versioning-strategy: "increase"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "rvelez140"
+    assignees:
+      - "rvelez140"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "security"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
