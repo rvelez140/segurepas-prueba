@@ -1,9 +1,9 @@
-import { IUser } from "./IUser";
-import { IVisit } from "./IVisit";
+import { IUser } from './IUser';
+import { IVisit } from './IVisit';
 
 export interface IReport {
   metadata: {
-    type: "resident" | "guard" | "general";
+    type: 'resident' | 'guard' | 'general';
     startDate: Date;
     endDate: Date;
   };

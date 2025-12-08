@@ -1,5 +1,5 @@
-import axios from "axios";
-import { User } from "../types/user.types";
+import axios from 'axios';
+import { User } from '../types/user.types';
 
 const API_URL = process.env.REACT_APP_API;
 
@@ -22,17 +22,17 @@ export const getResidents = async () => {
     console.log(`Se obtuvieron los datos`);
     return response.data;
   } catch (error) {
-    console.error("Error obteniendo los datos de residentes:", error);
+    console.error('Error obteniendo los datos de residentes:', error);
     throw error;
   }
 };
 
-export const updateUser = async (id: string, data: Partial<User> ): Promise<User> => {
+export const updateUser = async (id: string, data: Partial<User>): Promise<User> => {
   try {
     const response = await axios.put(`${API_URL}/users/${id}`, data);
     return response.data;
-  }catch(error){
+  } catch (error) {
     console.error(`Error al actualizar el usiario`, error);
     throw error;
   }
-}
+};

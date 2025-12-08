@@ -44,6 +44,7 @@ sudo ./server-setup.sh
 ```
 
 Este script instalará automáticamente:
+
 - ✅ Docker y Docker Compose
 - ✅ Usuario de deployment
 - ✅ Configuración de firewall
@@ -154,13 +155,13 @@ cat ~/.ssh/github_actions
 
 Agrega los siguientes secrets:
 
-| Secret Name | Descripción | Ejemplo |
-|------------|-------------|---------|
-| `SERVER_HOST` | IP o dominio del servidor | `123.45.67.89` o `servidor.com` |
-| `SERVER_USER` | Usuario de deployment | `securepass` |
-| `SERVER_SSH_KEY` | Clave privada SSH (completa) | `-----BEGIN OPENSSH...` |
-| `SERVER_PORT` | Puerto SSH (opcional) | `22` |
-| `DEPLOY_PATH` | Ruta de deployment en servidor | `/opt/securepass` |
+| Secret Name      | Descripción                    | Ejemplo                         |
+| ---------------- | ------------------------------ | ------------------------------- |
+| `SERVER_HOST`    | IP o dominio del servidor      | `123.45.67.89` o `servidor.com` |
+| `SERVER_USER`    | Usuario de deployment          | `securepass`                    |
+| `SERVER_SSH_KEY` | Clave privada SSH (completa)   | `-----BEGIN OPENSSH...`         |
+| `SERVER_PORT`    | Puerto SSH (opcional)          | `22`                            |
+| `DEPLOY_PATH`    | Ruta de deployment en servidor | `/opt/securepass`               |
 
 ### Paso 3: Habilitar GitHub Container Registry
 
@@ -254,12 +255,14 @@ docker-compose -f docker-compose.production.yml logs nginx
 ### El deployment falla en GitHub Actions
 
 **Verificar conexión SSH:**
+
 ```bash
 # En tu máquina local, probar la conexión
 ssh -i /path/to/private/key securepass@tu-servidor.com
 ```
 
 **Verificar que el usuario tiene permisos de Docker:**
+
 ```bash
 # En el servidor
 groups securepass
@@ -272,11 +275,13 @@ sudo usermod -aG docker securepass
 ### Los contenedores no inician
 
 **Ver logs detallados:**
+
 ```bash
 docker-compose -f docker-compose.production.yml logs
 ```
 
 **Verificar archivo .env:**
+
 ```bash
 # Verificar que existe
 ls -la .env
@@ -288,11 +293,13 @@ cat .env
 ### Error de conexión a MongoDB
 
 **Verificar que MongoDB está corriendo:**
+
 ```bash
 docker-compose -f docker-compose.production.yml ps mongodb
 ```
 
 **Verificar credenciales:**
+
 ```bash
 # Conectar a MongoDB manualmente
 docker-compose -f docker-compose.production.yml exec mongodb mongosh \
@@ -302,6 +309,7 @@ docker-compose -f docker-compose.production.yml exec mongodb mongosh \
 ### La API no responde
 
 **Verificar health endpoint:**
+
 ```bash
 # Desde el servidor
 curl http://localhost:8000/health
@@ -311,6 +319,7 @@ curl https://api.tudominio.com/health
 ```
 
 **Ver logs de API:**
+
 ```bash
 docker-compose -f docker-compose.production.yml logs -f api
 ```
@@ -318,11 +327,13 @@ docker-compose -f docker-compose.production.yml logs -f api
 ### Nginx retorna 502 Bad Gateway
 
 **Verificar que los servicios están corriendo:**
+
 ```bash
 docker-compose -f docker-compose.production.yml ps
 ```
 
 **Verificar configuración de Nginx:**
+
 ```bash
 # Probar configuración
 docker-compose -f docker-compose.production.yml exec nginx nginx -t
@@ -334,6 +345,7 @@ docker-compose -f docker-compose.production.yml logs nginx
 ### Problemas con SSL/HTTPS
 
 **Renovar certificado:**
+
 ```bash
 sudo certbot renew
 

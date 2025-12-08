@@ -1,12 +1,7 @@
-import { AuditLog } from "../models/AuditLog";
-import {
-  IAuditLog,
-  IAuditLogInput,
-  AuditAction,
-  AuditSeverity,
-} from "../interfaces/IAuditLog";
-import { Request } from "express";
-import { Types } from "mongoose";
+import { AuditLog } from '../models/AuditLog';
+import { IAuditLog, IAuditLogInput, AuditAction, AuditSeverity } from '../interfaces/IAuditLog';
+import { Request } from 'express';
+import { Types } from 'mongoose';
 
 export class AuditLogService {
   /**
@@ -20,7 +15,7 @@ export class AuditLogService {
       });
       return auditLog;
     } catch (error) {
-      console.error("Error creando log de auditoría:", error);
+      console.error('Error creando log de auditoría:', error);
       // No lanzar error para no interrumpir el flujo principal
       throw error;
     }
@@ -43,7 +38,7 @@ export class AuditLogService {
         user: user?._id,
         userEmail: user?.auth?.email,
         ipAddress: this.getIpAddress(req),
-        userAgent: req.get("user-agent"),
+        userAgent: req.get('user-agent'),
         resource: data.resource,
         resourceId: data.resourceId,
         details: data.details,
@@ -51,7 +46,7 @@ export class AuditLogService {
         errorMessage: data.errorMessage,
       });
     } catch (error) {
-      console.error("Error logging from request:", error);
+      console.error('Error logging from request:', error);
       return null;
     }
   }
@@ -59,18 +54,14 @@ export class AuditLogService {
   /**
    * Registrar login exitoso
    */
-  static async logLoginSuccess(
-    req: Request,
-    userId: Types.ObjectId,
-    email: string
-  ): Promise<void> {
+  static async logLoginSuccess(req: Request, userId: Types.ObjectId, email: string): Promise<void> {
     await this.log({
       action: AuditAction.LOGIN,
       severity: AuditSeverity.INFO,
       user: userId,
       userEmail: email,
       ipAddress: this.getIpAddress(req),
-      userAgent: req.get("user-agent"),
+      userAgent: req.get('user-agent'),
       success: true,
     });
   }
@@ -78,17 +69,13 @@ export class AuditLogService {
   /**
    * Registrar login fallido
    */
-  static async logLoginFailure(
-    req: Request,
-    email: string,
-    reason: string
-  ): Promise<void> {
+  static async logLoginFailure(req: Request, email: string, reason: string): Promise<void> {
     await this.log({
       action: AuditAction.LOGIN_FAILED,
       severity: AuditSeverity.WARNING,
       userEmail: email,
       ipAddress: this.getIpAddress(req),
-      userAgent: req.get("user-agent"),
+      userAgent: req.get('user-agent'),
       success: false,
       errorMessage: reason,
     });
@@ -97,15 +84,12 @@ export class AuditLogService {
   /**
    * Registrar acceso no autorizado
    */
-  static async logUnauthorizedAccess(
-    req: Request,
-    resource: string
-  ): Promise<void> {
+  static async logUnauthorizedAccess(req: Request, resource: string): Promise<void> {
     await this.log({
       action: AuditAction.UNAUTHORIZED_ACCESS,
       severity: AuditSeverity.ERROR,
       ipAddress: this.getIpAddress(req),
-      userAgent: req.get("user-agent"),
+      userAgent: req.get('user-agent'),
       resource,
       success: false,
       details: {
@@ -124,7 +108,7 @@ export class AuditLogService {
       action: AuditAction.RATE_LIMIT_EXCEEDED,
       severity: AuditSeverity.WARNING,
       ipAddress: this.getIpAddress(req),
-      userAgent: req.get("user-agent"),
+      userAgent: req.get('user-agent'),
       success: false,
       details: {
         path: req.path,
@@ -165,7 +149,7 @@ export class AuditLogService {
 
     const [logs, total] = await Promise.all([
       AuditLog.find(query)
-        .populate("user", "name auth.email role")
+        .populate('user', 'name auth.email role')
         .sort({ timestamp: -1 })
         .skip(skip)
         .limit(limit),
@@ -201,49 +185,42 @@ export class AuditLogService {
       if (endDate) matchQuery.timestamp.$lte = endDate;
     }
 
-    const [totalLogs, successful, failed, bySeverity, byAction, topUsers] =
-      await Promise.all([
-        AuditLog.countDocuments(matchQuery),
-        AuditLog.countDocuments({ ...matchQuery, success: true }),
-        AuditLog.countDocuments({ ...matchQuery, success: false }),
-        AuditLog.aggregate([
-          { $match: matchQuery },
-          { $group: { _id: "$severity", count: { $sum: 1 } } },
-        ]),
-        AuditLog.aggregate([
-          { $match: matchQuery },
-          { $group: { _id: "$action", count: { $sum: 1 } } },
-        ]),
-        AuditLog.aggregate([
-          { $match: { ...matchQuery, user: { $exists: true } } },
-          { $group: { _id: "$user", count: { $sum: 1 } } },
-          { $sort: { count: -1 } },
-          { $limit: 10 },
-          {
-            $lookup: {
-              from: "users",
-              localField: "_id",
-              foreignField: "_id",
-              as: "userData",
-            },
+    const [totalLogs, successful, failed, bySeverity, byAction, topUsers] = await Promise.all([
+      AuditLog.countDocuments(matchQuery),
+      AuditLog.countDocuments({ ...matchQuery, success: true }),
+      AuditLog.countDocuments({ ...matchQuery, success: false }),
+      AuditLog.aggregate([
+        { $match: matchQuery },
+        { $group: { _id: '$severity', count: { $sum: 1 } } },
+      ]),
+      AuditLog.aggregate([
+        { $match: matchQuery },
+        { $group: { _id: '$action', count: { $sum: 1 } } },
+      ]),
+      AuditLog.aggregate([
+        { $match: { ...matchQuery, user: { $exists: true } } },
+        { $group: { _id: '$user', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 10 },
+        {
+          $lookup: {
+            from: 'users',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'userData',
           },
-        ]),
-      ]);
+        },
+      ]),
+    ]);
 
     return {
       totalLogs,
       successfulActions: successful,
       failedActions: failed,
-      bySeverity: bySeverity.reduce(
-        (acc, item) => ({ ...acc, [item._id]: item.count }),
-        {}
-      ),
-      byAction: byAction.reduce(
-        (acc, item) => ({ ...acc, [item._id]: item.count }),
-        {}
-      ),
+      bySeverity: bySeverity.reduce((acc, item) => ({ ...acc, [item._id]: item.count }), {}),
+      byAction: byAction.reduce((acc, item) => ({ ...acc, [item._id]: item.count }), {}),
       topUsers: topUsers.map((item) => ({
-        user: item.userData[0]?.name || "Unknown",
+        user: item.userData[0]?.name || 'Unknown',
         count: item.count,
       })),
     };
@@ -254,9 +231,9 @@ export class AuditLogService {
    */
   private static getIpAddress(req: Request): string {
     return (
-      (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
       req.socket.remoteAddress ||
-      "unknown"
+      'unknown'
     );
   }
 

@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { verificationController } from "../controllers/verificationController";
+import { Router } from 'express';
+import { verificationController } from '../controllers/verificationController';
 
 const router = Router();
 

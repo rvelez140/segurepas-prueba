@@ -1,23 +1,23 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
-import style from "../../styles/visits.module.css";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
+import style from '../../styles/visits.module.css';
 
 const EmailVerification: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [verificationCode, setVerificationCode] = useState("");
-  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState('');
+  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [tokenVerifying, setTokenVerifying] = useState(false);
 
   const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   // Verificar si hay un token en la URL para verificación automática o un email
   useEffect(() => {
-    const token = searchParams.get("token");
-    const emailParam = searchParams.get("email");
+    const token = searchParams.get('token');
+    const emailParam = searchParams.get('email');
 
     if (token) {
       verifyWithToken(token);
@@ -34,12 +34,12 @@ const EmailVerification: React.FC = () => {
       const response = await axios.get(`${backendUrl}/api/verification/verify-token/${token}`);
       setMessage({ type: 'success', text: response.data.message });
       setTimeout(() => {
-        navigate("/");
+        navigate('/');
       }, 3000);
     } catch (error: any) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Error al verificar el token'
+        text: error.response?.data?.error || 'Error al verificar el token',
       });
     } finally {
       setTokenVerifying(false);
@@ -60,17 +60,17 @@ const EmailVerification: React.FC = () => {
     try {
       const response = await axios.post(`${backendUrl}/api/verification/verify-code`, {
         email,
-        code: verificationCode
+        code: verificationCode,
       });
 
       setMessage({ type: 'success', text: response.data.message });
       setTimeout(() => {
-        navigate("/");
+        navigate('/');
       }, 3000);
     } catch (error: any) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Error al verificar el código'
+        text: error.response?.data?.error || 'Error al verificar el código',
       });
     } finally {
       setIsLoading(false);
@@ -92,7 +92,7 @@ const EmailVerification: React.FC = () => {
     } catch (error: any) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Error al reenviar el email'
+        text: error.response?.data?.error || 'Error al reenviar el email',
       });
     } finally {
       setIsLoading(false);
@@ -104,10 +104,10 @@ const EmailVerification: React.FC = () => {
       <div className={style.loginResidentContainer}>
         <div className={style.loginCard}>
           <h2>SecurePass</h2>
-          <div className={style.logo} style={{ fontSize: '48px', marginTop: '20px' }}>🔐</div>
-          <p style={{ textAlign: "center", marginTop: "1rem" }}>
-            Verificando tu email...
-          </p>
+          <div className={style.logo} style={{ fontSize: '48px', marginTop: '20px' }}>
+            🔐
+          </div>
+          <p style={{ textAlign: 'center', marginTop: '1rem' }}>Verificando tu email...</p>
         </div>
       </div>
     );
@@ -117,7 +117,9 @@ const EmailVerification: React.FC = () => {
     <div className={style.loginResidentContainer}>
       <div className={style.loginCard}>
         <h2>SecurePass</h2>
-        <div className={style.logo} style={{ fontSize: '48px', marginTop: '10px' }}>📧</div>
+        <div className={style.logo} style={{ fontSize: '48px', marginTop: '10px' }}>
+          📧
+        </div>
         <h3>Verifica tu Email</h3>
 
         <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '20px' }}>
@@ -148,7 +150,7 @@ const EmailVerification: React.FC = () => {
           />
 
           <button type="submit" disabled={isLoading} style={{ marginTop: '10px' }}>
-            {isLoading ? "VERIFICANDO..." : "Verificar Código"}
+            {isLoading ? 'VERIFICANDO...' : 'Verificar Código'}
           </button>
         </form>
 
@@ -162,9 +164,7 @@ const EmailVerification: React.FC = () => {
         )}
 
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <p style={{ fontSize: '14px', color: '#666' }}>
-            ¿No recibiste el código?
-          </p>
+          <p style={{ fontSize: '14px', color: '#666' }}>¿No recibiste el código?</p>
           <button
             type="button"
             onClick={handleResendEmail}
@@ -177,11 +177,7 @@ const EmailVerification: React.FC = () => {
         </div>
 
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            className={style.backButton}
-          >
+          <button type="button" onClick={() => navigate('/')} className={style.backButton}>
             Volver al Login
           </button>
         </div>

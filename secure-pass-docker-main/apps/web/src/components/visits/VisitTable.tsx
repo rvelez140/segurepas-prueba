@@ -1,30 +1,28 @@
-import { useEffect, useState } from "react";
-import styles from "../../styles/visits.module.css";
-import { VisitResponse } from "../../types/visit.types";
-import { getAllVisits } from "../../api/visit.api";
-import { useNavigate } from "react-router-dom";
-import QRModal from "../../components/authorization/QRModal";
-import { loadToken, setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
+import { useEffect, useState } from 'react';
+import styles from '../../styles/visits.module.css';
+import { VisitResponse } from '../../types/visit.types';
+import { getAllVisits } from '../../api/visit.api';
+import { useNavigate } from 'react-router-dom';
+import QRModal from '../../components/authorization/QRModal';
+import { loadToken, setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
 
 const VisitTable = () => {
   const [visits, setVisits] = useState<VisitResponse[]>([]);
   const [filteredVisits, setFilteredVisits] = useState<VisitResponse[]>([]);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [sortAsc, setSortAsc] = useState(true);
-  const [selectedVisit, setSelectedVisit] = useState<VisitResponse | null>(
-    null
-  );
+  const [selectedVisit, setSelectedVisit] = useState<VisitResponse | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
       const token = loadToken();
-      if (!token) return navigate("/");
+      if (!token) return navigate('/');
       setAuthToken(token);
       const user = await getAuthenticatedUser();
-      if (user?.role !== "admin") return navigate("/");
+      if (user?.role !== 'admin') return navigate('/');
 
       const all = await getAllVisits();
       setVisits(all);
@@ -40,15 +38,12 @@ const VisitTable = () => {
       filtered = filtered.filter(
         (v) =>
           v.visit.name.toLowerCase().includes(search.toLowerCase()) ||
-          v.authorization.resident.name
-            .toLowerCase()
-            .includes(search.toLowerCase())
+          v.authorization.resident.name.toLowerCase().includes(search.toLowerCase())
       );
     }
     if (statusFilter) {
       filtered = filtered.filter(
-        (v) =>
-          v.authorization.state.toLowerCase() === statusFilter.toLowerCase()
+        (v) => v.authorization.state.toLowerCase() === statusFilter.toLowerCase()
       );
     }
     setFilteredVisits(filtered);
@@ -65,20 +60,20 @@ const VisitTable = () => {
   };
 
   const exportToCSV = () => {
-    const header = ["Visitante", "Documento", "Residente", "Estado", "Expira"];
+    const header = ['Visitante', 'Documento', 'Residente', 'Estado', 'Expira'];
     const rows = filteredVisits.map((v) => [
       v.visit.name,
       v.visit.document,
       v.authorization.resident.name,
       v.authorization.state,
-      v.authorization.exp?.toLocaleDateString("es-ES") || "",
+      v.authorization.exp?.toLocaleDateString('es-ES') || '',
     ]);
-    const csv = [header, ...rows].map((row) => row.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const csv = [header, ...rows].map((row) => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "autorizaciones.csv";
+    a.download = 'autorizaciones.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -93,10 +88,7 @@ const VisitTable = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select
-          onChange={(e) => setStatusFilter(e.target.value)}
-          value={statusFilter}
-        >
+        <select onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
           <option value="">Todos</option>
           <option value="aprobada">Aprobada</option>
           <option value="pendiente">Pendiente</option>
@@ -124,18 +116,14 @@ const VisitTable = () => {
               <td>{v.visit.document}</td>
               <td>{v.authorization.resident.name}</td>
               <td>
-                <span
-                  className={`${styles.badge} ${
-                    styles[v.authorization.state.toLowerCase()]
-                  }`}
-                >
+                <span className={`${styles.badge} ${styles[v.authorization.state.toLowerCase()]}`}>
                   {v.authorization.state.toUpperCase()}
                 </span>
               </td>
               <td className={styles.hideableRow}>
                 {v.authorization.exp
-                  ? new Date(v.authorization.exp).toLocaleDateString("es-ES")
-                  : "—"}
+                  ? new Date(v.authorization.exp).toLocaleDateString('es-ES')
+                  : '—'}
               </td>
             </tr>
           ))}

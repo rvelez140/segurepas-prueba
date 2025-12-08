@@ -1,4 +1,4 @@
-import { VisitResponse } from "./visit.types";
+import { VisitResponse } from './visit.types';
 
 export interface SidebarProps {
   setShowLogoutModal?: React.Dispatch<React.SetStateAction<boolean>>;

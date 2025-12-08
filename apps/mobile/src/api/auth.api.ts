@@ -1,9 +1,9 @@
-import axios from "axios";
-import { LoginData, LoginResponse } from "../types/auth.types";
-import { User } from "../types/user.types";
-import Constants from 'expo-constants'
+import axios from 'axios';
+import { LoginData, LoginResponse } from '../types/auth.types';
+import { User } from '../types/user.types';
+import Constants from 'expo-constants';
 
-const { apiUrl } = Constants.expoConfig?.extra as {apiUrl: string};
+const { apiUrl } = Constants.expoConfig?.extra as { apiUrl: string };
 const API_URL = apiUrl;
 
 // Método puedes autenticarte en el backend y recibir un token + información del usuario
@@ -14,11 +14,11 @@ export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
     return response.data;
   } catch (error: any) {
     if (error.response) {
-      throw new Error(error.response.data.error || "Error al iniciar sesión");
+      throw new Error(error.response.data.error || 'Error al iniciar sesión');
     } else if (error.request) {
-      throw new Error("No se recibió respuesta del servidor");
+      throw new Error('No se recibió respuesta del servidor');
     } else {
-      throw new Error("Error al configurar la solicitud");
+      throw new Error('Error al configurar la solicitud');
     }
   }
 };
@@ -34,13 +34,13 @@ export const getAuthenticatedUser = async (): Promise<User> => {
   } catch (error: any) {
     if (error.response) {
       if (error.response.status === 401) {
-        throw new Error("Sesión expirada o no autorizada");
+        throw new Error('Sesión expirada o no autorizada');
       }
-      throw new Error(error.response.data.error || "Error al verificar usuario");
+      throw new Error(error.response.data.error || 'Error al verificar usuario');
     } else if (error.request) {
-      throw new Error("No se recibió respuesta del servidor");
+      throw new Error('No se recibió respuesta del servidor');
     } else {
-      throw new Error("Error al configurar la solicitud");
+      throw new Error('Error al configurar la solicitud');
     }
   }
 };

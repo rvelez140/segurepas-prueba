@@ -1,15 +1,15 @@
-import nodemailer from "nodemailer";
-import crypto from "crypto";
-import { env } from "../config/env";
-import { User } from "../models/User";
-import { IUser } from "../interfaces/IUser";
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import { env } from '../config/env';
+import { User } from '../models/User';
+import { IUser } from '../interfaces/IUser';
 
 class EmailVerificationService {
   public transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: 'Gmail',
       auth: {
         user: env.EMAIL_USER,
         pass: env.EMAIL_PASSWORD,
@@ -45,8 +45,8 @@ class EmailVerificationService {
         verificationCode,
         verificationToken,
         verificationTokenExpires: expiresIn,
-        emailVerified: false
-      }
+        emailVerified: false,
+      },
     });
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -179,7 +179,10 @@ class EmailVerificationService {
   /**
    * Verifica el código de verificación
    */
-  async verifyCode(email: string, code: string): Promise<{ success: boolean; message: string; user?: IUser }> {
+  async verifyCode(
+    email: string,
+    code: string
+  ): Promise<{ success: boolean; message: string; user?: IUser }> {
     const user = await User.findOne({ 'auth.email': email })
       .select('+verificationCode +verificationTokenExpires')
       .exec();
@@ -207,13 +210,13 @@ class EmailVerificationService {
     // Marcar como verificado
     await User.findByIdAndUpdate(user._id, {
       $set: {
-        emailVerified: true
+        emailVerified: true,
       },
       $unset: {
         verificationCode: '',
         verificationToken: '',
-        verificationTokenExpires: ''
-      }
+        verificationTokenExpires: '',
+      },
     });
 
     const updatedUser = await User.findById(user._id).exec();
@@ -243,13 +246,13 @@ class EmailVerificationService {
     // Marcar como verificado
     await User.findByIdAndUpdate(user._id, {
       $set: {
-        emailVerified: true
+        emailVerified: true,
       },
       $unset: {
         verificationCode: '',
         verificationToken: '',
-        verificationTokenExpires: ''
-      }
+        verificationTokenExpires: '',
+      },
     });
 
     const updatedUser = await User.findById(user._id).exec();
@@ -418,7 +421,7 @@ class EmailVerificationService {
                 <span class="info-value">${new Date(user.registerDate).toLocaleDateString('es-ES', {
                   year: 'numeric',
                   month: 'long',
-                  day: 'numeric'
+                  day: 'numeric',
                 })}</span>
               </div>
             </div>

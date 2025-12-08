@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { emailVerificationService } from "../services/EmailVerificationService";
+import { Request, Response } from 'express';
+import { emailVerificationService } from '../services/EmailVerificationService';
 
 export const verificationController = {
   /**
@@ -9,7 +9,7 @@ export const verificationController = {
     const { email, code } = req.body;
 
     if (!email || !code) {
-      res.status(400).json({ error: "Email y código son requeridos" });
+      res.status(400).json({ error: 'Email y código son requeridos' });
       return;
     }
 
@@ -33,10 +33,10 @@ export const verificationController = {
 
       res.status(200).json({
         message: result.message,
-        emailVerified: true
+        emailVerified: true,
       });
     } catch (error: any) {
-      res.status(500).json({ error: error.message || "Error al verificar el código" });
+      res.status(500).json({ error: error.message || 'Error al verificar el código' });
     }
   },
 
@@ -47,7 +47,7 @@ export const verificationController = {
     const { token } = req.params;
 
     if (!token) {
-      res.status(400).json({ error: "Token es requerido" });
+      res.status(400).json({ error: 'Token es requerido' });
       return;
     }
 
@@ -71,10 +71,10 @@ export const verificationController = {
 
       res.status(200).json({
         message: result.message,
-        emailVerified: true
+        emailVerified: true,
       });
     } catch (error: any) {
-      res.status(500).json({ error: error.message || "Error al verificar el token" });
+      res.status(500).json({ error: error.message || 'Error al verificar el token' });
     }
   },
 
@@ -85,7 +85,7 @@ export const verificationController = {
     const { email } = req.body;
 
     if (!email) {
-      res.status(400).json({ error: "Email es requerido" });
+      res.status(400).json({ error: 'Email es requerido' });
       return;
     }
 
@@ -98,10 +98,12 @@ export const verificationController = {
       }
 
       res.status(200).json({
-        message: result.message
+        message: result.message,
       });
     } catch (error: any) {
-      res.status(500).json({ error: error.message || "Error al reenviar el email de verificación" });
+      res
+        .status(500)
+        .json({ error: error.message || 'Error al reenviar el email de verificación' });
     }
-  }
+  },
 };

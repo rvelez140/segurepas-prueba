@@ -33,10 +33,6 @@ router.post(
 router.delete('/:id/logo', roleMiddleware(['admin']), companyController.deleteLogo);
 
 // Rutas de suscripción
-router.put(
-  '/:id/subscription',
-  roleMiddleware(['admin']),
-  companyController.updateSubscription
-);
+router.put('/:id/subscription', roleMiddleware(['admin']), companyController.updateSubscription);
 
 export default router;

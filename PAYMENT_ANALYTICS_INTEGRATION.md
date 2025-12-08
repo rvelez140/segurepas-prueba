@@ -9,6 +9,7 @@ Esta documentación describe las nuevas funcionalidades de integración con proc
 ### 1. Integración con Procesadores de Pago
 
 #### **Stripe**
+
 - Creación de sesiones de checkout
 - Gestión de suscripciones (crear, cancelar, actualizar)
 - Webhooks para eventos de pago
@@ -16,6 +17,7 @@ Esta documentación describe las nuevas funcionalidades de integración con proc
 - Ciclos de facturación mensual y anual
 
 #### **PayPal**
+
 - Creación de suscripciones
 - Activación de suscripciones después de aprobación del usuario
 - Webhooks para eventos de PayPal
@@ -24,6 +26,7 @@ Esta documentación describe las nuevas funcionalidades de integración con proc
 ### 2. Sistema de Notificaciones por Email
 
 Se implementaron notificaciones automáticas para:
+
 - **Bienvenida**: Email de bienvenida al suscribirse
 - **Pago Exitoso**: Confirmación de pago procesado
 - **Pago Fallido**: Notificación de error en el pago
@@ -34,6 +37,7 @@ Se implementaron notificaciones automáticas para:
 ### 3. Analytics de Suscripciones
 
 Métricas implementadas:
+
 - **Revenue Metrics**: Ingresos totales, MRR, ARR, ingresos por plan y proveedor
 - **Subscription Metrics**: Suscripciones activas, canceladas, por plan, churn rate, retention rate
 - **Growth Metrics**: Nuevas suscripciones, cancelaciones, crecimiento neto
@@ -109,6 +113,7 @@ npm install
 ### Suscripciones
 
 #### Crear Checkout de Stripe
+
 ```http
 POST /api/subscriptions/stripe/checkout
 Content-Type: application/json
@@ -121,6 +126,7 @@ Content-Type: application/json
 ```
 
 #### Crear Suscripción de PayPal
+
 ```http
 POST /api/subscriptions/paypal/create
 Content-Type: application/json
@@ -133,6 +139,7 @@ Content-Type: application/json
 ```
 
 #### Activar Suscripción de PayPal
+
 ```http
 POST /api/subscriptions/paypal/activate
 Content-Type: application/json
@@ -144,16 +151,19 @@ Content-Type: application/json
 ```
 
 #### Obtener Suscripciones del Usuario
+
 ```http
 GET /api/subscriptions/user/:userId
 ```
 
 #### Obtener Suscripción Activa
+
 ```http
 GET /api/subscriptions/user/:userId/active
 ```
 
 #### Cancelar Suscripción
+
 ```http
 POST /api/subscriptions/:subscriptionId/cancel
 Content-Type: application/json
@@ -166,31 +176,37 @@ Content-Type: application/json
 ### Analytics
 
 #### Dashboard Completo
+
 ```http
 GET /api/analytics/dashboard?startDate=2024-01-01&endDate=2024-12-31
 ```
 
 #### Métricas de Ingresos
+
 ```http
 GET /api/analytics/revenue?startDate=2024-01-01&endDate=2024-12-31
 ```
 
 #### Métricas de Suscripciones
+
 ```http
 GET /api/analytics/subscriptions
 ```
 
 #### Métricas de Crecimiento
+
 ```http
 GET /api/analytics/growth?startDate=2024-01-01&endDate=2024-12-31
 ```
 
 #### Métricas de Pagos
+
 ```http
 GET /api/analytics/payments?startDate=2024-01-01&endDate=2024-12-31
 ```
 
 #### Tendencias
+
 ```http
 GET /api/analytics/trends?months=12
 ```
@@ -198,11 +214,13 @@ GET /api/analytics/trends?months=12
 ### Webhooks
 
 #### Webhook de Stripe
+
 ```http
 POST /api/webhooks/stripe
 ```
 
 #### Webhook de PayPal
+
 ```http
 POST /api/webhooks/paypal
 ```
@@ -259,6 +277,7 @@ POST /api/webhooks/paypal
 ## 📊 Modelos de Datos
 
 ### Subscription
+
 ```typescript
 {
   userId: ObjectId,
@@ -279,6 +298,7 @@ POST /api/webhooks/paypal
 ```
 
 ### Payment
+
 ```typescript
 {
   userId: ObjectId,
@@ -329,8 +349,8 @@ const response = await fetch('/api/subscriptions/stripe/checkout', {
   body: JSON.stringify({
     userId: currentUser.id,
     plan: 'premium',
-    billingCycle: 'monthly'
-  })
+    billingCycle: 'monthly',
+  }),
 });
 
 const { url } = await response.json();
@@ -355,14 +375,17 @@ console.log('Churn Rate:', data.subscriptions.churnRate);
 ## 🐛 Troubleshooting
 
 ### Error: "Stripe API key not set"
+
 - Verifica que `STRIPE_SECRET_KEY` esté configurado en `.env`
 - Asegúrate de que la clave comience con `sk_`
 
 ### Error: "PayPal authentication failed"
+
 - Verifica `PAYPAL_CLIENT_ID` y `PAYPAL_CLIENT_SECRET`
 - Asegúrate de usar las credenciales correctas según el modo (sandbox/live)
 
 ### Emails no se envían
+
 - Verifica las credenciales de email en `.env`
 - Si usas Gmail, necesitas una [App Password](https://support.google.com/accounts/answer/185833)
 - Verifica que el puerto 587 no esté bloqueado

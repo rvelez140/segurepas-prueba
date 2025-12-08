@@ -10,73 +10,73 @@ export interface VisitData {
 }
 
 export interface VisitResponse {
-    id: string;
-    visit: Visit;
-    authorization: Authorization;
-    registry?: Registry;
-    qrId: string;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  visit: Visit;
+  authorization: Authorization;
+  registry?: Registry;
+  qrId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UpdateVisitData {
-    visit: {
-        name: string;
-        email: string;
-    }
-    authorization: {
-        reason: string;
-    }
+  visit: {
+    name: string;
+    email: string;
+  };
+  authorization: {
+    reason: string;
+  };
 }
 
 export interface VisitAuthorizedResponse {
-    id: string;
-    visit: Visit;
-    authorization: Authorization;
-    registry?: Registry;
-    qrId: string;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  visit: Visit;
+  authorization: Authorization;
+  registry?: Registry;
+  qrId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface AuthorizedResponse {
-    message: string;
-    data: VisitAuthorizedResponse;
+  message: string;
+  data: VisitAuthorizedResponse;
 }
 interface Visit {
-    name: string;
-    email: string;
-    document: string;
-    visitImage?: string;
-    vehicleImage?: string;
-    vehiclePlate?: string;
+  name: string;
+  email: string;
+  document: string;
+  visitImage?: string;
+  vehicleImage?: string;
+  vehiclePlate?: string;
 }
 
 interface Authorization {
-    resident: visitResident;
-    state: string;
-    reason: string;
-    date: Date;
-    exp: Date;
+  resident: visitResident;
+  state: string;
+  reason: string;
+  date: Date;
+  exp: Date;
 }
 
 interface Registry {
-    entry?: Entry;
-    exit?: Exit;
+  entry?: Entry;
+  exit?: Exit;
 }
 
 interface Entry {
-    guard?: string;
-    date? : Date;
+  guard?: string;
+  date?: Date;
 }
 
 interface Exit {
-    guard?: string;
-    date?: Date;
+  guard?: string;
+  date?: Date;
 }
 
 interface visitResident {
-    _id: string;
-    name: string;
-    apartment: string;
+  _id: string;
+  name: string;
+  apartment: string;
 }

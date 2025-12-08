@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import Redis from 'ioredis';
 
 class CacheService {
   private client: Redis | null = null;
@@ -10,7 +10,7 @@ class CacheService {
 
   private connect() {
     try {
-      const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
       this.client = new Redis(redisUrl, {
         retryStrategy: (times) => {
@@ -20,22 +20,22 @@ class CacheService {
         maxRetriesPerRequest: 3,
       });
 
-      this.client.on("connect", () => {
-        console.log("✓ Conectado a Redis");
+      this.client.on('connect', () => {
+        console.log('✓ Conectado a Redis');
         this.isConnected = true;
       });
 
-      this.client.on("error", (error) => {
-        console.error("Error de Redis:", error);
+      this.client.on('error', (error) => {
+        console.error('Error de Redis:', error);
         this.isConnected = false;
       });
 
-      this.client.on("close", () => {
-        console.log("Conexión a Redis cerrada");
+      this.client.on('close', () => {
+        console.log('Conexión a Redis cerrada');
         this.isConnected = false;
       });
     } catch (error) {
-      console.error("Error conectando a Redis:", error);
+      console.error('Error conectando a Redis:', error);
       this.client = null;
       this.isConnected = false;
     }
@@ -197,7 +197,7 @@ class CacheService {
       await this.client!.flushdb();
       return true;
     } catch (error) {
-      console.error("Error limpiando caché:", error);
+      console.error('Error limpiando caché:', error);
       return false;
     }
   }
@@ -212,7 +212,7 @@ class CacheService {
       const info = await this.client!.info();
       return info;
     } catch (error) {
-      console.error("Error obteniendo info de Redis:", error);
+      console.error('Error obteniendo info de Redis:', error);
       return null;
     }
   }
@@ -235,7 +235,7 @@ export const cacheService = new CacheService();
 // Claves de caché predefinidas
 export const CacheKeys = {
   // Visitas
-  activeVisits: () => "visits:active",
+  activeVisits: () => 'visits:active',
   visitByQR: (qrId: string) => `visit:qr:${qrId}`,
   visitsByResident: (residentId: string) => `visits:resident:${residentId}`,
 
@@ -244,20 +244,20 @@ export const CacheKeys = {
   userByEmail: (email: string) => `user:email:${email}`,
 
   // Estadísticas
-  visitStats: () => "stats:visits",
-  parkingStats: () => "stats:parking",
-  auditStats: () => "stats:audit",
+  visitStats: () => 'stats:visits',
+  parkingStats: () => 'stats:parking',
+  auditStats: () => 'stats:audit',
 
   // Parqueaderos
   availableParking: (type: string) => `parking:available:${type}`,
-  activeAssignments: () => "parking:assignments:active",
+  activeAssignments: () => 'parking:assignments:active',
 
   // Listas de acceso
-  blacklist: () => "access:blacklist",
-  whitelist: () => "access:whitelist",
+  blacklist: () => 'access:blacklist',
+  whitelist: () => 'access:whitelist',
 
   // Visitas recurrentes
-  recurringActive: () => "recurring:active",
+  recurringActive: () => 'recurring:active',
 };
 
 // TTL predefinidos (en segundos)

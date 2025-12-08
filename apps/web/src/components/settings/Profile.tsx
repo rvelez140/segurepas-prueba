@@ -1,9 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
-import styles from "../../styles/profile.module.css";
-import { User } from "../../types/user.types";
-import { setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
-import { updateUser } from "../../api/user.api";
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import styles from '../../styles/profile.module.css';
+import { User } from '../../types/user.types';
+import { setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
+import { updateUser } from '../../api/user.api';
 
 interface ProfileProps {
   token: string;
@@ -25,7 +25,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
         setUser(userData);
         setIsLoading(false);
       } catch (err) {
-        setError("Error al cargar los datos del usuario");
+        setError('Error al cargar los datos del usuario');
         setIsLoading(false);
       }
     };
@@ -39,9 +39,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
     }
   };
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setEditedUser((prev) => ({
       ...prev,
@@ -57,20 +55,20 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
       const updatedUser = await updateUser(user._id, editedUser);
       setUser(updatedUser);
       setEditMode(false);
-      setSuccessMessage("Datos actualizados correctamente");
+      setSuccessMessage('Datos actualizados correctamente');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      setError("Error al actualizar los datos");
+      setError('Error al actualizar los datos');
     } finally {
       setIsLoading(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -89,18 +87,13 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
       </div>
     );
   if (error) return <div className={styles.error}>{error}</div>;
-  if (!user)
-    return (
-      <div className={styles.error}>No se encontraron datos del usuario</div>
-    );
+  if (!user) return <div className={styles.error}>No se encontraron datos del usuario</div>;
 
   return (
     <div className={styles.profileContainer}>
       <h2 className={styles.profileTitle}>Información del Perfil</h2>
 
-      {successMessage && (
-        <div className={styles.successMessage}>{successMessage}</div>
-      )}
+      {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
       <div className={styles.profileSection}>
         <h3>Información Personal</h3>
@@ -110,7 +103,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
             <input
               type="text"
               name="name"
-              value={editedUser.name || ""}
+              value={editedUser.name || ''}
               onChange={handleChange}
               className={styles.profileInput}
             />
@@ -125,7 +118,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
             <input
               type="email"
               name="email"
-              value={editedUser.email || ""}
+              value={editedUser.email || ''}
               onChange={handleChange}
               className={styles.profileInput}
             />
@@ -141,7 +134,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
               <input
                 type="tel"
                 name="tel"
-                value={editedUser.tel || ""}
+                value={editedUser.tel || ''}
                 onChange={handleChange}
                 className={styles.profileInput}
               />
@@ -152,7 +145,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
         )}
       </div>
 
-      {user.role === "residente" && (
+      {user.role === 'residente' && (
         <div className={styles.profileSection}>
           <h3>Información de Residencia</h3>
           {user.apartment && (
@@ -162,7 +155,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
                 <input
                   type="text"
                   name="apartment"
-                  value={editedUser.apartment || ""}
+                  value={editedUser.apartment || ''}
                   onChange={handleChange}
                   className={styles.profileInput}
                 />
@@ -190,7 +183,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
             {editMode ? (
               <select
                 name="shift"
-                value={editedUser.shift || ""}
+                value={editedUser.shift || ''}
                 onChange={handleChange}
                 className={styles.profileInput}
               >
@@ -207,11 +200,7 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
 
       <div className={styles.profileActions}>
         {!editMode ? (
-          <button
-            onClick={handleEdit}
-            className={styles.editButton}
-            disabled={isLoading}
-          >
+          <button onClick={handleEdit} className={styles.editButton} disabled={isLoading}>
             Editar
           </button>
         ) : (
@@ -223,12 +212,8 @@ const Profile: React.FC<ProfileProps> = ({ token }) => {
             >
               Cancelar
             </button>
-            <button
-              onClick={handleSave}
-              className={styles.saveButton}
-              disabled={isLoading}
-            >
-              {isLoading ? "Guardando..." : "Guardar Cambios"}
+            <button onClick={handleSave} className={styles.saveButton} disabled={isLoading}>
+              {isLoading ? 'Guardando...' : 'Guardar Cambios'}
             </button>
           </>
         )}

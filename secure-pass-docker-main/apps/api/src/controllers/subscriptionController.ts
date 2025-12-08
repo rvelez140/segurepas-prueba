@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { SubscriptionService } from "../services/SubscriptionService";
-import { PlanType } from "../interfaces/ISubscription";
+import { Request, Response, NextFunction } from 'express';
+import { SubscriptionService } from '../services/SubscriptionService';
+import { PlanType } from '../interfaces/ISubscription';
 
 export const subscriptionController = {
   async createSubscription(req: Request, res: Response, next: NextFunction) {
@@ -9,7 +9,7 @@ export const subscriptionController = {
 
       if (!residentialName || !planType) {
         return res.status(400).json({
-          error: "El nombre del residencial y el tipo de plan son requeridos",
+          error: 'El nombre del residencial y el tipo de plan son requeridos',
         });
       }
 
@@ -31,7 +31,7 @@ export const subscriptionController = {
 
       const subscription = await SubscriptionService.findById(id);
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -63,13 +63,10 @@ export const subscriptionController = {
       const { id } = req.params;
       const updateData = req.body;
 
-      const subscription = await SubscriptionService.updateSubscription(
-        id,
-        updateData
-      );
+      const subscription = await SubscriptionService.updateSubscription(id, updateData);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -84,19 +81,13 @@ export const subscriptionController = {
       const { planType, customAmount } = req.body;
 
       if (!planType) {
-        return res
-          .status(400)
-          .json({ error: "El tipo de plan es requerido" });
+        return res.status(400).json({ error: 'El tipo de plan es requerido' });
       }
 
-      const subscription = await SubscriptionService.upgradePlan(
-        id,
-        planType,
-        customAmount
-      );
+      const subscription = await SubscriptionService.upgradePlan(id, planType, customAmount);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -112,7 +103,7 @@ export const subscriptionController = {
       const subscription = await SubscriptionService.activateSubscription(id);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -128,7 +119,7 @@ export const subscriptionController = {
       const subscription = await SubscriptionService.cancelSubscription(id);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -144,7 +135,7 @@ export const subscriptionController = {
       const subscription = await SubscriptionService.suspendSubscription(id);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -158,19 +149,16 @@ export const subscriptionController = {
       const { id } = req.params;
       const { unitsCount } = req.body;
 
-      if (typeof unitsCount !== "number") {
+      if (typeof unitsCount !== 'number') {
         return res.status(400).json({
-          error: "La cantidad de viviendas debe ser un número",
+          error: 'La cantidad de viviendas debe ser un número',
         });
       }
 
-      const subscription = await SubscriptionService.updateUsageCount(
-        id,
-        unitsCount
-      );
+      const subscription = await SubscriptionService.updateUsageCount(id, unitsCount);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
       res.json(subscription);
@@ -197,10 +185,10 @@ export const subscriptionController = {
       const subscription = await SubscriptionService.deleteSubscription(id);
 
       if (!subscription) {
-        return res.status(404).json({ error: "Suscripción no encontrada" });
+        return res.status(404).json({ error: 'Suscripción no encontrada' });
       }
 
-      res.json({ message: "Suscripción eliminada exitosamente" });
+      res.json({ message: 'Suscripción eliminada exitosamente' });
     } catch (error) {
       next(error);
     }
@@ -211,12 +199,10 @@ export const subscriptionController = {
       const { planType } = req.params;
 
       if (!Object.values(PlanType).includes(planType as PlanType)) {
-        return res.status(400).json({ error: "Tipo de plan inválido" });
+        return res.status(400).json({ error: 'Tipo de plan inválido' });
       }
 
-      const details = SubscriptionService.getPlanDetails(
-        planType as PlanType
-      );
+      const details = SubscriptionService.getPlanDetails(planType as PlanType);
       res.json(details);
     } catch (error) {
       next(error);

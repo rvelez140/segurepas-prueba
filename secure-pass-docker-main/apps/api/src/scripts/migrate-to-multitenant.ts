@@ -123,7 +123,6 @@ async function migrateToMultiTenant() {
     console.log('   1. Verificar que todos los datos se migraron correctamente');
     console.log('   2. Activar el middleware de tenant en las rutas');
     console.log('   3. Reiniciar la aplicación\n');
-
   } catch (error) {
     console.error('❌ Error durante la migración:', error);
     process.exit(1);

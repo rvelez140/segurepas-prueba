@@ -1,4 +1,4 @@
-import { User } from "./user.types";
+import { User } from './user.types';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -6,7 +6,7 @@ export type RootStackParamList = {
   Main: undefined;
 
   Scanner: {
-    state: "entry" | "exit";
+    state: 'entry' | 'exit';
   };
 
   ResidentDetail: {

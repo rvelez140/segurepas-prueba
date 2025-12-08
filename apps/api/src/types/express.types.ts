@@ -32,4 +32,4 @@ export const flattenObject = (
   }
 
   return result;
-}
+};

@@ -1,9 +1,9 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 export enum PlanType {
-  BASIC = "basico",
-  PRO = "pro",
-  ENTERPRISE = "enterprise",
+  BASIC = 'basico',
+  PRO = 'pro',
+  ENTERPRISE = 'enterprise',
 }
 
 export interface ISubscription extends Document {
@@ -13,7 +13,7 @@ export interface ISubscription extends Document {
   pricing: {
     amount: number; // Precio en USD
     currency: string; // Moneda (USD)
-    billingCycle: "monthly" | "yearly"; // Ciclo de facturación
+    billingCycle: 'monthly' | 'yearly'; // Ciclo de facturación
   };
   limits: {
     maxUnits: number; // Límite de viviendas
@@ -22,12 +22,7 @@ export interface ISubscription extends Document {
     apiAccess: boolean; // Acceso a API
     whiteLabel: boolean; // Marca blanca
   };
-  status:
-    | "active"
-    | "inactive"
-    | "trial"
-    | "cancelled"
-    | "suspended"; // Estado de la suscripción
+  status: 'active' | 'inactive' | 'trial' | 'cancelled' | 'suspended'; // Estado de la suscripción
   currentUsage: {
     unitsCount: number; // Cantidad actual de viviendas
   };
@@ -38,7 +33,7 @@ export interface ISubscription extends Document {
     lastPaymentDate?: Date;
     nextPaymentDate?: Date;
     paymentMethod?: string;
-    paymentStatus?: "pending" | "completed" | "failed" | "refunded";
+    paymentStatus?: 'pending' | 'completed' | 'failed' | 'refunded';
   };
   createdAt: Date;
   updatedAt: Date;
@@ -46,7 +41,7 @@ export interface ISubscription extends Document {
   // Métodos
   isActive(): boolean;
   isOverLimit(): boolean;
-  hasFeature(feature: keyof ISubscription["limits"]): boolean;
+  hasFeature(feature: keyof ISubscription['limits']): boolean;
 }
 
 export interface ISubscriptionInput {
@@ -55,6 +50,6 @@ export interface ISubscriptionInput {
   pricing?: {
     amount: number;
     currency?: string;
-    billingCycle?: "monthly" | "yearly";
+    billingCycle?: 'monthly' | 'yearly';
   };
 }

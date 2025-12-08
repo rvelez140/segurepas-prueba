@@ -1,5 +1,5 @@
-import { ReportResponse } from "../../types/report.types";
-import styles from "../../styles/report.module.css";
+import { ReportResponse } from '../../types/report.types';
+import styles from '../../styles/report.module.css';
 
 interface ReportDisplayProps {
   reportData: ReportResponse;
@@ -7,10 +7,10 @@ interface ReportDisplayProps {
 
 const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return new Date(date).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -19,16 +19,13 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
       {/* Encabezado del Reporte */}
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>
-          {reportData.metadata.type === "general" &&
-            "Reporte General de Visitas"}
-          {reportData.metadata.type === "resident" && "Reporte de Residentes"}
-          {reportData.metadata.type === "guard" && "Reporte de Guardias"}
+          {reportData.metadata.type === 'general' && 'Reporte General de Visitas'}
+          {reportData.metadata.type === 'resident' && 'Reporte de Residentes'}
+          {reportData.metadata.type === 'guard' && 'Reporte de Guardias'}
         </h2>
         <p className={styles.dateRange}>
-          Período: {formatDate(reportData.metadata.startDate)} -{" "}
-          {reportData.metadata.endDate
-            ? formatDate(reportData.metadata.endDate)
-            : "Actual"}
+          Período: {formatDate(reportData.metadata.startDate)} -{' '}
+          {reportData.metadata.endDate ? formatDate(reportData.metadata.endDate) : 'Actual'}
         </p>
 
         {reportData.userInfo && (
@@ -73,74 +70,58 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
         <h3 className={styles.sectionTitle}>Estadísticas</h3>
         <div className={styles.statsGrid}>
           {/* Estadísticas Generales */}
-          {reportData.metadata.type === "general" && (
+          {reportData.metadata.type === 'general' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.totalResidents}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.totalResidents}</p>
               <p className={styles.statLabel}>Residentes Totales</p>
             </div>
           )}
 
-          {reportData.metadata.type === "general" && (
+          {reportData.metadata.type === 'general' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.totalGuards}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.totalGuards}</p>
               <p className={styles.statLabel}>Guardias Totales</p>
             </div>
           )}
 
-          {reportData.metadata.type === "general" && (
+          {reportData.metadata.type === 'general' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.averageEntryHourGeneral}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.averageEntryHourGeneral}</p>
               <p className={styles.statLabel}>Hora Promedio de Entrada</p>
             </div>
           )}
 
-          {reportData.metadata.type === "general" && (
+          {reportData.metadata.type === 'general' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.averageExitHourGeneral}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.averageExitHourGeneral}</p>
               <p className={styles.statLabel}>Hora Promedio de Salida</p>
             </div>
           )}
 
           {/* Estadísticas para Residentes/Guardias */}
-          {(reportData.metadata.type === "resident" ||
-            reportData.metadata.type === "guard") && (
+          {(reportData.metadata.type === 'resident' || reportData.metadata.type === 'guard') && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.mostFrequentEntryHour}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.mostFrequentEntryHour}</p>
               <p className={styles.statLabel}>Hora Más Frecuente de Entradas</p>
             </div>
           )}
 
-          {(reportData.metadata.type === "resident" ||
-            reportData.metadata.type === "guard") && (
+          {(reportData.metadata.type === 'resident' || reportData.metadata.type === 'guard') && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.mostFrequentExitHour}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.mostFrequentExitHour}</p>
               <p className={styles.statLabel}>Hora Más Frecuente de Salidas</p>
             </div>
           )}
 
           {/* Estadísticas Específicas de Residentes */}
-          {reportData.metadata.type === "resident" && (
+          {reportData.metadata.type === 'resident' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.totalAuthorizations}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.totalAuthorizations}</p>
               <p className={styles.statLabel}>Autorizaciones Totales</p>
             </div>
           )}
 
-          {reportData.metadata.type === "resident" && (
+          {reportData.metadata.type === 'resident' && (
             <div className={styles.statCard}>
               <p className={styles.statValue}>
                 {reportData.statistics.invertalAuthorizations
@@ -151,48 +132,38 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
             </div>
           )}
 
-          {reportData.metadata.type === "resident" && (
+          {reportData.metadata.type === 'resident' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.averageVisitDuration}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.averageVisitDuration}</p>
               <p className={styles.statLabel}>Duración Promedio de Visita</p>
             </div>
           )}
 
           {/* Estadísticas Específicas de Guardias */}
-          {reportData.metadata.type === "guard" && (
+          {reportData.metadata.type === 'guard' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.totalEntries}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.totalEntries}</p>
               <p className={styles.statLabel}>Entradas Registradas</p>
             </div>
           )}
 
-          {reportData.metadata.type === "guard" && (
+          {reportData.metadata.type === 'guard' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.intervalEntries}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.intervalEntries}</p>
               <p className={styles.statLabel}>Entradas en el Período</p>
             </div>
           )}
 
-          {reportData.metadata.type === "guard" && (
+          {reportData.metadata.type === 'guard' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.totalExits}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.totalExits}</p>
               <p className={styles.statLabel}>Salidas Registradas</p>
             </div>
           )}
 
-          {reportData.metadata.type === "guard" && (
+          {reportData.metadata.type === 'guard' && (
             <div className={styles.statCard}>
-              <p className={styles.statValue}>
-                {reportData.statistics.intervalExits}
-              </p>
+              <p className={styles.statValue}>{reportData.statistics.intervalExits}</p>
               <p className={styles.statLabel}>Salidas en el Período</p>
             </div>
           )}
@@ -229,7 +200,7 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
         </div>
 
         {/* Residentes Más Activos (solo en reporte general) */}
-        {reportData.metadata.type === "general" && (
+        {reportData.metadata.type === 'general' && (
           <div className={styles.tableSection}>
             <h4 className={styles.subsectionTitle}>Residentes Más Activos</h4>
             <div className={styles.tableContainer}>
@@ -243,15 +214,13 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
                 </thead>
                 <tbody>
                   {reportData.topRecords.topResidents &&
-                    reportData.topRecords.topResidents.map(
-                      (resident, index) => (
-                        <tr key={index}>
-                          <td>{resident.name}</td>
-                          <td>{resident.apartment}</td>
-                          <td>{resident.count}</td>
-                        </tr>
-                      )
-                    )}
+                    reportData.topRecords.topResidents.map((resident, index) => (
+                      <tr key={index}>
+                        <td>{resident.name}</td>
+                        <td>{resident.apartment}</td>
+                        <td>{resident.count}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -259,7 +228,7 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
         )}
 
         {/* Guardias Más Activos (solo en reporte general) */}
-        {reportData.metadata.type === "general" && (
+        {reportData.metadata.type === 'general' && (
           <div className={styles.tableSection}>
             <h4 className={styles.subsectionTitle}>Guardias Más Activos</h4>
             <div className={styles.tableContainer}>
@@ -285,7 +254,7 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
         )}
 
         {/* Guardia Más Activo (solo en reporte de residente) */}
-        {reportData.metadata.type === "resident" && (
+        {reportData.metadata.type === 'resident' && (
           <div className={styles.highlightSection}>
             <h4 className={styles.subsectionTitle}>Guardia Más Activo</h4>
             {reportData.topRecords.mostActiveGuard && (
@@ -308,30 +277,30 @@ const ReportDisplay = ({ reportData }: ReportDisplayProps) => {
         )}
 
         {/* Residente Más Activo (solo en reporte de guardia) */}
-        {reportData.metadata.type === "guard" && (
+        {reportData.metadata.type === 'guard' && (
           <div className={styles.highlightSection}>
             <h4 className={styles.subsectionTitle}>Residente Más Activo</h4>
             {reportData.topRecords.mostActiveResident && (
-            <div className={styles.highlightCard}>
-              <div>
-                <p className={styles.highlightLabel}>Nombre</p>
-                <p className={styles.highlightValue}>
-                  {reportData.topRecords.mostActiveResident.name}
-                </p>
+              <div className={styles.highlightCard}>
+                <div>
+                  <p className={styles.highlightLabel}>Nombre</p>
+                  <p className={styles.highlightValue}>
+                    {reportData.topRecords.mostActiveResident.name}
+                  </p>
+                </div>
+                <div>
+                  <p className={styles.highlightLabel}>Apartamento</p>
+                  <p className={styles.highlightValue}>
+                    {reportData.topRecords.mostActiveResident.apartment}
+                  </p>
+                </div>
+                <div>
+                  <p className={styles.highlightLabel}>Total Visitas</p>
+                  <p className={styles.highlightValue}>
+                    {reportData.topRecords.mostActiveResident.count}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className={styles.highlightLabel}>Apartamento</p>
-                <p className={styles.highlightValue}>
-                  {reportData.topRecords.mostActiveResident.apartment}
-                </p>
-              </div>
-              <div>
-                <p className={styles.highlightLabel}>Total Visitas</p>
-                <p className={styles.highlightValue}>
-                  {reportData.topRecords.mostActiveResident.count}
-                </p>
-              </div>
-            </div>
             )}
           </div>
         )}

@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isDesktop: true,
 
   // Plataforma actual
-  platform: process.platform
+  platform: process.platform,
 });
 
 // Tipos para TypeScript (opcional, para el lado del renderer)

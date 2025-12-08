@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/visits/Sidebar";
-import styles from "../../styles/visits.module.css";
-import { useSidebar } from "../../contexts/SidebarContext";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import Sidebar from '../../components/visits/Sidebar';
+import styles from '../../styles/visits.module.css';
+import { useSidebar } from '../../contexts/SidebarContext';
+import { useNavigate } from 'react-router-dom';
 import {
   delRememberMe,
   delToken,
   loadToken,
   setAuthToken,
   getAuthToken,
-} from "../../services/auth.service";
-import { LogoutModal } from "../../components/login/LogoutModal";
-import Profile from "../../components/settings/Profile";
-import { getAuthenticatedUser } from "../../api/auth.api";
-import RegisterForm from "../../components/settings/RegisterForm";
-import { User } from "../../types/user.types";
-import Header from "../../components/visits/Header";
+} from '../../services/auth.service';
+import { LogoutModal } from '../../components/login/LogoutModal';
+import Profile from '../../components/settings/Profile';
+import { getAuthenticatedUser } from '../../api/auth.api';
+import RegisterForm from '../../components/settings/RegisterForm';
+import { User } from '../../types/user.types';
+import Header from '../../components/visits/Header';
 
 const Settings: React.FC = () => {
   const { isOpen } = useSidebar();
@@ -30,9 +30,9 @@ const Settings: React.FC = () => {
         const token = loadToken();
         setAuthToken(token);
         setUser(await getAuthenticatedUser());
-        if (user?.role === "admin") setIsAdmin(true);
+        if (user?.role === 'admin') setIsAdmin(true);
       } catch (error) {
-        navigate("/");
+        navigate('/');
       }
     };
 
@@ -40,7 +40,7 @@ const Settings: React.FC = () => {
   }, [navigate, user?.role]);
 
   const handleLogout = () => {
-    navigate("/");
+    navigate('/');
     delToken();
     delRememberMe();
     setShowLogoutModal(false);
@@ -50,11 +50,7 @@ const Settings: React.FC = () => {
     user && (
       <div className={styles.dashboardContainer}>
         <Sidebar setShowLogoutModal={setShowLogoutModal} />
-        <div
-          className={`${styles.mainContent} ${
-            !isOpen ? styles.mainContentFull : ""
-          }`}
-        >
+        <div className={`${styles.mainContent} ${!isOpen ? styles.mainContentFull : ''}`}>
           <Header />
           <Profile token={getAuthToken()} />
           {isAdmin && <RegisterForm />}

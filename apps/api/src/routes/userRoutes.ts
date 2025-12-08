@@ -16,8 +16,16 @@ router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
 
 // Rutas de subida de imágenes de usuarios
-router.post('/users/:id/upload-document', upload.single('image'), userController.uploadDocumentImage);
-router.post('/users/:id/upload-vehicle-plate', upload.single('image'), userController.uploadVehiclePlateImage);
+router.post(
+  '/users/:id/upload-document',
+  upload.single('image'),
+  userController.uploadDocumentImage
+);
+router.post(
+  '/users/:id/upload-vehicle-plate',
+  upload.single('image'),
+  userController.uploadVehiclePlateImage
+);
 router.delete('/users/:id/upload', userController.deleteUserImages);
 
 export default router;

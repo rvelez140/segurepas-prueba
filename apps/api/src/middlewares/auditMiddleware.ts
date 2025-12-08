@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { AuditLogService } from "../services/AuditLogService";
-import { AuditAction, AuditSeverity } from "../interfaces/IAuditLog";
+import { Request, Response, NextFunction } from 'express';
+import { AuditLogService } from '../services/AuditLogService';
+import { AuditAction, AuditSeverity } from '../interfaces/IAuditLog';
 
 /**
  * Middleware para auditar requests automáticamente
@@ -39,7 +39,7 @@ export const auditMiddleware = (action: AuditAction, resource?: string) => {
             errorMessage: !success && data ? extractErrorMessage(data) : undefined,
           });
         } catch (error) {
-          console.error("Error en auditoría:", error);
+          console.error('Error en auditoría:', error);
         }
       });
 
@@ -56,14 +56,14 @@ export const auditMiddleware = (action: AuditAction, resource?: string) => {
  * Remover campos sensibles como passwords
  */
 function sanitizeBody(body: any): any {
-  if (!body || typeof body !== "object") return body;
+  if (!body || typeof body !== 'object') return body;
 
   const sanitized = { ...body };
-  const sensitiveFields = ["password", "token", "secret", "apiKey"];
+  const sensitiveFields = ['password', 'token', 'secret', 'apiKey'];
 
   for (const field of sensitiveFields) {
     if (sanitized[field]) {
-      sanitized[field] = "***REDACTED***";
+      sanitized[field] = '***REDACTED***';
     }
   }
 
@@ -74,7 +74,7 @@ function sanitizeBody(body: any): any {
  * Extraer mensaje de error de la respuesta
  */
 function extractErrorMessage(data: any): string | undefined {
-  if (typeof data === "string") {
+  if (typeof data === 'string') {
     try {
       const parsed = JSON.parse(data);
       return parsed.error || parsed.message;
@@ -83,7 +83,7 @@ function extractErrorMessage(data: any): string | undefined {
     }
   }
 
-  if (data && typeof data === "object") {
+  if (data && typeof data === 'object') {
     return data.error || data.message;
   }
 

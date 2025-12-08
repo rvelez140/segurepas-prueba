@@ -1,27 +1,27 @@
-import mongoose, { Schema, Model } from "mongoose";
-import bcrypt from "bcryptjs";
-import { IUser, GuardShift } from "../interfaces/IUser";
+import mongoose, { Schema, Model } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { IUser, GuardShift } from '../interfaces/IUser';
 
 const userSchema: Schema = new mongoose.Schema(
   {
     auth: {
       email: {
         type: String,
-        required: [true, "El email es requerido"],
+        required: [true, 'El email es requerido'],
         unique: true,
-        match: [/^\S+@\S+\.\S+$/, "Email inválido"],
+        match: [/^\S+@\S+\.\S+$/, 'Email inválido'],
         index: true,
       },
       password: {
         type: String,
-        required: [true, "La contraseña es requerida"],
-        minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
+        required: [true, 'La contraseña es requerida'],
+        minlength: [8, 'La contraseña debe tener al menos 8 caracteres'],
         select: false,
       },
     },
     name: {
       type: String,
-      required: [true, "El nombre es requerido"],
+      required: [true, 'El nombre es requerido'],
       trim: true,
     },
     registerDate: {
@@ -35,15 +35,15 @@ const userSchema: Schema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["residente", "guardia", "admin"],
-      required: [true, "El rol es requerido"],
+      enum: ['residente', 'guardia', 'admin'],
+      required: [true, 'El rol es requerido'],
     },
 
     // Campos específicos de residente
     apartment: {
       type: String,
       required: function (this: { role: string }) {
-        return this.role === "residente";
+        return this.role === 'residente';
       },
       validate: {
         validator: (v: string) => /^[A-Za-z]-\d{1,3}$/.test(v),
@@ -53,7 +53,7 @@ const userSchema: Schema = new mongoose.Schema(
     tel: {
       type: String,
       required: function (this: { role: string }) {
-        return this.role === "residente";
+        return this.role === 'residente';
       },
       validate: {
         validator: (v: string) => /^\+\d{1,3}[-\s]?\d{1,4}([-\s]?\d+)*$/.test(v),
@@ -63,17 +63,17 @@ const userSchema: Schema = new mongoose.Schema(
     document: {
       type: String,
       required: function (this: { role: string }) {
-        return this.role === "residente";
+        return this.role === 'residente';
       },
       validate: {
         validator: (v: string) => /^\d{11}$/.test(v),
-        message: "El documento de identidad debe tener 11 dígitos",
+        message: 'El documento de identidad debe tener 11 dígitos',
       },
     },
     vehiclePlate: {
       type: String,
       required: function (this: { role: string }) {
-        return this.role === "residente";
+        return this.role === 'residente';
       },
       trim: true,
       uppercase: true,
@@ -91,14 +91,14 @@ const userSchema: Schema = new mongoose.Schema(
       type: String,
       enum: Object.values(GuardShift),
       required: function (this: { role: string }) {
-        return this.role === "guardia";
+        return this.role === 'guardia';
       },
     },
     // Campos específicos de admin
     lastAccess: {
       type: Date,
       required: function (this: { role: string }) {
-        return this.role === "admin";
+        return this.role === 'admin';
       },
       default: Date.now,
     },
@@ -118,8 +118,8 @@ const userSchema: Schema = new mongoose.Schema(
 );
 
 // Middleware para hashear la contraseña antes de guardar
-userSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("auth.password")) return next();
+userSchema.pre<IUser>('save', async function (next) {
+  if (!this.isModified('auth.password')) return next();
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -132,11 +132,9 @@ userSchema.pre<IUser>("save", async function (next) {
 });
 
 // Método para comparar contraseñas
-userSchema.methods.comparePassword = async function (
-  candidatePassword: string
-): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.auth.password);
 };
 
-export const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+export const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 export default User;

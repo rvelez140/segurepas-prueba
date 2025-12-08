@@ -23,15 +23,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [residentsData, guardsData] = await Promise.all([
-          getResidents(),
-          getGuards()
-        ]);
+        const [residentsData, guardsData] = await Promise.all([getResidents(), getGuards()]);
         setResidents(residentsData);
         setGuards(guardsData);
       } catch (error) {
-        console.error("Error fetching users:", error);
-        setError("Error al cargar los datos. Por favor intente nuevamente.");
+        console.error('Error fetching users:', error);
+        setError('Error al cargar los datos. Por favor intente nuevamente.');
       } finally {
         setIsLoading(false);
       }
@@ -42,7 +39,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (residentId && guardId) {
       setError('No se puede seleccionar residente y guardia a la vez');
       return;
@@ -54,12 +51,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
     }
 
     setError('');
-    
+
     const reportData: ReportData = {
       start: new Date(startDate),
       end: endDate ? new Date(endDate) : undefined,
       resident: residentId || undefined,
-      guard: guardId || undefined
+      guard: guardId || undefined,
     };
 
     onSubmit(reportData);
@@ -78,7 +75,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
     <div className={styles.formContainer}>
       <h2 className={styles.formTitle}>Generar Reporte</h2>
       {error && <div className={styles.errorMessage}>{error}</div>}
-      
+
       <form onSubmit={handleSubmit} className={styles.formGrid}>
         <div>
           <label className={styles.formLabel}>Fecha de Inicio*</label>
@@ -90,7 +87,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
             required
           />
         </div>
-        
+
         <div>
           <label className={styles.formLabel}>Fecha de Fin (opcional)</label>
           <input
@@ -101,7 +98,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
             min={startDate}
           />
         </div>
-        
+
         <div>
           <label className={styles.formLabel}>Residente (opcional)</label>
           <select
@@ -120,7 +117,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
             ))}
           </select>
         </div>
-        
+
         <div>
           <label className={styles.formLabel}>Guardia (opcional)</label>
           <select
@@ -139,13 +136,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit, loading }) => {
             ))}
           </select>
         </div>
-        
+
         <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className={styles.submitButton}
-          >
+          <button type="submit" disabled={loading} className={styles.submitButton}>
             {loading ? 'Generando...' : 'Generar Reporte'}
           </button>
         </div>

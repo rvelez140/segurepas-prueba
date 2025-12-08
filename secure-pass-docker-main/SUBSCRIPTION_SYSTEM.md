@@ -7,6 +7,7 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
 ## Planes Disponibles
 
 ### 🔒 Plan Básico - $29 USD/mes
+
 - **Hasta 50 viviendas**
 - Gestión de visitas
 - Control de entrada/salida
@@ -15,6 +16,7 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
 - Ideal para residenciales pequeños
 
 ### 🔐 Plan Pro - $69 USD/mes
+
 - **Hasta 200 viviendas**
 - Todas las características del Plan Básico
 - **Reportes avanzados**
@@ -23,6 +25,7 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
 - Ideal para residenciales medianos
 
 ### 🏢 Plan Enterprise - Personalizado
+
 - **Viviendas ilimitadas**
 - Todas las características del Plan Pro
 - **Múltiples entradas**
@@ -37,6 +40,7 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
 ### Backend (API)
 
 #### Modelos
+
 - **Subscription** (`apps/api/src/models/Subscription.ts`)
   - Gestiona la información de suscripciones
   - Incluye límites, precios, estado y uso actual
@@ -47,11 +51,13 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
   - Campo `subscription` vincula al residencial con su plan
 
 #### Interfaces
+
 - **ISubscription** (`apps/api/src/interfaces/ISubscription.ts`)
   - Define la estructura de datos de suscripciones
   - Incluye enum PlanType con los tres planes
 
 #### Servicios
+
 - **SubscriptionService** (`apps/api/src/services/SubscriptionService.ts`)
   - `createSubscription()` - Crear nueva suscripción
   - `upgradePlan()` - Mejorar plan actual
@@ -63,12 +69,14 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
   - `getPlanDetails()` - Obtener detalles de un plan
 
 #### Controladores
+
 - **subscriptionController** (`apps/api/src/controllers/subscriptionController.ts`)
   - Maneja todas las peticiones HTTP relacionadas con suscripciones
   - Endpoints para CRUD completo de suscripciones
   - Gestión de planes y límites
 
 #### Rutas
+
 - **subscriptionRoutes** (`apps/api/src/routes/subscriptionRoutes.ts`)
   - `GET /api/plans` - Obtener todos los planes
   - `GET /api/plans/:planType` - Detalles de un plan
@@ -83,6 +91,7 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
   - `GET /api/:id/limits` - Verificar límites
 
 #### Middlewares
+
 - **subscriptionMiddleware** (`apps/api/src/middlewares/subscriptionMiddleware.ts`)
   - `checkSubscriptionActive` - Verifica que la suscripción esté activa
   - `checkUnitsLimit` - Verifica límite de viviendas
@@ -94,12 +103,14 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
 ### Frontend (Web)
 
 #### API Client
+
 - **subscription.api.ts** (`apps/web/src/api/subscription.api.ts`)
   - Cliente HTTP para consumir endpoints de suscripciones
   - Funciones para todas las operaciones CRUD
   - Tipos TypeScript para suscripciones y planes
 
 #### Páginas
+
 - **Pricing** (`apps/web/src/pages/main/Pricing.tsx`)
   - Muestra los tres planes disponibles
   - Comparación de características
@@ -107,6 +118,7 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
   - Ruta: `/pricing`
 
 #### Componentes
+
 - **SubscriptionCard** (`apps/web/src/components/subscription/SubscriptionCard.tsx`)
   - Muestra información de suscripción actual
   - Estado del plan, uso de viviendas, características
@@ -117,64 +129,64 @@ SecurePass ahora incluye un modelo de ingresos B2B SaaS con tres planes de suscr
 ## Flujo de Trabajo
 
 ### 1. Registro de Residencial
+
 ```javascript
 // Crear nueva suscripción (período de prueba de 30 días)
 const subscription = await SubscriptionService.createSubscription({
-  residentialName: "Residencial El Bosque",
-  planType: PlanType.BASIC
+  residentialName: 'Residencial El Bosque',
+  planType: PlanType.BASIC,
 });
 ```
 
 ### 2. Crear Administrador
+
 ```javascript
 // El admin se vincula a la suscripción
 const admin = await UserService.createUser({
-  role: "admin",
-  name: "Juan Pérez",
-  auth: { email: "admin@residencial.com", password: "..." },
-  subscription: subscription._id
+  role: 'admin',
+  name: 'Juan Pérez',
+  auth: { email: 'admin@residencial.com', password: '...' },
+  subscription: subscription._id,
 });
 ```
 
 ### 3. Verificar Límites
+
 ```javascript
 // Middleware automático en rutas protegidas
-router.post('/residents',
-  authMiddleware,
-  checkSubscriptionActive,
-  checkUnitsLimit,
-  createResident
-);
+router.post('/residents', authMiddleware, checkSubscriptionActive, checkUnitsLimit, createResident);
 ```
 
 ### 4. Activar Suscripción
+
 ```javascript
 // Después de procesar el pago
 await SubscriptionService.activateSubscription(subscriptionId);
 ```
 
 ### 5. Mejorar Plan
+
 ```javascript
 // Usuario decide mejorar a Plan Pro
-await SubscriptionService.upgradePlan(
-  subscriptionId,
-  PlanType.PRO
-);
+await SubscriptionService.upgradePlan(subscriptionId, PlanType.PRO);
 ```
 
 ## Características Principales
 
 ### Período de Prueba
+
 - 30 días gratuitos al registrarse
 - Acceso completo a características del plan seleccionado
 - Estado: `trial`
 
 ### Gestión de Límites
+
 - Verificación automática de límites de viviendas
 - Bloqueo de funcionalidades según plan
 - Notificaciones cuando se acerca al límite
 
 ### Estados de Suscripción
+
 - `trial` - Período de prueba
 - `active` - Suscripción activa y pagada
 - `cancelled` - Cancelada por el usuario
@@ -182,12 +194,14 @@ await SubscriptionService.upgradePlan(
 - `inactive` - Inactiva
 
 ### Ciclos de Facturación
+
 - Mensual (`monthly`)
 - Anual (`yearly`) - Puede implementarse con descuento
 
 ## Integración con Pasarelas de Pago
 
 El sistema está preparado para integrar con:
+
 - Stripe
 - PayPal
 - MercadoPago
@@ -236,6 +250,7 @@ import SubscriptionCard from './components/subscription/SubscriptionCard';
 ## Soporte
 
 Para preguntas o soporte sobre el sistema de suscripciones:
+
 - Revisar la documentación de la API
 - Consultar los tipos TypeScript para estructura de datos
 - Verificar los middlewares para lógica de restricciones

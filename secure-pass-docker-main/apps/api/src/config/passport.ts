@@ -11,7 +11,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8000/api/auth/google/callback',
+      callbackURL:
+        process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8000/api/auth/google/callback',
     },
     async (accessToken: string, refreshToken: string, profile: Profile, done: any) => {
       try {
@@ -64,7 +65,8 @@ passport.use(
     {
       clientID: process.env.MICROSOFT_CLIENT_ID || '',
       clientSecret: process.env.MICROSOFT_CLIENT_SECRET || '',
-      callbackURL: process.env.MICROSOFT_CALLBACK_URL || 'http://localhost:8000/api/auth/microsoft/callback',
+      callbackURL:
+        process.env.MICROSOFT_CALLBACK_URL || 'http://localhost:8000/api/auth/microsoft/callback',
       scope: ['user.read'],
     },
     async (accessToken: string, refreshToken: string, profile: any, done: any) => {

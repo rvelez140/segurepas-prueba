@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { visitController } from "../controllers/visitController";
-import { upload } from "../middlewares/uploadMiddleware"
+import { Router } from 'express';
+import { visitController } from '../controllers/visitController';
+import { upload } from '../middlewares/uploadMiddleware';
 
 const router = Router();
 
@@ -26,7 +26,10 @@ router.put('/visits/exit', visitController.registerExit);
 router.get('/visits/qr/:qrId', visitController.getVisitByQR);
 
 // Realizar una consulta de las visitas de un residente (unica por documento)
-router.get('/visits/resident/document/:residentId', visitController.getVisitsByResidentGroupedByDocument);
+router.get(
+  '/visits/resident/document/:residentId',
+  visitController.getVisitsByResidentGroupedByDocument
+);
 
 // Realiza una consulta de todas las visitas de un residente
 router.get('/visits/resident/:residentId', visitController.getVisitsByResident);
@@ -41,13 +44,21 @@ router.get('/visits/document', visitController.getAllLatestVisitsGroupedByDocume
 router.get('/visits/document/:document', visitController.getLatestVisitByDocument);
 
 // Subida de imagen de visita
-router.post('/visits/upload-visit/:document', upload.single("image"), visitController.uploadVisitImage);
+router.post(
+  '/visits/upload-visit/:document',
+  upload.single('image'),
+  visitController.uploadVisitImage
+);
 
 // Subida de imagen de vehiculo
-router.post('/visits/upload-vehicle/:document', upload.single("image"), visitController.uploadVehicleImage);
+router.post(
+  '/visits/upload-vehicle/:document',
+  upload.single('image'),
+  visitController.uploadVehicleImage
+);
 
 // Eliminacion de todas las imagenes de cloudinary (eliminacion de folder 'visits')
-router.delete('/visits/upload', visitController.deleteAllVisitsImages)
+router.delete('/visits/upload', visitController.deleteAllVisitsImages);
 
 // Eliminacion de ambas imagenes (profile / vehiculo) de visita
 router.delete('/visits/upload/:document', visitController.deleteVisitImage);

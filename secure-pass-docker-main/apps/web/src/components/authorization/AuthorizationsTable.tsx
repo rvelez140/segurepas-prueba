@@ -1,18 +1,16 @@
-import { deleteVisit, getVisitsByResidentId } from "../../api/visit.api";
-import styles from "../../styles/visits.module.css";
-import { FaEdit, FaQrcode, FaShare, FaTimes, FaTrash } from "react-icons/fa";
-import { VisitResponse } from "../../types/visit.types";
-import React, { useEffect, useRef, useState } from "react";
-import QRModal from "./QRModal";
-import { loadToken, setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
-import EditVisitModal from "./EditVisitModal";
+import { deleteVisit, getVisitsByResidentId } from '../../api/visit.api';
+import styles from '../../styles/visits.module.css';
+import { FaEdit, FaQrcode, FaShare, FaTimes, FaTrash } from 'react-icons/fa';
+import { VisitResponse } from '../../types/visit.types';
+import React, { useEffect, useRef, useState } from 'react';
+import QRModal from './QRModal';
+import { loadToken, setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
+import EditVisitModal from './EditVisitModal';
 
 const AuthorizationsTable: React.FC = () => {
   const [visits, setVisits] = useState<VisitResponse[] | null>(null);
-  const [authorizations, setAuthorizations] = useState<VisitResponse[] | null>(
-    null
-  );
+  const [authorizations, setAuthorizations] = useState<VisitResponse[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedQR, setSelectedQR] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -20,9 +18,7 @@ const AuthorizationsTable: React.FC = () => {
   const [visitToEdit, setVisitToEdit] = useState<VisitResponse | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [visitToShare, setVisitToShare] = useState<VisitResponse | null>(null);
-  const [visitToDelete, setVisitToDelete] = useState<VisitResponse | null>(
-    null
-  );
+  const [visitToDelete, setVisitToDelete] = useState<VisitResponse | null>(null);
   const qrModalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,8 +38,7 @@ const AuthorizationsTable: React.FC = () => {
       setAuthorizations(
         visits?.filter(
           (visit) =>
-            visit.authorization.state === "pendiente" ||
-            visit.authorization.state === "aprobada"
+            visit.authorization.state === 'pendiente' || visit.authorization.state === 'aprobada'
         ) as VisitResponse[]
       );
     };
@@ -132,28 +127,26 @@ const AuthorizationsTable: React.FC = () => {
           </thead>
           <tbody>
             {authorizations?.map((a, i) => {
-              const isPending = a.authorization.state === "pendiente";
+              const isPending = a.authorization.state === 'pendiente';
               return (
                 <tr key={i} className={styles.authRow}>
                   <td>{a.visit.name}</td>
                   <td className={styles.hideableRow}>{a.visit.document}</td>
                   <td>
                     <span
-                      className={`${styles.badge} ${
-                        styles[a.authorization.state.toLowerCase()]
-                      }`}
+                      className={`${styles.badge} ${styles[a.authorization.state.toLowerCase()]}`}
                     >
                       {a.authorization.state.toUpperCase()}
                     </span>
                   </td>
                   <td className={styles.hideableRow}>
                     {a.authorization.exp instanceof Date
-                      ? a.authorization.exp.toLocaleDateString("es-ES", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
+                      ? a.authorization.exp.toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
                         })
-                      : " "}
+                      : ' '}
                   </td>
                   <td>
                     <div className={styles.actionGroup}>
@@ -165,16 +158,11 @@ const AuthorizationsTable: React.FC = () => {
                       >
                         <FaQrcode className={styles.actionAuthIcon} />
                       </button>
-                      <button
-                        className={styles.authBtn}
-                        onClick={() => handleShareClick(a)}
-                      >
+                      <button className={styles.authBtn} onClick={() => handleShareClick(a)}>
                         <FaShare className={styles.actionAuthIcon} />
                       </button>
                       <button
-                        className={`${styles.authBtn} ${
-                          !isPending ? styles.disabledBtn : ""
-                        }`}
+                        className={`${styles.authBtn} ${!isPending ? styles.disabledBtn : ''}`}
                         disabled={!isPending}
                         onClick={() => {
                           if (isPending) handleEditClick(a);
@@ -184,9 +172,7 @@ const AuthorizationsTable: React.FC = () => {
                       </button>
 
                       <button
-                        className={`${styles.authBtn} ${
-                          !isPending ? styles.disabledBtn : ""
-                        }`}
+                        className={`${styles.authBtn} ${!isPending ? styles.disabledBtn : ''}`}
                         disabled={!isPending}
                         onClick={() => {
                           if (isPending) handleDeleteClick(a);
@@ -217,17 +203,14 @@ const AuthorizationsTable: React.FC = () => {
             <div className={styles.modalHeader}>
               <h3>Compartir solicitud</h3>
               <div className={styles.modalCloseBtnContainer}>
-                <button
-                  className={styles.modalCloseBtn}
-                  onClick={handleCloseShareModal}
-                >
+                <button className={styles.modalCloseBtn} onClick={handleCloseShareModal}>
                   <FaTimes />
                 </button>
               </div>
             </div>
             <p>
-              Para compartir esta solicitud, abre el código QR y usa el botón
-              "Compartir" en la esquina superior izquierda.
+              Para compartir esta solicitud, abre el código QR y usa el botón "Compartir" en la
+              esquina superior izquierda.
             </p>
             <div className={styles.modalFooter}>
               <button
@@ -251,10 +234,7 @@ const AuthorizationsTable: React.FC = () => {
             <div className={styles.modalHeader}>
               <h3>Confirmar eliminación</h3>
               <div className={styles.modalCloseBtnContainer}>
-                <button
-                  className={styles.modalCloseBtn}
-                  onClick={handleCloseDeleteModal}
-                >
+                <button className={styles.modalCloseBtn} onClick={handleCloseDeleteModal}>
                   <FaTimes />
                 </button>
               </div>

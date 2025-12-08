@@ -1,13 +1,13 @@
-import { ParkingSpace } from "../models/ParkingSpace";
-import { ParkingAssignment } from "../models/ParkingAssignment";
+import { ParkingSpace } from '../models/ParkingSpace';
+import { ParkingAssignment } from '../models/ParkingAssignment';
 import {
   IParkingSpace,
   IParkingAssignment,
   ParkingType,
   ParkingStatus,
-} from "../interfaces/IParking";
-import { Types } from "mongoose";
-import { paginate, PaginationOptions, PaginatedResult } from "../utils/pagination";
+} from '../interfaces/IParking';
+import { Types } from 'mongoose';
+import { paginate, PaginationOptions, PaginatedResult } from '../utils/pagination';
 
 export class ParkingService {
   // === PARKING SPACES ===
@@ -33,7 +33,7 @@ export class ParkingService {
     if (filters?.floor) query.floor = filters.floor;
 
     return await ParkingSpace.find(query)
-      .populate("resident", "name apartment")
+      .populate('resident', 'name apartment')
       .sort({ number: 1 });
   }
 
@@ -51,7 +51,7 @@ export class ParkingService {
    * Obtener espacio por ID
    */
   static async getSpaceById(id: string): Promise<IParkingSpace | null> {
-    return await ParkingSpace.findById(id).populate("resident", "name apartment");
+    return await ParkingSpace.findById(id).populate('resident', 'name apartment');
   }
 
   /**
@@ -79,11 +79,7 @@ export class ParkingService {
     id: Types.ObjectId,
     status: ParkingStatus
   ): Promise<IParkingSpace | null> {
-    return await ParkingSpace.findByIdAndUpdate(
-      id,
-      { $set: { status } },
-      { new: true }
-    );
+    return await ParkingSpace.findByIdAndUpdate(id, { $set: { status } }, { new: true });
   }
 
   // === PARKING ASSIGNMENTS ===
@@ -101,11 +97,11 @@ export class ParkingService {
     // Verificar que el espacio esté disponible
     const space = await ParkingSpace.findById(data.parkingSpace);
     if (!space) {
-      throw new Error("Espacio de parqueo no encontrado");
+      throw new Error('Espacio de parqueo no encontrado');
     }
 
     if (space.status !== ParkingStatus.AVAILABLE) {
-      throw new Error("El espacio no está disponible");
+      throw new Error('El espacio no está disponible');
     }
 
     // Crear asignación
@@ -124,25 +120,23 @@ export class ParkingService {
     });
 
     return assignment.populate([
-      { path: "parkingSpace" },
-      { path: "visit" },
-      { path: "assignedBy", select: "name role" },
+      { path: 'parkingSpace' },
+      { path: 'visit' },
+      { path: 'assignedBy', select: 'name role' },
     ]);
   }
 
   /**
    * Registrar salida de parqueo
    */
-  static async recordExit(
-    assignmentId: string
-  ): Promise<IParkingAssignment | null> {
+  static async recordExit(assignmentId: string): Promise<IParkingAssignment | null> {
     const assignment = await ParkingAssignment.findById(assignmentId);
     if (!assignment) {
-      throw new Error("Asignación no encontrada");
+      throw new Error('Asignación no encontrada');
     }
 
     if (assignment.exitTime) {
-      throw new Error("La salida ya fue registrada");
+      throw new Error('La salida ya fue registrada');
     }
 
     assignment.exitTime = new Date();
@@ -154,9 +148,9 @@ export class ParkingService {
     });
 
     return assignment.populate([
-      { path: "parkingSpace" },
-      { path: "visit" },
-      { path: "assignedBy", select: "name role" },
+      { path: 'parkingSpace' },
+      { path: 'visit' },
+      { path: 'assignedBy', select: 'name role' },
     ]);
   }
 
@@ -165,9 +159,9 @@ export class ParkingService {
    */
   static async getActiveAssignments(): Promise<IParkingAssignment[]> {
     return await ParkingAssignment.find({ exitTime: { $exists: false } })
-      .populate("parkingSpace")
-      .populate("visit")
-      .populate("assignedBy", "name role")
+      .populate('parkingSpace')
+      .populate('visit')
+      .populate('assignedBy', 'name role')
       .sort({ entryTime: -1 });
   }
 
@@ -200,16 +194,16 @@ export class ParkingService {
     }
 
     const query = ParkingAssignment.find(queryFilter)
-      .populate("parkingSpace")
-      .populate("visit")
-      .populate("assignedBy", "name role");
+      .populate('parkingSpace')
+      .populate('visit')
+      .populate('assignedBy', 'name role');
 
     const countQuery = ParkingAssignment.countDocuments(queryFilter);
 
     return await paginate(query, countQuery, {
       ...paginationOptions,
-      sortBy: paginationOptions?.sortBy || "entryTime",
-      sortOrder: paginationOptions?.sortOrder || "desc",
+      sortBy: paginationOptions?.sortBy || 'entryTime',
+      sortOrder: paginationOptions?.sortOrder || 'desc',
     });
   }
 

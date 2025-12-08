@@ -5,18 +5,18 @@ export enum SubscriptionStatus {
   CANCELED = 'canceled',
   EXPIRED = 'expired',
   PENDING = 'pending',
-  TRIAL = 'trial'
+  TRIAL = 'trial',
 }
 
 export enum SubscriptionPlan {
   BASIC = 'basic',
   PREMIUM = 'premium',
-  ENTERPRISE = 'enterprise'
+  ENTERPRISE = 'enterprise',
 }
 
 export enum PaymentProvider {
   STRIPE = 'stripe',
-  PAYPAL = 'paypal'
+  PAYPAL = 'paypal',
 }
 
 export interface ISubscription extends Document {

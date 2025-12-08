@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import VisitFormContent from "./VisitFormContent";
+import React, { useEffect, useState } from 'react';
+import VisitFormContent from './VisitFormContent';
 import {
   authorizeVisit,
   getLastVisitsByResidentId,
   sendVisitNotificationEmail,
-} from "../../api/visit.api";
-import { transformFormtoVisitData } from "../../services/visit.service";
-import { VisitData, VisitResponse } from "../../types/visit.types";
-import { VisitFormModalProps } from "../../types/types";
-import styles from "../../styles/visitForm.module.css";
-import { loadToken, setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
+} from '../../api/visit.api';
+import { transformFormtoVisitData } from '../../services/visit.service';
+import { VisitData, VisitResponse } from '../../types/visit.types';
+import { VisitFormModalProps } from '../../types/types';
+import styles from '../../styles/visitForm.module.css';
+import { loadToken, setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
 
 const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    document: "",
-    reason: "",
+    name: '',
+    email: '',
+    document: '',
+    reason: '',
   });
   const [lastVisits, setLastVisits] = useState<VisitResponse[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,50 +40,44 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
     setError(null);
 
     if (!formData.document.trim()) {
-      setError("El documento de identidad es requerido");
+      setError('El documento de identidad es requerido');
       valid = false;
     } else if (formData.document.length !== 11) {
-      setError("Documento de identidad inválido");
+      setError('Documento de identidad inválido');
       valid = false;
     }
 
     if (!formData.email.trim()) {
-      setError("El email es requerido");
+      setError('El email es requerido');
       valid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError("El Email introducido no es válido");
+      setError('El Email introducido no es válido');
       valid = false;
     }
 
     if (!formData.name.trim()) {
-      setError("El nombre es requerido");
+      setError('El nombre es requerido');
       valid = false;
     }
 
     return valid;
   };
 
-  const handleNameChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (value === "" || /^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(value)) {
+    if (value === '' || /^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleDocumentChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (value === "" || /^[0-9]+$/.test(value)) {
+    if (value === '' || /^[0-9]+$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleLastVisitChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleLastVisitChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const selectedIndex = Number(e.target.value);
     if (lastVisits && !isNaN(selectedIndex) && selectedIndex >= 0) {
       const selectedVisit = lastVisits[selectedIndex];
@@ -95,17 +89,15 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
       });
     } else {
       setFormData({
-        name: "",
-        email: "",
-        document: "",
-        reason: "",
+        name: '',
+        email: '',
+        document: '',
+        reason: '',
       });
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -132,9 +124,9 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
       const visit = await authorizeVisit(visitData as VisitData);
       await sendVisitNotificationEmail(visit.data.id);
       setSuccess(true);
-      setFormData({ name: "", email: "", document: "", reason: "" });
+      setFormData({ name: '', email: '', document: '', reason: '' });
     } catch (err: any) {
-      setError("Ya existe una visita activa con este documento");
+      setError('Ya existe una visita activa con este documento');
     } finally {
       setLoading(false);
     }
@@ -145,11 +137,7 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContainer}>
-        <button
-          className={styles.modalCloseBtn}
-          onClick={onClose}
-          aria-label="Cerrar modal"
-        >
+        <button className={styles.modalCloseBtn} onClick={onClose} aria-label="Cerrar modal">
           &times;
         </button>
         <div className={styles.visitFormModal}>

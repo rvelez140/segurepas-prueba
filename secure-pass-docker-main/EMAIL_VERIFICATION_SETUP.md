@@ -43,12 +43,14 @@ Cuando un usuario intenta iniciar sesión:
 El usuario puede verificar de dos formas:
 
 #### Opción A: Código de Verificación
+
 1. Ingresa email y código de 6 dígitos
 2. Sistema valida el código
 3. Marca email como verificado
 4. Redirige al login
 
 #### Opción B: Enlace de Activación
+
 1. Usuario hace clic en el enlace del email
 2. Frontend captura el token de la URL
 3. Llama al backend para verificar
@@ -208,6 +210,7 @@ npm run dev
 ### Usuarios OAuth (Google/Microsoft)
 
 Los usuarios que se registran con Google o Microsoft:
+
 - **NO requieren verificación de email**
 - Se marcan automáticamente como `emailVerified: true`
 - Pueden acceder inmediatamente después del registro
@@ -216,6 +219,7 @@ Los usuarios que se registran con Google o Microsoft:
 ### Código Expirado
 
 Si el código o token expira (después de 24 horas):
+
 - El usuario ve un mensaje de error
 - Puede solicitar un nuevo código con "Reenviar Email"
 - Se genera un nuevo código y token
@@ -224,6 +228,7 @@ Si el código o token expira (después de 24 horas):
 ### Email No Recibido
 
 Si el usuario no recibe el email:
+
 1. Verificar carpeta de spam/correo no deseado
 2. Usar el botón "Reenviar Email"
 3. Verificar que `EMAIL_USER` y `EMAIL_PASSWORD` sean correctos
@@ -323,12 +328,14 @@ interface IUser {
 ### Error: "No se pudo enviar el email"
 
 **Posibles causas:**
+
 - Credenciales de Gmail incorrectas
 - 2-Step Verification no habilitada
 - App Password no generada o incorrecta
 - Firewall bloqueando puerto 587
 
 **Solución:**
+
 1. Verifica `EMAIL_USER` y `EMAIL_PASSWORD`
 2. Genera una nueva App Password
 3. Revisa logs del backend para detalles del error
@@ -336,11 +343,13 @@ interface IUser {
 ### Error: "Código de verificación incorrecto"
 
 **Posibles causas:**
+
 - Código ingresado incorrectamente
 - Código ya usado
 - Código expirado (>24 horas)
 
 **Solución:**
+
 - Verifica el código en el email
 - Solicita un nuevo código con "Reenviar Email"
 - Revisa que el email sea correcto
@@ -348,11 +357,13 @@ interface IUser {
 ### Error: "Token de verificación inválido"
 
 **Posibles causas:**
+
 - Enlace ya usado
 - Token expirado (>24 horas)
 - Token manipulado
 
 **Solución:**
+
 - Solicita un nuevo email de verificación
 - No modifiques el enlace del email
 

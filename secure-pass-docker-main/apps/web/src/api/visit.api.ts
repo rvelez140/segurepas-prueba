@@ -1,54 +1,50 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   AuthorizedResponse,
   UpdateVisitData,
   VisitAuthorizedResponse,
   VisitData,
   VisitResponse,
-} from "../types/visit.types";
-import { ReportData, ReportResponse } from "../types/report.types";
+} from '../types/visit.types';
+import { ReportData, ReportResponse } from '../types/report.types';
 
 const API_URL = process.env.REACT_APP_API;
 
-export const authorizeVisit = async (
-  data: VisitData
-): Promise<AuthorizedResponse> => {
+export const authorizeVisit = async (data: VisitData): Promise<AuthorizedResponse> => {
   try {
-    const response = await axios.post<AuthorizedResponse>(
-      `${API_URL}/visits/authorize`,
-      data
-    );
+    const response = await axios.post<AuthorizedResponse>(`${API_URL}/visits/authorize`, data);
     console.log(`Se autorizó la visita correctamente`, response.data);
     return response.data;
   } catch (error: any) {
-      console.error(`Error autorizando la visita`, error);
-      throw error;
+    console.error(`Error autorizando la visita`, error);
+    throw error;
   }
 };
 
 export const getVisit = async (id: string): Promise<VisitResponse> => {
-  try{
-    const response = await axios.get<VisitResponse>(
-      `${API_URL}/visits/${id}`
-    )
+  try {
+    const response = await axios.get<VisitResponse>(`${API_URL}/visits/${id}`);
     return response.data;
-  }catch(error: any){
+  } catch (error: any) {
     console.error(`Error al obtener la visita`, error);
     throw error;
   }
-}
+};
 
 export const deleteVisit = async (id: string): Promise<void> => {
-  try{
+  try {
     const response = await axios.delete(`${API_URL}/visits/${id}`);
     console.log(`La visita se eliminó correctamente`);
     return response.data;
-  }catch(error){
-    console.error(`Error al eliminar la visita`)
+  } catch (error) {
+    console.error(`Error al eliminar la visita`);
   }
-}
+};
 
-export const updateVisit = async (document: string, data: UpdateVisitData): Promise<VisitAuthorizedResponse> => {
+export const updateVisit = async (
+  document: string,
+  data: UpdateVisitData
+): Promise<VisitAuthorizedResponse> => {
   try {
     const response = await axios.put<VisitAuthorizedResponse>(
       `${API_URL}/visits/${document}`,
@@ -60,15 +56,11 @@ export const updateVisit = async (document: string, data: UpdateVisitData): Prom
     console.error(`Error actualizando la visita`, error);
     throw error;
   }
-}
+};
 
-export const getVisitsByResidentId = async (
-  id: string
-): Promise<VisitResponse[]> => {
+export const getVisitsByResidentId = async (id: string): Promise<VisitResponse[]> => {
   try {
-    const response = await axios.get<VisitResponse[]>(
-      `${API_URL}/visits/resident/${id}`
-    );
+    const response = await axios.get<VisitResponse[]>(`${API_URL}/visits/resident/${id}`);
     const visits = response.data.map((visit: any) => ({
       ...visit,
       createdAt: new Date(visit.createdAt),
@@ -76,9 +68,7 @@ export const getVisitsByResidentId = async (
       authorization: {
         ...visit.authorization,
         date: new Date(visit.authorization.date),
-        exp: visit.authorization.exp
-          ? new Date(visit.authorization.exp)
-          : undefined,
+        exp: visit.authorization.exp ? new Date(visit.authorization.exp) : undefined,
       },
       registry: visit.registry
         ? {
@@ -86,17 +76,13 @@ export const getVisitsByResidentId = async (
             entry: visit.registry.entry
               ? {
                   ...visit.registry.entry,
-                  date: visit.registry.entry.date
-                    ? new Date(visit.registry.entry.date)
-                    : undefined,
+                  date: visit.registry.entry.date ? new Date(visit.registry.entry.date) : undefined,
                 }
               : undefined,
             exit: visit.registry.exit
               ? {
                   ...visit.registry.exit,
-                  date: visit.registry.entry.date
-                    ? new Date(visit.registry.exit.date)
-                    : undefined,
+                  date: visit.registry.entry.date ? new Date(visit.registry.exit.date) : undefined,
                 }
               : undefined,
           }
@@ -109,13 +95,9 @@ export const getVisitsByResidentId = async (
   }
 };
 
-export const getLastVisitsByResidentId = async (
-  id: string
-): Promise<VisitResponse[]> => {
+export const getLastVisitsByResidentId = async (id: string): Promise<VisitResponse[]> => {
   try {
-    const response = await axios.get<VisitResponse[]>(
-      `${API_URL}/visits/resident/document/${id}`
-    );
+    const response = await axios.get<VisitResponse[]>(`${API_URL}/visits/resident/document/${id}`);
     const visits = response.data.map((visit: any) => ({
       ...visit,
       createdAt: new Date(visit.createdAt),
@@ -123,9 +105,7 @@ export const getLastVisitsByResidentId = async (
       authorization: {
         ...visit.authorization,
         date: new Date(visit.authorization.date),
-        exp: visit.authorization.exp
-          ? new Date(visit.authorization.exp)
-          : undefined,
+        exp: visit.authorization.exp ? new Date(visit.authorization.exp) : undefined,
       },
       registry: visit.registry
         ? {
@@ -133,17 +113,13 @@ export const getLastVisitsByResidentId = async (
             entry: visit.registry.entry
               ? {
                   ...visit.registry.entry,
-                  date: visit.registry.entry.date
-                    ? new Date(visit.registry.entry.date)
-                    : undefined,
+                  date: visit.registry.entry.date ? new Date(visit.registry.entry.date) : undefined,
                 }
               : undefined,
             exit: visit.registry.exit
               ? {
                   ...visit.registry.exit,
-                  date: visit.registry.entry.date
-                    ? new Date(visit.registry.exit.date)
-                    : undefined,
+                  date: visit.registry.entry.date ? new Date(visit.registry.exit.date) : undefined,
                 }
               : undefined,
           }
@@ -168,9 +144,7 @@ export const getAllVisits = async (): Promise<VisitResponse[]> => {
       authorization: {
         ...visit.authorization,
         date: new Date(visit.authorization.date),
-        exp: visit.authorization.exp
-          ? new Date(visit.authorization.exp)
-          : undefined,
+        exp: visit.authorization.exp ? new Date(visit.authorization.exp) : undefined,
       },
       registry: visit.registry
         ? {
@@ -178,17 +152,13 @@ export const getAllVisits = async (): Promise<VisitResponse[]> => {
             entry: visit.registry.entry
               ? {
                   ...visit.registry.entry,
-                  date: visit.registry.entry.date
-                    ? new Date(visit.registry.entry.date)
-                    : undefined,
+                  date: visit.registry.entry.date ? new Date(visit.registry.entry.date) : undefined,
                 }
               : undefined,
             exit: visit.registry.exit
               ? {
                   ...visit.registry.exit,
-                  date: visit.registry.exit.date
-                    ? new Date(visit.registry.exit.date)
-                    : undefined,
+                  date: visit.registry.exit.date ? new Date(visit.registry.exit.date) : undefined,
                 }
               : undefined,
           }
@@ -203,10 +173,7 @@ export const getAllVisits = async (): Promise<VisitResponse[]> => {
 export const sendVisitNotificationEmail = async (id: string): Promise<void> => {
   try {
     const response = await axios.post(`${API_URL}/visits/notify/${id}`);
-    console.log(
-      `Se enviaron los correos de notificación exitosamente: `,
-      response.data
-    );
+    console.log(`Se enviaron los correos de notificación exitosamente: `, response.data);
     return response.data;
   } catch (error) {
     console.error(`Ocurrió un error al enviar la notificación: `, error);
@@ -217,9 +184,9 @@ export const sendVisitNotificationEmail = async (id: string): Promise<void> => {
 export const getReport = async (data: ReportData): Promise<ReportResponse> => {
   try {
     const params = new URLSearchParams();
-    
+
     params.append('start', data.start.toISOString());
-    
+
     if (data.end) {
       params.append('end', data.end.toISOString());
     }
@@ -232,11 +199,8 @@ export const getReport = async (data: ReportData): Promise<ReportResponse> => {
       params.append('guard', data.guard);
     }
 
-    const response = await axios.get<ReportResponse>(
-      `${API_URL}/visits/report`,
-      { params }
-    );
-    
+    const response = await axios.get<ReportResponse>(`${API_URL}/visits/report`, { params });
+
     console.log(`Se ha generado el reporte exitosamente`);
     return response.data;
   } catch (error) {

@@ -28,7 +28,7 @@ export const initSentry = (app: Express) => {
     // Configuración de release
     release: process.env.SENTRY_RELEASE || 'securepass-api@1.0.0',
     // Filtrar información sensible
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // Remover información sensible de los eventos
       if (event.request?.headers) {
         delete event.request.headers.authorization;
@@ -50,7 +50,8 @@ export const setupSentryErrorHandler = (app: Express) => {
   app.use(Sentry.Handlers.errorHandler());
 
   // Middleware de error personalizado
-  app.use((err: any, req: any, res: any, next: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  app.use((err: any, _req: any, res: any, _next: any) => {
     console.error('Error capturado:', err);
 
     res.status(err.status || 500).json({

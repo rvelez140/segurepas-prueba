@@ -1,15 +1,15 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 export enum ParkingType {
-  RESIDENT = "resident",
-  VISITOR = "visitor",
+  RESIDENT = 'resident',
+  VISITOR = 'visitor',
 }
 
 export enum ParkingStatus {
-  AVAILABLE = "available",
-  OCCUPIED = "occupied",
-  RESERVED = "reserved",
-  MAINTENANCE = "maintenance",
+  AVAILABLE = 'available',
+  OCCUPIED = 'occupied',
+  RESERVED = 'reserved',
+  MAINTENANCE = 'maintenance',
 }
 
 export interface IParkingSpaceInput {

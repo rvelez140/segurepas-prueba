@@ -64,8 +64,8 @@ export const tenantBySubdomainMiddleware = async (
   try {
     // Obtener subdominio desde header, query o body
     const subdomain =
-      req.headers['x-company-subdomain'] as string ||
-      req.query.subdomain as string ||
+      (req.headers['x-company-subdomain'] as string) ||
+      (req.query.subdomain as string) ||
       req.body.subdomain;
 
     if (!subdomain) {

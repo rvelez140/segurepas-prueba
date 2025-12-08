@@ -1,25 +1,25 @@
 // Interface con tipo de response de usuario /api
 export interface User {
-    _id: string;
-    name: string;
-    email: string;
-    role: string;
-    apartment?: string;
-    tel?: string;
-    document?: string;
-    vehiclePlate?: string;
-    documentImage?: string;
-    vehiclePlateImage?: string;
-    shift?: string;
-    registerDate: string;
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  apartment?: string;
+  tel?: string;
+  document?: string;
+  vehiclePlate?: string;
+  documentImage?: string;
+  vehiclePlateImage?: string;
+  shift?: string;
+  registerDate: string;
 }
 
 // Tipo para opciones de select en formularios
 export interface UserSelectOption {
-  _id: string;       // _id del usuario
-  label: string;       // Nombre para mostrar
-  role?: string;     // Rol opcional
-  extraInfo?: string;  // Info adicional (ej: "Torre 1 - Apt 101")
+  _id: string; // _id del usuario
+  label: string; // Nombre para mostrar
+  role?: string; // Rol opcional
+  extraInfo?: string; // Info adicional (ej: "Torre 1 - Apt 101")
 }
 
 // Tipo para respuesta API de usuarios

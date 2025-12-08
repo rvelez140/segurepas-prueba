@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import styles from "../../styles/visits.module.css";
-import { VisitResponse } from "../../types/visit.types";
-import { getVisitsByResidentId } from "../../api/visit.api";
-import { loadToken, setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
+import React, { useEffect, useState } from 'react';
+import styles from '../../styles/visits.module.css';
+import { VisitResponse } from '../../types/visit.types';
+import { getVisitsByResidentId } from '../../api/visit.api';
+import { loadToken, setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
 
 const VisitHistory: React.FC = () => {
   const [visits, setVisits] = useState<VisitResponse[] | null>(null);
@@ -27,8 +27,7 @@ const VisitHistory: React.FC = () => {
       setPastVisits(
         visits?.filter(
           (visit) =>
-            visit.authorization.state === "finalizada" ||
-            visit.authorization.state === "rechazada"
+            visit.authorization.state === 'finalizada' || visit.authorization.state === 'rechazada'
         ) as VisitResponse[]
       );
     };
@@ -59,17 +58,15 @@ const VisitHistory: React.FC = () => {
               <tr key={i}>
                 <td>{v.visit.name}</td>
                 <td>
-                  {v.registry?.exit?.date?.toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                  {v.registry?.exit?.date?.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}
                 </td>
                 <td>
                   <span
-                    className={`${styles.badge} ${
-                      styles[v.authorization.state.toLowerCase()]
-                    }`}
+                    className={`${styles.badge} ${styles[v.authorization.state.toLowerCase()]}`}
                   >
                     {v.authorization.state.toUpperCase()}
                   </span>

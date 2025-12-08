@@ -10,7 +10,9 @@ export class AnalyticsController {
       const { startDate, endDate } = req.query;
 
       const period = {
-        startDate: startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        startDate: startDate
+          ? new Date(startDate as string)
+          : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         endDate: endDate ? new Date(endDate as string) : new Date(),
       };
 
@@ -37,7 +39,9 @@ export class AnalyticsController {
       const { startDate, endDate } = req.query;
 
       const period = {
-        startDate: startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        startDate: startDate
+          ? new Date(startDate as string)
+          : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         endDate: endDate ? new Date(endDate as string) : new Date(),
       };
 
@@ -84,7 +88,9 @@ export class AnalyticsController {
       const { startDate, endDate } = req.query;
 
       const period = {
-        startDate: startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        startDate: startDate
+          ? new Date(startDate as string)
+          : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         endDate: endDate ? new Date(endDate as string) : new Date(),
       };
 
@@ -111,7 +117,9 @@ export class AnalyticsController {
       const { startDate, endDate } = req.query;
 
       const period = {
-        startDate: startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        startDate: startDate
+          ? new Date(startDate as string)
+          : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         endDate: endDate ? new Date(endDate as string) : new Date(),
       };
 

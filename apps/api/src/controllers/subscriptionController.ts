@@ -75,19 +75,12 @@ export class SubscriptionController {
     try {
       const { userId, subscriptionId } = req.body;
 
-      const subscription = await paypalPaymentService.activateSubscription(
-        userId,
-        subscriptionId
-      );
+      const subscription = await paypalPaymentService.activateSubscription(userId, subscriptionId);
 
       // Enviar email de bienvenida
       const user = await UserService.findById(userId);
       if (user) {
-        await notificationService.sendSubscriptionWelcome(
-          user.auth.email,
-          user.name,
-          subscription
-        );
+        await notificationService.sendSubscriptionWelcome(user.auth.email, user.name, subscription);
       }
 
       res.status(200).json({
@@ -171,7 +164,10 @@ export class SubscriptionController {
       if (subscription.provider === 'stripe') {
         canceledSubscription = await stripePaymentService.cancelSubscription(subscriptionId);
       } else {
-        canceledSubscription = await paypalPaymentService.cancelSubscription(subscriptionId, reason);
+        canceledSubscription = await paypalPaymentService.cancelSubscription(
+          subscriptionId,
+          reason
+        );
       }
 
       // Enviar email de cancelación

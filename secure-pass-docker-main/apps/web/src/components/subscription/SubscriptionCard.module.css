@@ -145,7 +145,9 @@
 
 .progressFill {
   height: 100%;
-  transition: width 0.3s ease, background-color 0.3s ease;
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
   border-radius: 4px;
 }
 
@@ -219,7 +221,9 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
 
 .upgradeButton:hover {
@@ -266,7 +270,7 @@
   --border: #e2e8f0;
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --background: #1a202c;
   --card-background: #2d3748;
   --text: #f7fafc;
@@ -274,22 +278,22 @@
   --border: #4a5568;
 }
 
-[data-theme="dark"] .statusActive {
+[data-theme='dark'] .statusActive {
   background: #064e3b;
   color: #d1fae5;
 }
 
-[data-theme="dark"] .statusTrial {
+[data-theme='dark'] .statusTrial {
   background: #1e3a8a;
   color: #dbeafe;
 }
 
-[data-theme="dark"] .statusCancelled {
+[data-theme='dark'] .statusCancelled {
   background: #7f1d1d;
   color: #fee2e2;
 }
 
-[data-theme="dark"] .statusSuspended {
+[data-theme='dark'] .statusSuspended {
   background: #78350f;
   color: #fef3c7;
 }

@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
-import VisitFormContent from "./VisitFormContent";
-import { authorizeVisit, getLastVisitsByResidentId, sendVisitNotificationEmail } from "../../api/visit.api";
-import { transformFormtoVisitData } from "../../services/visit.service";
-import { VisitData, VisitResponse } from "../../types/visit.types";
-import styles from "../../styles/visitForm.module.css";
-import { getAuthenticatedUser } from "../../api/auth.api";
-import { loadToken, setAuthToken } from "../../services/auth.service";
+import React, { useEffect, useState } from 'react';
+import VisitFormContent from './VisitFormContent';
+import {
+  authorizeVisit,
+  getLastVisitsByResidentId,
+  sendVisitNotificationEmail,
+} from '../../api/visit.api';
+import { transformFormtoVisitData } from '../../services/visit.service';
+import { VisitData, VisitResponse } from '../../types/visit.types';
+import styles from '../../styles/visitForm.module.css';
+import { getAuthenticatedUser } from '../../api/auth.api';
+import { loadToken, setAuthToken } from '../../services/auth.service';
 
 const VisitFormCard: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    document: "",
-    reason: "",
+    name: '',
+    email: '',
+    document: '',
+    reason: '',
   });
   const [lastVisits, setLastVisits] = useState<VisitResponse[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,23 +39,23 @@ const VisitFormCard: React.FC = () => {
     setError(null);
 
     if (!formData.document.trim()) {
-      setError("El documento de identidad es requerido");
+      setError('El documento de identidad es requerido');
       valid = false;
     } else if (formData.document.length !== 11) {
-      setError("Documento de identidad inválido");
+      setError('Documento de identidad inválido');
       valid = false;
     }
 
     if (!formData.email.trim()) {
-      setError("El email es requerido");
+      setError('El email es requerido');
       valid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError("El Email introducido no es válido");
+      setError('El Email introducido no es válido');
       valid = false;
     }
 
     if (!formData.name.trim()) {
-      setError("El nombre es requerido");
+      setError('El nombre es requerido');
       valid = false;
     }
 
@@ -60,14 +64,14 @@ const VisitFormCard: React.FC = () => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (value === "" || /^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(value)) {
+    if (value === '' || /^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (value === "" || /^[0-9]+$/.test(value)) {
+    if (value === '' || /^[0-9]+$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -82,12 +86,12 @@ const VisitFormCard: React.FC = () => {
         document: selectedVisit.visit.document,
         reason: selectedVisit.authorization.reason,
       });
-    }else{
+    } else {
       setFormData({
-        name: "",
-        email: "",
-        document: "",
-        reason: "",
+        name: '',
+        email: '',
+        document: '',
+        reason: '',
       });
     }
   };
@@ -119,9 +123,9 @@ const VisitFormCard: React.FC = () => {
       const visit = await authorizeVisit(visitData as VisitData);
       await sendVisitNotificationEmail(visit.data.id);
       setSuccess(true);
-      setFormData({ name: "", email: "", document: "", reason: "" });
+      setFormData({ name: '', email: '', document: '', reason: '' });
     } catch (err: any) {
-      setError(err.message ? err.message : "Ocurrió un error al autorizar el visitante");
+      setError(err.message ? err.message : 'Ocurrió un error al autorizar el visitante');
     } finally {
       setLoading(false);
     }

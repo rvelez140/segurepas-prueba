@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from 'react';
 
 type SidebarContextType = {
   isOpen: boolean;
@@ -18,13 +18,11 @@ const SidebarContext = createContext<SidebarContextType>({
     backgroundColor: '',
     textColor: '',
     borderColor: '',
-    hoverColor: ''
+    hoverColor: '',
   },
 });
 
-export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => {
@@ -36,7 +34,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
     backgroundColor: 'var(--sidebar-bg)',
     textColor: 'var(--sidebar-text)',
     borderColor: 'var(--sidebar-border)',
-    hoverColor: 'var(--sidebar-hover)'
+    hoverColor: 'var(--sidebar-hover)',
   };
 
   return (

@@ -19,16 +19,17 @@ app.use(passport.initialize());
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 8000;
 
-mongoose.connect(MONGODB_URI)
-    .then(() => console.log('Se ha realizado la conexión con MongoDB'))
-    .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => console.log('Se ha realizado la conexión con MongoDB'))
+  .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes,  userRoutes, authRoutes, verificationRoutes, subscriptionRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, verificationRoutes, subscriptionRoutes);
 app.use('/api/companies', companyRoutes);
 
 app.get('/', (req, res) => {
-    res.send(
-        `<!DOCTYPE html>
+  res.send(
+    `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -84,10 +85,9 @@ app.get('/', (req, res) => {
     </div>
 </body>
 </html>`
-    );
-}); 
-
+  );
+});
 
 app.listen(PORT, () => {
-    console.log('Servidor corriendo en Puerto: ', PORT);
+  console.log('Servidor corriendo en Puerto: ', PORT);
 });

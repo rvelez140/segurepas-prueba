@@ -103,11 +103,7 @@ class CardPaymentService {
       if (paymentIntent.status === 'succeeded') {
         const user = await UserService.findById(userId);
         if (user) {
-          await notificationService.sendPaymentSuccess(
-            user.auth.email,
-            user.name,
-            payment
-          );
+          await notificationService.sendPaymentSuccess(user.auth.email, user.name, payment);
         }
       }
 
@@ -139,11 +135,7 @@ class CardPaymentService {
       // Enviar email de pago fallido
       const user = await UserService.findById(userId);
       if (user) {
-        await notificationService.sendPaymentFailed(
-          user.auth.email,
-          user.name,
-          payment
-        );
+        await notificationService.sendPaymentFailed(user.auth.email, user.name, payment);
       }
 
       throw error;
@@ -166,11 +158,7 @@ class CardPaymentService {
       if (paymentIntent.status === 'succeeded') {
         const user = await UserService.findById(payment.userId.toString());
         if (user) {
-          await notificationService.sendPaymentSuccess(
-            user.auth.email,
-            user.name,
-            payment
-          );
+          await notificationService.sendPaymentSuccess(user.auth.email, user.name, payment);
         }
       }
     }
@@ -240,7 +228,7 @@ class CardPaymentService {
       type: 'card',
     });
 
-    return paymentMethods.data.map(pm => ({
+    return paymentMethods.data.map((pm) => ({
       id: pm.id,
       brand: pm.card?.brand,
       last4: pm.card?.last4,
@@ -259,11 +247,7 @@ class CardPaymentService {
   /**
    * Procesa un reembolso
    */
-  async refundPayment(
-    paymentId: string,
-    amount?: number,
-    reason?: string
-  ): Promise<any> {
+  async refundPayment(paymentId: string, amount?: number, reason?: string): Promise<any> {
     const payment = await Payment.findById(paymentId);
     if (!payment) {
       throw new Error('Pago no encontrado');
@@ -308,11 +292,7 @@ class CardPaymentService {
   /**
    * Obtiene el historial de pagos de un usuario
    */
-  async getUserPayments(
-    userId: string,
-    limit: number = 10,
-    offset: number = 0
-  ): Promise<any> {
+  async getUserPayments(userId: string, limit: number = 10, offset: number = 0): Promise<any> {
     const payments = await Payment.find({ userId })
       .sort({ createdAt: -1 })
       .skip(offset)
@@ -340,13 +320,13 @@ class CardPaymentService {
    */
   private mapStripePaymentStatus(status: string): PaymentStatus {
     const statusMap: Record<string, PaymentStatus> = {
-      'succeeded': PaymentStatus.COMPLETED,
-      'processing': PaymentStatus.PENDING,
-      'requires_payment_method': PaymentStatus.PENDING,
-      'requires_confirmation': PaymentStatus.PENDING,
-      'requires_action': PaymentStatus.PENDING,
-      'canceled': PaymentStatus.CANCELED,
-      'requires_capture': PaymentStatus.PENDING,
+      succeeded: PaymentStatus.COMPLETED,
+      processing: PaymentStatus.PENDING,
+      requires_payment_method: PaymentStatus.PENDING,
+      requires_confirmation: PaymentStatus.PENDING,
+      requires_action: PaymentStatus.PENDING,
+      canceled: PaymentStatus.CANCELED,
+      requires_capture: PaymentStatus.PENDING,
     };
 
     return statusMap[status] || PaymentStatus.FAILED;
@@ -370,10 +350,7 @@ class CardPaymentService {
   /**
    * Asocia un método de pago a un cliente
    */
-  async attachPaymentMethodToCustomer(
-    paymentMethodId: string,
-    customerId: string
-  ): Promise<void> {
+  async attachPaymentMethodToCustomer(paymentMethodId: string, customerId: string): Promise<void> {
     await this.stripe.paymentMethods.attach(paymentMethodId, {
       customer: customerId,
     });

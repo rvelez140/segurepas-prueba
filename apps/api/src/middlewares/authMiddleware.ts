@@ -10,7 +10,7 @@ export const authMiddleware = async (
 ): Promise<void> => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+
     if (!token) {
       res.status(401).json({ error: 'Autenticación requerida' });
       return;
@@ -34,12 +34,12 @@ export const authMiddleware = async (
 export const roleMiddleware = (requiredRoles: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user;
-    
+
     if (!user || !requiredRoles.includes(user.role)) {
       res.status(403).json({ error: 'Acceso no autorizado' });
       return;
     }
-    
+
     next();
   };
 };

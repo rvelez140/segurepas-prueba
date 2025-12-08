@@ -1,25 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import { SubscriptionService } from "../services/SubscriptionService";
-import { User } from "../models/User";
-import { Admin } from "../interfaces/IUser";
+import { Request, Response, NextFunction } from 'express';
+import { SubscriptionService } from '../services/SubscriptionService';
+import { User } from '../models/User';
+import { Admin } from '../interfaces/IUser';
 
 /**
  * Middleware para verificar que la suscripción esté activa
  */
-export const checkSubscriptionActive = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const checkSubscriptionActive = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
-      return res.status(401).json({ error: "Usuario no autenticado" });
+      return res.status(401).json({ error: 'Usuario no autenticado' });
     }
 
     // Obtener el usuario y verificar si es admin
     const user = await User.findById(userId).exec();
-    if (!user || user.role !== "admin") {
+    if (!user || user.role !== 'admin') {
       // Si no es admin, no necesita verificación de suscripción
       return next();
     }
@@ -29,20 +25,20 @@ export const checkSubscriptionActive = async (
 
     if (!subscriptionId) {
       return res.status(403).json({
-        error: "No hay suscripción asociada a este residencial",
+        error: 'No hay suscripción asociada a este residencial',
       });
     }
 
     const subscription = await SubscriptionService.findById(subscriptionId);
     if (!subscription) {
       return res.status(404).json({
-        error: "Suscripción no encontrada",
+        error: 'Suscripción no encontrada',
       });
     }
 
     if (!subscription.isActive()) {
       return res.status(403).json({
-        error: "La suscripción no está activa",
+        error: 'La suscripción no está activa',
         status: subscription.status,
       });
     }
@@ -58,23 +54,19 @@ export const checkSubscriptionActive = async (
 /**
  * Middleware para verificar límites de viviendas
  */
-export const checkUnitsLimit = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const checkUnitsLimit = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const subscription = req.subscription;
 
     if (!subscription) {
       return res.status(403).json({
-        error: "No hay suscripción disponible",
+        error: 'No hay suscripción disponible',
       });
     }
 
     if (subscription.isOverLimit()) {
       return res.status(403).json({
-        error: "Se ha excedido el límite de viviendas del plan",
+        error: 'Se ha excedido el límite de viviendas del plan',
         currentUnits: subscription.currentUsage.unitsCount,
         maxUnits: subscription.limits.maxUnits,
         planType: subscription.planType,
@@ -97,13 +89,11 @@ export const checkFeatureAccess = (feature: string) => {
 
       if (!subscription) {
         return res.status(403).json({
-          error: "No hay suscripción disponible",
+          error: 'No hay suscripción disponible',
         });
       }
 
-      const hasAccess = subscription.hasFeature(
-        feature as keyof typeof subscription.limits
-      );
+      const hasAccess = subscription.hasFeature(feature as keyof typeof subscription.limits);
 
       if (!hasAccess) {
         return res.status(403).json({
@@ -124,19 +114,19 @@ export const checkFeatureAccess = (feature: string) => {
 /**
  * Middleware para verificar acceso a reportes avanzados
  */
-export const checkAdvancedReports = checkFeatureAccess("advancedReports");
+export const checkAdvancedReports = checkFeatureAccess('advancedReports');
 
 /**
  * Middleware para verificar acceso a múltiples entradas
  */
-export const checkMultipleEntries = checkFeatureAccess("multipleEntries");
+export const checkMultipleEntries = checkFeatureAccess('multipleEntries');
 
 /**
  * Middleware para verificar acceso a API
  */
-export const checkApiAccess = checkFeatureAccess("apiAccess");
+export const checkApiAccess = checkFeatureAccess('apiAccess');
 
 /**
  * Middleware para verificar acceso a marca blanca
  */
-export const checkWhiteLabel = checkFeatureAccess("whiteLabel");
+export const checkWhiteLabel = checkFeatureAccess('whiteLabel');

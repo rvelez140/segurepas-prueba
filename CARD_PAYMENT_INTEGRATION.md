@@ -7,23 +7,27 @@ Documentación completa para implementar pagos únicos con tarjeta de crédito/d
 ## 🎯 Funcionalidades
 
 ### Pagos Únicos (One-time Payments)
+
 - Procesamiento de pagos con tarjeta
 - Payment Intents de Stripe
 - Confirmación de pagos
 - Cancelación de pagos pendientes
 
 ### Gestión de Tarjetas
+
 - Guardar métodos de pago
 - Listar tarjetas guardadas
 - Eliminar métodos de pago
 - Setup Intents para guardar tarjetas sin cargo
 
 ### Gestión de Clientes
+
 - Crear clientes en Stripe
 - Asociar métodos de pago a clientes
 - Historial de pagos por usuario
 
 ### Reembolsos
+
 - Procesar reembolsos totales
 - Procesar reembolsos parciales
 - Registro de reembolsos
@@ -51,6 +55,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -80,6 +85,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -112,6 +118,7 @@ GET /api/payments/intent/:paymentIntentId/status
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -145,6 +152,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -160,6 +168,7 @@ GET /api/payments/methods/:customerId
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -207,6 +216,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -233,6 +243,7 @@ GET /api/payments/user/:userId?limit=10&offset=0
 ```
 
 **Respuesta:**
+
 ```json
 {
   "success": true,
@@ -303,25 +314,22 @@ function PaymentForm() {
           userId: currentUser.id,
           amount: 5000, // $50.00
           currency: 'USD',
-          description: 'Pago por servicio premium'
-        })
+          description: 'Pago por servicio premium',
+        }),
       });
 
       const { clientSecret } = await response.json();
 
       // 2. Confirmar el pago con Stripe
-      const { error, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: elements.getElement(CardElement),
-            billing_details: {
-              name: currentUser.name,
-              email: currentUser.email
-            }
-          }
-        }
-      );
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: currentUser.name,
+            email: currentUser.email,
+          },
+        },
+      });
 
       if (error) {
         console.error('Error:', error);
@@ -381,24 +389,21 @@ function SaveCardForm() {
     const response = await fetch('/api/payments/setup-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: currentUser.id })
+      body: JSON.stringify({ userId: currentUser.id }),
     });
 
     const { clientSecret } = await response.json();
 
     // 2. Confirmar Setup Intent
-    const { error, setupIntent } = await stripe.confirmCardSetup(
-      clientSecret,
-      {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: currentUser.name,
-            email: currentUser.email
-          }
-        }
-      }
-    );
+    const { error, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: currentUser.name,
+          email: currentUser.email,
+        },
+      },
+    });
 
     if (!error) {
       console.log('Tarjeta guardada:', setupIntent.payment_method);
@@ -408,8 +413,8 @@ function SaveCardForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paymentMethodId: setupIntent.payment_method,
-          customerId: currentUser.stripeCustomerId
-        })
+          customerId: currentUser.stripeCustomerId,
+        }),
       });
     }
   };
@@ -435,8 +440,8 @@ async function chargeStoredCard(paymentMethodId, amount) {
       paymentMethodId: paymentMethodId,
       amount: amount,
       currency: 'USD',
-      description: 'Cargo a tarjeta guardada'
-    })
+      description: 'Cargo a tarjeta guardada',
+    }),
   });
 
   const result = await response.json();
@@ -500,8 +505,8 @@ function PaymentScreen() {
       body: JSON.stringify({
         userId: currentUser.id,
         amount: 5000,
-        currency: 'USD'
-      })
+        currency: 'USD',
+      }),
     });
 
     const { clientSecret } = await response.json();
@@ -564,6 +569,7 @@ function PaymentScreen() {
 - **Tarjeta robada**: 4000 0000 0000 9979
 
 Para todas las tarjetas:
+
 - **Fecha de expiración**: Cualquier fecha futura
 - **CVV**: Cualquier 3 dígitos
 - **Código postal**: Cualquier código válido
@@ -577,7 +583,7 @@ Para todas las tarjetas:
 const result = await processPayment({
   userId: 'user_123',
   amount: 5000,
-  description: 'Pago de servicio premium'
+  description: 'Pago de servicio premium',
 });
 ```
 
@@ -588,10 +594,7 @@ const result = await processPayment({
 const setupIntent = await saveCard(userId);
 
 // 2. Usar tarjeta guardada
-const payment = await chargeStoredCard(
-  paymentMethodId,
-  amount
-);
+const payment = await chargeStoredCard(paymentMethodId, amount);
 ```
 
 ### 3. Reembolso
@@ -613,13 +616,13 @@ const cards = await getPaymentMethods(customerId);
 
 ## 📊 Diferencias con Suscripciones
 
-| Característica | Pago Único | Suscripción |
-|---------------|------------|-------------|
-| Frecuencia | Una vez | Recurrente |
-| Endpoint | `/api/payments/card` | `/api/subscriptions/stripe/checkout` |
-| Tipo | ONE_TIME | SUBSCRIPTION |
-| Renovación | No | Automática |
-| Webhooks | payment_intent.* | customer.subscription.* |
+| Característica | Pago Único           | Suscripción                          |
+| -------------- | -------------------- | ------------------------------------ |
+| Frecuencia     | Una vez              | Recurrente                           |
+| Endpoint       | `/api/payments/card` | `/api/subscriptions/stripe/checkout` |
+| Tipo           | ONE_TIME             | SUBSCRIPTION                         |
+| Renovación     | No                   | Automática                           |
+| Webhooks       | payment_intent.\*    | customer.subscription.\*             |
 
 ## 🔄 Flujo Completo
 
@@ -647,14 +650,17 @@ sequenceDiagram
 ## 🆘 Troubleshooting
 
 ### Error: "Invalid API Key"
+
 - Verifica que `STRIPE_SECRET_KEY` esté configurado
 - Asegúrate de usar la clave correcta (test vs live)
 
 ### Error: "Payment requires authentication"
+
 - Implementa 3D Secure en el frontend
 - Usa `confirmCardPayment` con `handleCardAction`
 
 ### Email no enviado
+
 - Verifica configuración de email en `.env`
 - Revisa logs del servidor
 

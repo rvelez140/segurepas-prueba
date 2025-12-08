@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import { UserService } from "../services/UserService";
-import { Admin, Guard, GuardShift, Resident } from "../interfaces/IUser";
+import { Request, Response, NextFunction } from 'express';
+import { UserService } from '../services/UserService';
+import { Admin, Guard, GuardShift, Resident } from '../interfaces/IUser';
 
 export const userController = {
   async getResidents(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserService.getUsersByRole("residente");
+      const users = await UserService.getUsersByRole('residente');
 
       const residents = users as Resident[];
 
@@ -26,7 +26,7 @@ export const userController = {
 
   async getGuards(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserService.getUsersByRole("guardia");
+      const users = await UserService.getUsersByRole('guardia');
 
       const guards = users as Guard[];
 
@@ -46,7 +46,7 @@ export const userController = {
 
   async getAdmins(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserService.getUsersByRole("admin");
+      const users = await UserService.getUsersByRole('admin');
 
       const admins = users as Admin[];
 
@@ -91,18 +91,18 @@ export const userController = {
 
         // Propiedades específicas de roles
         switch (user.role) {
-          case "residente":
+          case 'residente':
             return {
               ...baseResponse,
               apartment: (user as Resident).apartment,
               tel: (user as Resident).tel,
             };
-          case "guardia":
+          case 'guardia':
             return {
               ...baseResponse,
               shift: (user as Guard).shift,
             };
-          case "admin":
+          case 'admin':
             return {
               ...baseResponse,
               lastAccess: (user as Admin).lastAccess,
@@ -118,37 +118,28 @@ export const userController = {
     }
   },
 
-  async updateUser(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const updateData = req.body;
 
       // Validaciones específicas por rol
-      if (
-        updateData.role === "residente" &&
-        (!updateData.apartment || !updateData.tel)
-      ) {
-        res
-          .status(400)
-          .json({
-            message: "Apartamento y teléfono son requeridos para residentes",
-          });
+      if (updateData.role === 'residente' && (!updateData.apartment || !updateData.tel)) {
+        res.status(400).json({
+          message: 'Apartamento y teléfono son requeridos para residentes',
+        });
         return;
       }
 
-      if (updateData.role === "guardia" && !updateData.shift) {
-        res.status(400).json({ message: "Turno es requerido para guardias" });
+      if (updateData.role === 'guardia' && !updateData.shift) {
+        res.status(400).json({ message: 'Turno es requerido para guardias' });
         return;
       }
 
       const updatedUser = await UserService.updateUser(id, updateData);
 
       if (!updatedUser) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        res.status(404).json({ message: 'Usuario no encontrado' });
         return;
       }
 
@@ -158,14 +149,14 @@ export const userController = {
         name: updatedUser.name,
         email: updatedUser.auth.email,
         role: updatedUser.role,
-        ...(updatedUser.role === "residente" && {
+        ...(updatedUser.role === 'residente' && {
           apartment: updatedUser.apartment,
           tel: updatedUser.tel,
         }),
-        ...(updatedUser.role === "guardia" && {
+        ...(updatedUser.role === 'guardia' && {
           shift: updatedUser.shift,
         }),
-        ...(updatedUser.role === "admin" && {
+        ...(updatedUser.role === 'admin' && {
           lastAccess: updatedUser.lastAccess,
         }),
         updateDate: updatedUser.updateDate,
@@ -183,7 +174,7 @@ export const userController = {
       const deletedUser = await UserService.deleteUser(id);
 
       if (!deletedUser) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        res.status(404).json({ message: 'Usuario no encontrado' });
         return;
       }
 
@@ -193,7 +184,7 @@ export const userController = {
         email: deletedUser.auth.email,
         role: deletedUser.role,
       };
-      res.json({ message: "Usuario eliminado correctamente", user });
+      res.json({ message: 'Usuario eliminado correctamente', user });
       res.status(204).send();
     } catch (error) {
       next(error);

@@ -168,7 +168,7 @@
   .statsGrid {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .userInfoGrid,
   .highlightCard {
     grid-template-columns: 1fr;
@@ -320,8 +320,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Select input styles */

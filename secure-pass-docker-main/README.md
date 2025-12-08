@@ -3,6 +3,7 @@
 ## 📌 Sistema de Gestión de Visitantes para Residencias
 
 Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
+
 - **Frontend Web** (React)
 - **Aplicación Móvil** (React Native + Expo)
 - **Backend API** (Node.js + Express + MongoDB)
@@ -10,16 +11,19 @@ Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
 ## 🚀 Tecnologías
 
 ### Frontend Web
+
 - Typescript, HTML, CSS
 - React
 - Axios para conexión API
 
 ### Aplicación Móvil
+
 - Typescript
 - React Native + Expo
 - Axios para conexión API
 
 ### Backend API
+
 - Node.js + Express
 - MongoDB Atlas
 - Autenticación JWT
@@ -28,20 +32,20 @@ Repositorio monorepo que contiene las tres aplicaciones del proyecto SecurePass:
 
 ## 👥 Roles de Usuarios
 
-| Usuario              | Funcionalidades |
-|----------------------|----------------|
-| **Residente**        | Crear/autorizar visitas, Generar QR's, Editar autorizaciones, Ver historial de visitas |
-| **Guardia**          | Escanear QR's, Registrar entradas/salidas, Ver residentes y sus historiales |
-| **Administrador**    | Gestionar usuarios, Generar reportes, Configurar sistema, Cambiar roles |
+| Usuario           | Funcionalidades                                                                        |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| **Residente**     | Crear/autorizar visitas, Generar QR's, Editar autorizaciones, Ver historial de visitas |
+| **Guardia**       | Escanear QR's, Registrar entradas/salidas, Ver residentes y sus historiales            |
+| **Administrador** | Gestionar usuarios, Generar reportes, Configurar sistema, Cambiar roles                |
 
 ## 🛠️ Funcionalidades Principales
 
-| Módulo               | Descripción |
-|----------------------|------------|
-| **Autenticación**    | Registro, login, gestión de roles (residente/guardia/admin) |
-| **Visitas**          | Autorizaciones, registro de entradas/salidas, validación QR |
-| **Imágenes**         | Subida de fotos de vehículos/visitantes |
-| **Reportes**         | Historial de visitas y generación de PDFs |
+| Módulo            | Descripción                                                 |
+| ----------------- | ----------------------------------------------------------- |
+| **Autenticación** | Registro, login, gestión de roles (residente/guardia/admin) |
+| **Visitas**       | Autorizaciones, registro de entradas/salidas, validación QR |
+| **Imágenes**      | Subida de fotos de vehículos/visitantes                     |
+| **Reportes**      | Historial de visitas y generación de PDFs                   |
 
 ## 🏗️ Estructura del Monorepo
 
@@ -71,6 +75,7 @@ npm run start:all
 ### Opción 2: Ejecutar cada aplicación por separado
 
 **Backend API**:
+
 ```bash
 cd apps/api
 npm install
@@ -78,6 +83,7 @@ npm start
 ```
 
 **Frontend Web**:
+
 ```bash
 cd apps/web
 npm install
@@ -85,6 +91,7 @@ npm start
 ```
 
 **Aplicación Móvil**:
+
 ```bash
 cd apps/mobile
 npm install
@@ -137,6 +144,6 @@ git push origin main
 
 - Configurar variables de entorno en `.env`:
 
-
 ## 📄 Licencia
+
 [MIT License] - Ver archivo LICENSE para más detalles.

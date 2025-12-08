@@ -31,35 +31,40 @@ SecurePass es ahora una aplicación **multi-tenant** que permite gestionar múlt
 ## 🎯 Características Multi-Tenant
 
 ### Aislamiento de Datos
+
 - Cada empresa tiene acceso únicamente a sus propios datos
 - Middleware automático de filtrado por empresa
 - Validación estricta de permisos
 
 ### Personalización por Empresa
+
 - **Logo personalizado**: Subido y almacenado en Cloudinary
 - **Colores**: Tema personalizable (primario y secundario)
 - **Subdominio único**: `empresa1.securepass.com`
 - **Configuración de email**: Dominios permitidos
 
 ### Planes de Suscripción
-| Plan | Usuarios | Residentes | Precio |
-|------|----------|------------|--------|
-| Free | 10 | 50 | Gratis |
-| Basic | 50 | 200 | $29/mes |
-| Premium | 200 | 1000 | $99/mes |
-| Enterprise | Ilimitado | Ilimitado | Custom |
+
+| Plan       | Usuarios  | Residentes | Precio  |
+| ---------- | --------- | ---------- | ------- |
+| Free       | 10        | 50         | Gratis  |
+| Basic      | 50        | 200        | $29/mes |
+| Premium    | 200       | 1000       | $99/mes |
+| Enterprise | Ilimitado | Ilimitado  | Custom  |
 
 ---
 
 ## 💻 Requisitos
 
 ### Software Requerido
+
 - **Docker**: 20.10 o superior
 - **Docker Compose**: 2.0 o superior
 - **Node.js**: 18+ (solo para desarrollo sin Docker)
 - **MongoDB**: 7.0 (incluido en Docker)
 
 ### Servicios Externos
+
 - **Cloudinary**: Para almacenamiento de imágenes (logos)
   - [Crear cuenta gratuita](https://cloudinary.com/users/register/free)
 - **SMTP**: Para envío de emails (Gmail, SendGrid, etc.)
@@ -149,6 +154,7 @@ docker-compose down
 ```
 
 **Acceder a:**
+
 - Frontend: http://localhost:3000
 - API: http://localhost:8000
 - MongoDB: localhost:27017
@@ -208,12 +214,14 @@ npm run migrate
 ```
 
 **¿Qué hace el script?**
+
 1. Crea una empresa por defecto
 2. Asigna todos los usuarios existentes a esa empresa
 3. Asigna todas las visitas existentes a esa empresa
 4. Reporta estadísticas de migración
 
 **Salida esperada:**
+
 ```
 🚀 Iniciando migración a multi-tenant...
 ✅ Empresa creada: Mi Empresa (default)
@@ -238,6 +246,7 @@ npm run migrate
 ```http
 GET /api/companies/subdomain/:subdomain
 ```
+
 Obtener información de empresa por subdominio
 
 #### Protegidas (requieren autenticación)
@@ -312,21 +321,21 @@ Authorization: Bearer {token}
 const response = await fetch('http://localhost:8000/api/companies', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer ' + token,
-    'Content-Type': 'application/json'
+    Authorization: 'Bearer ' + token,
+    'Content-Type': 'application/json',
   },
   body: JSON.stringify({
     name: 'Residencial Las Palmas',
     subdomain: 'las-palmas',
     contact: {
       email: 'admin@laspalmas.com',
-      phone: '+1809-123-4567'
+      phone: '+1809-123-4567',
     },
     settings: {
       primaryColor: '#2ecc71',
-      secondaryColor: '#27ae60'
-    }
-  })
+      secondaryColor: '#27ae60',
+    },
+  }),
 });
 
 // Subir logo
@@ -336,9 +345,9 @@ formData.append('logo', logoFile);
 const logoResponse = await fetch(`http://localhost:8000/api/companies/${companyId}/logo`, {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer ' + token
+    Authorization: 'Bearer ' + token,
   },
-  body: formData
+  body: formData,
 });
 ```
 
@@ -368,6 +377,7 @@ const logoResponse = await fetch(`http://localhost:8000/api/companies/${companyI
 ### Problema: No se conecta a MongoDB
 
 **Solución:**
+
 ```bash
 # Verificar que MongoDB está corriendo
 docker-compose ps mongodb
@@ -382,11 +392,13 @@ docker-compose restart mongodb
 ### Problema: Error al subir logo
 
 **Posibles causas:**
+
 1. Credenciales de Cloudinary incorrectas
 2. Límite de tamaño excedido (max: 10MB)
 3. Formato de imagen no soportado
 
 **Solución:**
+
 ```bash
 # Verificar variables de Cloudinary
 docker-compose exec api printenv | grep CLOUDINARY
@@ -398,6 +410,7 @@ docker-compose logs -f api
 ### Problema: "Empresa no encontrada"
 
 **Solución:**
+
 ```bash
 # Ejecutar migración
 docker-compose exec api npm run migrate
@@ -413,6 +426,7 @@ docker-compose exec mongodb mongosh
 **Causa:** Usuario sin empresa asignada
 
 **Solución:**
+
 ```bash
 # Verificar usuario
 docker-compose exec mongodb mongosh
@@ -475,6 +489,7 @@ docker volume ls
    - Descomentar sección HTTPS en `nginx/nginx.conf`
 
 3. **Firewall:**
+
    ```bash
    # Permitir solo puertos necesarios
    ufw allow 80/tcp

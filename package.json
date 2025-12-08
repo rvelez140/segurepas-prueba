@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "start:web": "cd apps/web && npm start",
     "start:mobile": "cd apps/mobile && npm start",

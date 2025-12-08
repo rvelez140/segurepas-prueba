@@ -3,6 +3,7 @@
 ## ⚡ Resumen en 30 segundos
 
 Este proyecto tiene **auto-despliegue configurado**:
+
 - ✅ Push a `main` o `production` → Deploy automático
 - ✅ Tests y validaciones antes de deployar
 - ✅ Health checks obligatorios
@@ -83,6 +84,7 @@ cat ~/.ssh/github_actions
 Ve a: `https://github.com/rvelez140/segurepas-prueba/settings/secrets/actions`
 
 Agrega:
+
 - `SERVER_HOST` → IP del servidor
 - `SERVER_USER` → Usuario SSH
 - `SERVER_SSH_KEY` → Contenido de `~/.ssh/github_actions`
@@ -193,6 +195,7 @@ Push to Git
 ## ⚠️ ¿Qué evita el Auto-Despliegue?
 
 El sistema **NO desplegará** si:
+
 - ❌ Falla la construcción de imágenes Docker
 - ❌ Tests fallan (cuando estén configurados)
 - ❌ Health check de API falla
@@ -200,6 +203,7 @@ El sistema **NO desplegará** si:
 - ❌ Error en la conexión SSH
 
 Si algo falla **DESPUÉS** del deploy:
+
 - 🔄 **Rollback automático** a versión anterior
 - 📋 Logs disponibles en GitHub Actions
 
@@ -207,31 +211,35 @@ Si algo falla **DESPUÉS** del deploy:
 
 ## 🔐 Credenciales - Resumen
 
-| Credencial | Dónde Obtenerla | Dónde Configurarla |
-|-----------|-----------------|-------------------|
-| **SERVER_HOST** | IP de tu servidor VPS | GitHub Secrets |
-| **SERVER_USER** | Usuario del servidor | GitHub Secrets |
-| **SERVER_SSH_KEY** | `ssh-keygen` | GitHub Secrets |
-| **EMAIL_PASSWORD** | [Gmail App Passwords](https://myaccount.google.com/apppasswords) | .env en servidor |
-| **GOOGLE_CLIENT_ID/SECRET** | [Google Cloud Console](https://console.cloud.google.com) | .env en servidor |
-| **CLOUDINARY_***  | [Cloudinary Dashboard](https://cloudinary.com/console) | .env en servidor |
-| **MONGO_ROOT_PASSWORD** | Generar: `openssl rand -base64 32` | .env en servidor |
-| **JWT_SECRET** | Generar: `openssl rand -base64 64` | .env en servidor |
+| Credencial                  | Dónde Obtenerla                                                  | Dónde Configurarla |
+| --------------------------- | ---------------------------------------------------------------- | ------------------ |
+| **SERVER_HOST**             | IP de tu servidor VPS                                            | GitHub Secrets     |
+| **SERVER_USER**             | Usuario del servidor                                             | GitHub Secrets     |
+| **SERVER_SSH_KEY**          | `ssh-keygen`                                                     | GitHub Secrets     |
+| **EMAIL_PASSWORD**          | [Gmail App Passwords](https://myaccount.google.com/apppasswords) | .env en servidor   |
+| **GOOGLE_CLIENT_ID/SECRET** | [Google Cloud Console](https://console.cloud.google.com)         | .env en servidor   |
+| **CLOUDINARY\_\***          | [Cloudinary Dashboard](https://cloudinary.com/console)           | .env en servidor   |
+| **MONGO_ROOT_PASSWORD**     | Generar: `openssl rand -base64 32`                               | .env en servidor   |
+| **JWT_SECRET**              | Generar: `openssl rand -base64 64`                               | .env en servidor   |
 
 ---
 
 ## 🆘 Problemas Comunes
 
 ### "Permission denied (publickey)"
+
 → Verificar que `SERVER_SSH_KEY` en GitHub Secrets es correcto
 
 ### "Health check failed"
+
 → Ver logs: `docker-compose logs api` / `docker-compose logs web`
 
 ### "Connection refused"
+
 → Verificar firewall: `sudo ufw allow 22,80,443/tcp`
 
 ### El sitio no carga después del deploy
+
 ```bash
 # Verificar estado
 docker-compose -f docker-compose.production.yml ps
@@ -271,6 +279,7 @@ git push origin main
 ```
 
 Se ejecutará automáticamente:
+
 1. ✅ Tests
 2. ✅ Build de imágenes
 3. ✅ Deploy al servidor

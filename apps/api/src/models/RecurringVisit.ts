@@ -1,9 +1,5 @@
-import mongoose, { Schema, Model } from "mongoose";
-import {
-  IRecurringVisit,
-  RecurrencePattern,
-  DayOfWeek,
-} from "../interfaces/IRecurringVisit";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IRecurringVisit, RecurrencePattern, DayOfWeek } from '../interfaces/IRecurringVisit';
 
 const recurringVisitSchema: Schema = new mongoose.Schema(
   {
@@ -31,7 +27,7 @@ const recurringVisitSchema: Schema = new mongoose.Schema(
     },
     resident: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
@@ -46,7 +42,7 @@ const recurringVisitSchema: Schema = new mongoose.Schema(
         validator: function (arr: number[]) {
           return arr.every((day) => day >= 0 && day <= 6);
         },
-        message: "Días de la semana inválidos",
+        message: 'Días de la semana inválidos',
       },
     },
     dayOfMonth: {
@@ -116,9 +112,11 @@ const recurringVisitSchema: Schema = new mongoose.Schema(
 
 // Índices compuestos
 recurringVisitSchema.index({ resident: 1, isActive: 1 });
-recurringVisitSchema.index({ "visit.document": 1, isActive: 1 });
+recurringVisitSchema.index({ 'visit.document': 1, isActive: 1 });
 
-export const RecurringVisit: Model<IRecurringVisit> =
-  mongoose.model<IRecurringVisit>("RecurringVisit", recurringVisitSchema);
+export const RecurringVisit: Model<IRecurringVisit> = mongoose.model<IRecurringVisit>(
+  'RecurringVisit',
+  recurringVisitSchema
+);
 
 export default RecurringVisit;

@@ -12,7 +12,7 @@ Edita `apps/desktop/package.json` y actualiza el número de versión:
 
 ```json
 {
-  "version": "1.0.0"  // Cambia a tu nueva versión
+  "version": "1.0.0" // Cambia a tu nueva versión
 }
 ```
 
@@ -72,16 +72,19 @@ Edita `package.json` y cambia la versión.
 ### Paso 3: Compilar Instaladores
 
 **En Windows:**
+
 ```bash
 npm run dist:win
 ```
 
 **En Linux:**
+
 ```bash
 npm run dist:linux
 ```
 
 O ambos (si tienes ambos sistemas):
+
 ```bash
 npm run dist
 ```
@@ -154,10 +157,12 @@ Copia y edita este template para tus releases:
 ## 📥 Instalación
 
 **Windows:**
+
 - Descarga `SecurePass-Setup-X.X.X.exe` para instalación completa
 - O `SecurePass-X.X.X-portable.exe` para versión portable
 
 **Linux:**
+
 - **Ubuntu/Debian:** `sudo dpkg -i securepass-desktop_X.X.X_amd64.deb`
 - **Fedora/RHEL:** `sudo rpm -i securepass-desktop-X.X.X.x86_64.rpm`
 - **Universal:** `chmod +x SecurePass-X.X.X.AppImage && ./SecurePass-X.X.X.AppImage`
@@ -243,6 +248,7 @@ gh release create v1.0.0 \
 ## 📞 Soporte
 
 Si tienes problemas publicando un release:
+
 - Revisa [RELEASE.md](RELEASE.md) para más detalles
 - Abre un issue en GitHub
 - Consulta la documentación de [electron-builder](https://www.electron.build/)

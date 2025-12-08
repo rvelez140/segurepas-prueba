@@ -97,6 +97,7 @@ npm install
 ```
 
 Las dependencias de Google OAuth ya están incluidas en el `package.json`:
+
 - `passport`
 - `passport-google-oauth20`
 - `@types/passport`
@@ -157,6 +158,7 @@ El frontend se ejecutará en `http://localhost:5173`
 ## Comportamiento para Usuarios Nuevos
 
 Cuando un usuario se autentica con Google por primera vez:
+
 - Se crea una cuenta automáticamente
 - El rol por defecto es **"residente"**
 - Los campos `apartment` y `tel` quedan vacíos
@@ -165,18 +167,22 @@ Cuando un usuario se autentica con Google por primera vez:
 ## Troubleshooting
 
 ### Error: "redirect_uri_mismatch"
+
 - Verifica que la URL de callback en Google Cloud Console coincida exactamente con `GOOGLE_CALLBACK_URL`
 - Asegúrate de incluir el protocolo (`http://` o `https://`)
 
 ### Error: "Invalid credentials"
+
 - Verifica que `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` estén correctos
 - Asegúrate de que no haya espacios antes o después de los valores
 
 ### El usuario no es redirigido después del login
+
 - Verifica que `FRONTEND_URL` en el backend esté configurado correctamente
 - Revisa la consola del navegador para errores de CORS
 
 ### Error: "Usuario no puede ser guardia"
+
 - Los usuarios con rol "guardia" no pueden acceder a la aplicación web
 - Solo residentes y administradores tienen acceso
 

@@ -1,5 +1,5 @@
-import { v2 as cloudinary } from "cloudinary";
-import { Readable } from "stream";
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -10,16 +10,13 @@ cloudinary.config({
 export class CloudinaryService {
   static async uploadImage(buffer: Buffer, folder: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { folder },
-        (error, result) => {
-          if (error) return reject(error);
-          if (!result?.secure_url) {
-            return reject(new Error("No se pudo obtener la URL de la imagen"));
-          }
-          resolve(result.secure_url);
+      const uploadStream = cloudinary.uploader.upload_stream({ folder }, (error, result) => {
+        if (error) return reject(error);
+        if (!result?.secure_url) {
+          return reject(new Error('No se pudo obtener la URL de la imagen'));
         }
-      );
+        resolve(result.secure_url);
+      });
 
       const readableStream = new Readable();
       readableStream.push(buffer);
@@ -29,13 +26,13 @@ export class CloudinaryService {
   }
 
   static async deleteImage(url: string): Promise<void> {
-    const publicId = url.split("/").pop()?.split(".")[0];
+    const publicId = url.split('/').pop()?.split('.')[0];
     if (!publicId) return;
 
     await cloudinary.uploader.destroy(publicId);
   }
 
-    static async deleteFolder(folderPath: string): Promise<{
+  static async deleteFolder(folderPath: string): Promise<{
     success: boolean;
     message: string;
     deletedCount?: number;
@@ -45,7 +42,7 @@ export class CloudinaryService {
       const resources = await cloudinary.api.resources({
         type: 'upload',
         prefix: folderPath,
-        max_results: 500
+        max_results: 500,
       });
 
       let deletedCount = 0;
@@ -62,13 +59,13 @@ export class CloudinaryService {
       return {
         success: true,
         message: `Folder ${folderPath} eliminado con ${deletedCount} archivos`,
-        deletedCount
+        deletedCount,
       };
     } catch (error: any) {
       console.error(`Error eliminando folder ${folderPath}:`, error);
       return {
         success: false,
-        message: `Error al eliminar folder: ${error.message}`
+        message: `Error al eliminar folder: ${error.message}`,
       };
     }
   }

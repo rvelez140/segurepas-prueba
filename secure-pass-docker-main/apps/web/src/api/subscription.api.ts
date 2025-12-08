@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export interface Plan {
   name: string;
@@ -112,9 +112,7 @@ export const upgradePlan = async (
 };
 
 // Activar suscripción
-export const activateSubscription = async (
-  id: string
-): Promise<Subscription> => {
+export const activateSubscription = async (id: string): Promise<Subscription> => {
   const response = await axios.post(`${API_URL}/${id}/activate`);
   return response.data;
 };
@@ -126,18 +124,13 @@ export const cancelSubscription = async (id: string): Promise<Subscription> => {
 };
 
 // Suspender suscripción
-export const suspendSubscription = async (
-  id: string
-): Promise<Subscription> => {
+export const suspendSubscription = async (id: string): Promise<Subscription> => {
   const response = await axios.post(`${API_URL}/${id}/suspend`);
   return response.data;
 };
 
 // Actualizar uso
-export const updateUsage = async (
-  id: string,
-  unitsCount: number
-): Promise<Subscription> => {
+export const updateUsage = async (id: string, unitsCount: number): Promise<Subscription> => {
   const response = await axios.put(`${API_URL}/${id}/usage`, { unitsCount });
   return response.data;
 };

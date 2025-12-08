@@ -55,16 +55,19 @@ Este error indica un problema temporal de DNS al resolver el nombre `mongodb.aso
 #### 1. Usar la IP directamente (si conoces la IP del servidor)
 
 Edita el archivo `.env` y reemplaza:
+
 ```bash
 MONGODB_URI=mongodb://securepass:PB3Lx2n4Sx4tlYK5@mongodb.asolutions.digital:27017/securepass?authSource=admin
 ```
 
 Por (ejemplo con IP):
+
 ```bash
 MONGODB_URI=mongodb://securepass:PB3Lx2n4Sx4tlYK5@192.168.1.100:27017/securepass?authSource=admin
 ```
 
 Para obtener la IP del servidor:
+
 ```bash
 nslookup mongodb.asolutions.digital
 # o
@@ -74,11 +77,13 @@ ping mongodb.asolutions.digital
 #### 2. Verificar /etc/hosts
 
 Agrega una entrada manual en `/etc/hosts`:
+
 ```bash
 sudo nano /etc/hosts
 ```
 
 Agrega:
+
 ```
 <IP_DEL_SERVIDOR> mongodb.asolutions.digital
 ```
@@ -110,6 +115,7 @@ sudo systemctl restart NetworkManager
 ### Problema: Error "Authentication failed"
 
 **Causas:**
+
 - Usuario o contraseña incorrectos
 - authSource incorrecto
 - El usuario no tiene permisos en la base de datos
@@ -134,6 +140,7 @@ show collections
 ### Problema: Error "Connection timeout"
 
 **Causas:**
+
 - Firewall bloqueando el puerto 27017
 - IP no está en la lista blanca
 - Servidor MongoDB no está ejecutándose
@@ -141,6 +148,7 @@ show collections
 **Solución:**
 
 1. **Verificar que el servidor esté accesible:**
+
 ```bash
 telnet mongodb.asolutions.digital 27017
 # o
@@ -148,6 +156,7 @@ nc -zv mongodb.asolutions.digital 27017
 ```
 
 2. **Verificar firewall:**
+
 ```bash
 # Verificar reglas de firewall
 sudo ufw status
@@ -165,6 +174,7 @@ Estos son errores pre-existentes en el código, no relacionados con la configura
 **Solución temporal:**
 
 Ejecutar el servidor sin verificación de tipos:
+
 ```bash
 # Compilar y ejecutar
 npm run build
@@ -228,6 +238,7 @@ Ya está incluido: `node test-connection.js`
 ## 🆘 Soporte Adicional
 
 Si tienes problemas:
+
 1. Revisa los logs del servidor: `npm run dev`
 2. Ejecuta el script de prueba: `node test-connection.js`
 3. Contacta al administrador de la base de datos
