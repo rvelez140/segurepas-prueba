@@ -1,0 +1,7 @@
+build
+node_modules
+coverage
+public
+*.config.js
+*.js
+!.eslintrc.js

@@ -2,6 +2,13 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import http from 'http';
+import logger, { httpLogger } from './utils/logger';
+import {
+  initSentry,
+  sentryRequestHandler,
+  sentryTracingHandler,
+  sentryErrorHandler,
+} from './config/sentry';
 import visitRoutes from './routes/visitRoutes';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
@@ -19,13 +26,23 @@ import { webSocketService } from './services/WebSocketService';
 
 const app = express();
 
+// Inicializar Sentry (debe ser lo primero)
+initSentry(app);
+
+// Sentry request handler (debe estar antes de las rutas)
+app.use(sentryRequestHandler);
+app.use(sentryTracingHandler);
+
+// HTTP request logging
+app.use(httpLogger);
+
 // Aplicar configuración de seguridad (Helmet, CORS, Sanitización, etc.)
 configureSecurity(app);
 
 // Rate limiting general
 app.use(generalLimiter);
 
-// Body parser
+// Body parser con límite de tamaño
 app.use(express.json({ limit: '10mb' }));
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
@@ -41,17 +58,20 @@ const mongooseOptions = {
 
 mongoose.connect(MONGODB_URI, mongooseOptions)
     .then(() => {
-        console.log('✓ Se ha realizado la conexión con MongoDB');
+        logger.info('✓ Se ha realizado la conexión con MongoDB');
         const isAtlas = MONGODB_URI.includes('mongodb+srv://');
-        console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
+        logger.info(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
     })
     .catch((err: Error) => {
-        console.error('✗ Error al conectar a MongoDB:', err.message);
-        console.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
+        logger.error('✗ Error al conectar a MongoDB:', { error: err.message });
+        logger.error('  Verifica que MONGODB_URI esté correctamente configurado en el archivo .env');
         process.exit(1);
     });
 
 app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes, notificationRoutes);
+
+// Sentry error handler (debe estar después de las rutas)
+app.use(sentryErrorHandler);
 
 app.get('/', (req, res) => {
     res.send(
@@ -114,7 +134,6 @@ app.get('/', (req, res) => {
     );
 });
 
-
 // Crear servidor HTTP
 const server = http.createServer(app);
 
@@ -123,5 +142,6 @@ webSocketService.initialize(server);
 
 // Iniciar servidor
 server.listen(PORT, () => {
-    console.log('Servidor corriendo en Puerto: ', PORT);
+    logger.info(`🚀 Servidor corriendo en Puerto: ${PORT}`);
+    logger.info(`📝 Entorno: ${process.env.NODE_ENV || 'development'}`);
 });

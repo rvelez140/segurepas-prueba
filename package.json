@@ -9,9 +9,17 @@
     "build:desktop": "cd apps/desktop && npm run build",
     "dist:desktop:win": "cd apps/desktop && npm run dist:win",
     "dist:desktop:linux": "cd apps/desktop && npm run dist:linux",
-    "dist:desktop": "cd apps/desktop && npm run dist"
+    "dist:desktop": "cd apps/desktop && npm run dist",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css,scss}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,scss}\"",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "concurrently": "^8.2.1"
+    "concurrently": "^8.2.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "prettier": "^3.1.0"
   }
 }

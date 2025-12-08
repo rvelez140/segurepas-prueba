@@ -29,7 +29,7 @@ export const configureSecurity = (app: Express) => {
 
   // CORS - Configuración de origen cruzado
   const corsOptions = {
-    origin: function (origin: string | undefined, callback: Function) {
+    origin: function (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) {
       // Lista de orígenes permitidos
       const whitelist = [
         process.env.WEB_URL || "http://localhost:3000",

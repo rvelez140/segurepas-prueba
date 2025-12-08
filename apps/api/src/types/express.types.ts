@@ -14,7 +14,7 @@ export const flattenObject = (
   result: PlainObject = {}
 ): PlainObject => {
   for (const key in obj) {
-    if (!obj.hasOwnProperty(key)) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
 
     const value = obj[key];
     const path = prefix ? `${prefix}.${key}` : key;

@@ -32,7 +32,7 @@ export class VisitService {
     }
 
     // Por defecto la visita expirará en 15 días
-    let e = new Date();
+    const e = new Date();
     e.setDate(e.getDate() + 15);
 
     // Crear la visita con estado inicial

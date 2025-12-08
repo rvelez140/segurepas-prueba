@@ -21,7 +21,7 @@ jobs:
   # Job 1: Tests y Validaciones
   # ========================================
   test:
-    name: Run Tests
+    name: Run Tests & Quality Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -39,15 +39,39 @@ jobs:
         working-directory: ./apps/api
         run: npm ci
 
-      - name: Run API tests
-        working-directory: ./apps/api
-        run: npm test -- --passWithNoTests || echo "No tests configured yet"
-        continue-on-error: true
-
       - name: Lint API code
         working-directory: ./apps/api
-        run: npm run lint || echo "No lint configured"
-        continue-on-error: true
+        run: npm run lint
+
+      - name: Check code formatting
+        working-directory: ./apps/api
+        run: npm run format:check
+
+      - name: Run API tests with coverage
+        working-directory: ./apps/api
+        run: npm run test:ci
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./apps/api/coverage/lcov.info
+          flags: api
+          name: api-coverage
+          fail_ci_if_error: false
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: apps/api/coverage
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          lcov-file: ./apps/api/coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   # ========================================
   # Job 2: Build y Push de Imágenes Docker
