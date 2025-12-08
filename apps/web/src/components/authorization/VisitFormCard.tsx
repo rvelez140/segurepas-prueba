@@ -13,6 +13,7 @@ const VisitFormCard: React.FC = () => {
     email: "",
     document: "",
     reason: "",
+    vehiclePlate: "",
   });
   const [lastVisits, setLastVisits] = useState<VisitResponse[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -81,6 +82,7 @@ const VisitFormCard: React.FC = () => {
         email: selectedVisit.visit.email,
         document: selectedVisit.visit.document,
         reason: selectedVisit.authorization.reason,
+        vehiclePlate: selectedVisit.visit.vehiclePlate || "",
       });
     }else{
       setFormData({
@@ -88,6 +90,7 @@ const VisitFormCard: React.FC = () => {
         email: "",
         document: "",
         reason: "",
+        vehiclePlate: "",
       });
     }
   };
@@ -95,6 +98,18 @@ const VisitFormCard: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCedulaExtracted = (text: string) => {
+    if (text && text.length >= 8 && text.length <= 11) {
+      setFormData((prev) => ({ ...prev, document: text }));
+    }
+  };
+
+  const handlePlacaExtracted = (text: string) => {
+    if (text) {
+      setFormData((prev) => ({ ...prev, vehiclePlate: text }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -119,7 +134,7 @@ const VisitFormCard: React.FC = () => {
       const visit = await authorizeVisit(visitData as VisitData);
       await sendVisitNotificationEmail(visit.data.id);
       setSuccess(true);
-      setFormData({ name: "", email: "", document: "", reason: "" });
+      setFormData({ name: "", email: "", document: "", reason: "", vehiclePlate: "" });
     } catch (err: any) {
       setError(err.message ? err.message : "Ocurrió un error al autorizar el visitante");
     } finally {
@@ -142,6 +157,8 @@ const VisitFormCard: React.FC = () => {
         lastVisits={lastVisits}
         resetError={() => setError(null)}
         resetSuccess={() => setSuccess(false)}
+        onCedulaExtracted={handleCedulaExtracted}
+        onPlacaExtracted={handlePlacaExtracted}
       />
     </div>
   );

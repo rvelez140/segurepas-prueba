@@ -125,7 +125,7 @@ export const RegisterExit = async (data: RegistryData) => {
 };
 
 export const uploadImage = async (
-  endpoint: "upload-visit" | "upload-vehicle",
+  endpoint: "upload-visit" | "upload-vehicle" | "ocr/upload-visit" | "ocr/upload-vehicle",
   document: string,
   formData: FormData
 ) => {

@@ -115,7 +115,25 @@ const EntryForm: React.FC<EntryFormProps> = ({ navigation, route }) => {
     try {
       setIsUploading(true);
       const formData = createFormData(imageUri);
-      await uploadImage(endpoint, document, formData);
+
+      // Usar endpoints con OCR para auto-detección
+      const ocrEndpoint = endpoint === "upload-visit"
+        ? "ocr/upload-visit"
+        : "ocr/upload-vehicle";
+
+      const result = await uploadImage(ocrEndpoint as any, document, formData);
+
+      // Mostrar resultado del OCR si está disponible
+      if (result && result.ocr) {
+        const { type, extractedValue } = result.ocr;
+        if (extractedValue) {
+          Alert.alert(
+            "Detección automática",
+            `${type === "cedula" ? "Cédula" : "Placa"} detectada: ${extractedValue}`,
+            [{ text: "OK" }]
+          );
+        }
+      }
     } catch (error) {
       console.error("Error al subir imagen:", error);
       throw error;
@@ -208,6 +226,13 @@ const EntryForm: React.FC<EntryFormProps> = ({ navigation, route }) => {
 
         <Text style={styles.label}>Cédula:</Text>
         <Text style={styles.value}>{visits.visit.document}</Text>
+
+        {visits.visit.vehiclePlate && (
+          <>
+            <Text style={styles.label}>Placa del Vehículo:</Text>
+            <Text style={styles.value}>{visits.visit.vehiclePlate}</Text>
+          </>
+        )}
 
         <Text style={styles.label}>Imagen de la cédula:</Text>
         {imagenPersona && (

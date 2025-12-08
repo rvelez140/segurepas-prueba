@@ -1,9 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+import http from 'http';
 import logger, { httpLogger } from './utils/logger';
 import {
   initSentry,
@@ -17,7 +15,14 @@ import authRoutes from './routes/authRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import auditRoutes from './routes/auditRoutes';
+import accessListRoutes from './routes/accessListRoutes';
+import recurringVisitRoutes from './routes/recurringVisitRoutes';
+import parkingRoutes from './routes/parkingRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import { configureSecurity } from './middlewares/securityMiddleware';
+import { generalLimiter } from './middlewares/rateLimitMiddleware';
+import { webSocketService } from './services/WebSocketService';
 
 const app = express();
 
@@ -31,46 +36,11 @@ app.use(sentryTracingHandler);
 // HTTP request logging
 app.use(httpLogger);
 
-// Configuración de seguridad con Helmet
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
-      },
-    },
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true,
-    },
-  })
-);
+// Aplicar configuración de seguridad (Helmet, CORS, Sanitización, etc.)
+configureSecurity(app);
 
-// Rate limiting global - 100 requests por 15 minutos
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // Límite de 100 requests por ventana
-  message: 'Demasiadas solicitudes desde esta IP, por favor intenta de nuevo más tarde.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-app.use(limiter);
-
-// Rate limiting estricto para rutas de autenticación - 5 requests por 15 minutos
-export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: 'Demasiados intentos de autenticación, por favor intenta de nuevo más tarde.',
-  skipSuccessfulRequests: true,
-});
-
-// CORS configurado
-app.use(cors());
+// Rate limiting general
+app.use(generalLimiter);
 
 // Body parser con límite de tamaño
 app.use(express.json({ limit: '10mb' }));
@@ -98,7 +68,7 @@ mongoose.connect(MONGODB_URI, mongooseOptions)
         process.exit(1);
     });
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, notificationRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, auditRoutes, accessListRoutes, recurringVisitRoutes, parkingRoutes, notificationRoutes);
 
 // Sentry error handler (debe estar después de las rutas)
 app.use(sentryErrorHandler);
@@ -121,7 +91,7 @@ app.get('/', (req, res) => {
             height: 100vh;
             margin: 0;
         }
-        
+
         .securepass-container {
             border: 2px solid #3498db;
             border-radius: 10px;
@@ -132,20 +102,20 @@ app.get('/', (req, res) => {
             max-width: 300px;
             width: 100%;
         }
-        
+
         .securepass-title {
             color: #2c3e50;
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
         }
-        
+
         .securepass-logo {
             color: #3498db;
             font-size: 36px;
             margin-bottom: 15px;
         }
-        
+
         .securepass-description {
             color: #7f8c8d;
             font-size: 14px;
@@ -162,10 +132,16 @@ app.get('/', (req, res) => {
 </body>
 </html>`
     );
-}); 
+});
 
+// Crear servidor HTTP
+const server = http.createServer(app);
 
-app.listen(PORT, () => {
+// Inicializar WebSocket
+webSocketService.initialize(server);
+
+// Iniciar servidor
+server.listen(PORT, () => {
     logger.info(`🚀 Servidor corriendo en Puerto: ${PORT}`);
     logger.info(`📝 Entorno: ${process.env.NODE_ENV || 'development'}`);
 });
