@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import { Express } from 'express';
+import { Express, Request, Response, NextFunction } from 'express';
 
 export const initSentry = (app: Express) => {
   // Solo inicializar Sentry si hay un DSN configurado
@@ -18,8 +18,6 @@ export const initSentry = (app: Express) => {
     integrations: [
       // Integración de Profiling
       nodeProfilingIntegration(),
-      // Integración de Express
-      new Sentry.Integrations.Http({ tracing: true }),
     ],
     // Tasa de muestreo para transacciones de performance
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
@@ -38,20 +36,16 @@ export const initSentry = (app: Express) => {
     },
   });
 
-  // Middleware de request handler debe ser el primero
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
-
   console.log('✓ Sentry inicializado correctamente para monitoreo de errores');
 };
 
 export const setupSentryErrorHandler = (app: Express) => {
-  // El error handler debe ser el último middleware
-  app.use(Sentry.Handlers.errorHandler());
-
-  // Middleware de error personalizado
+  // Middleware de error personalizado que envía a Sentry
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  app.use((err: any, _req: any, res: any, _next: any) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    // Capturar error en Sentry
+    Sentry.captureException(err);
+
     console.error('Error capturado:', err);
 
     res.status(err.status || 500).json({
