@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, Menu, shell, ipcMain, nativeTheme } from 'electron';
 import * as path from 'path';
 import { autoUpdater } from 'electron-updater';
 
@@ -229,4 +229,28 @@ ipcMain.handle('platform-info', () => {
     arch: process.arch,
     version: process.version,
   };
+});
+
+// Manejadores para el tema del sistema
+ipcMain.handle('get-system-theme', () => {
+  return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+});
+
+ipcMain.handle('get-theme-source', () => {
+  return nativeTheme.themeSource;
+});
+
+ipcMain.handle('set-theme-source', (_event, source: 'system' | 'light' | 'dark') => {
+  nativeTheme.themeSource = source;
+  return nativeTheme.themeSource;
+});
+
+// Escuchar cambios en el tema del sistema y notificar a la ventana
+nativeTheme.on('updated', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('theme-changed', {
+      shouldUseDarkColors: nativeTheme.shouldUseDarkColors,
+      themeSource: nativeTheme.themeSource,
+    });
+  }
 });
