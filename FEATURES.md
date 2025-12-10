@@ -1,6 +1,7 @@
 # 🚀 SecurePass - Funcionalidades Completas
 
 ## 📋 Tabla de Contenidos
+
 - [Seguridad y Auditoría](#seguridad-y-auditoría)
 - [Gestión de Visitas](#gestión-de-visitas)
 - [Control de Acceso](#control-de-acceso)
@@ -14,6 +15,7 @@
 ## 🔒 Seguridad y Auditoría
 
 ### Rate Limiting
+
 - **5 niveles de protección** contra ataques de fuerza bruta
 - authLimiter: 5 intentos de login en 15 minutos
 - generalLimiter: 100 requests en 15 minutos
@@ -22,6 +24,7 @@
 - readLimiter: 60 lecturas por minuto
 
 ### Protección de Seguridad
+
 - ✅ Helmet para headers HTTP seguros
 - ✅ CORS configurado con whitelist
 - ✅ Sanitización NoSQL (express-mongo-sanitize)
@@ -29,6 +32,7 @@
 - ✅ Headers personalizados (XSS, clickjacking, MIME-sniffing)
 
 ### Sistema de Auditoría
+
 - 📊 **15+ tipos de acciones auditadas**
   - LOGIN, LOGOUT, LOGIN_FAILED
   - USER_CREATE, USER_UPDATE, USER_DELETE
@@ -48,6 +52,7 @@
 ## 👥 Gestión de Visitas
 
 ### Auto-Rellenado con OCR
+
 - 📸 **Tesseract.js** para reconocimiento de texto
 - Detección automática de:
   - Cédulas colombianas (8-11 dígitos)
@@ -60,6 +65,7 @@
   - `POST /api/visits/ocr/upload-vehicle/:document` - Subir placa con OCR
 
 ### Visitas Recurrentes
+
 - 📅 **Patrones de recurrencia**:
   - DAILY (diario)
   - WEEKLY (semanal)
@@ -85,6 +91,7 @@
 ## 🚫 Control de Acceso
 
 ### Lista Negra / Whitelist
+
 - **Blacklist**: Bloquear documentos problemáticos
 - **Whitelist**: Acceso rápido para visitantes frecuentes
 - Expiración automática por fecha
@@ -92,6 +99,7 @@
 - Integración automática con autorizaciones
 
 **Endpoints**:
+
 - `POST /api/access-list/blacklist` - Agregar a lista negra
 - `POST /api/access-list/whitelist` - Agregar a lista blanca
 - `GET /api/access-list/blacklist/check/:document` - Verificar bloqueo
@@ -102,6 +110,7 @@
 ## 🚗 Sistema de Parqueaderos
 
 ### Gestión de Espacios
+
 - **Tipos**:
   - RESIDENT (residentes)
   - VISITOR (visitantes)
@@ -113,6 +122,7 @@
   - MAINTENANCE (mantenimiento)
 
 ### Características
+
 - ✅ Asignación automática de espacios
 - ✅ Tracking de tiempo de estacionamiento
 - ✅ Cálculo automático de duración
@@ -121,6 +131,7 @@
 - ✅ Integración con sistema de visitas
 
 **Endpoints**:
+
 - `POST /api/parking/spaces` - Crear espacio
 - `GET /api/parking/spaces/available` - Espacios disponibles
 - `POST /api/parking/assign` - Asignar espacio
@@ -132,6 +143,7 @@
 ## 🔔 Notificaciones
 
 ### Push Notifications (Firebase)
+
 - 📱 **Firebase Cloud Messaging**
 - Notificaciones predefinidas:
   - Visita autorizada
@@ -141,6 +153,7 @@
   - Parqueadero lleno
 
 ### WebSockets (Socket.IO)
+
 - ⚡ **Tiempo Real**
 - Eventos:
   - `new_visit` - Nueva visita (guardias)
@@ -159,6 +172,7 @@
 ## ⚡ Performance y Escalabilidad
 
 ### Caché con Redis
+
 - 🚀 **ioredis** para alto rendimiento
 - Claves predefinidas:
   - `visits:active` - Visitas activas
@@ -174,6 +188,7 @@
   - day: 24 horas
 
 ### Paginación
+
 - Utility helper para paginar queries
 - Límite máximo: 100 items por página
 - Ordenamiento configurable
@@ -184,12 +199,14 @@
 ## 🧪 Testing y CI/CD
 
 ### Tests Automatizados (Jest)
+
 - ✅ Unit tests
 - ✅ Integration tests
 - ✅ Supertest para tests de API
 - Configuración de base de datos de prueba
 
 ### CI/CD (GitHub Actions)
+
 - **Pipeline completo**:
   1. Lint y Type Check
   2. Run Tests (MongoDB + Redis)
@@ -208,12 +225,14 @@
 ## 📊 Estadísticas y Analytics
 
 ### Dashboard Mejorado
+
 - Métricas en tiempo real
 - Gráficos y visualizaciones
 - Reportes programados
 - Exportación a PDF/Excel
 
 ### Métricas Disponibles
+
 - Total de visitas (activas, pendientes, completadas)
 - Tasa de aprobación/rechazo
 - Tiempo promedio de estadía
@@ -268,18 +287,21 @@ EMAIL_PASSWORD=your_app_password
 ## 🎯 Próximas Funcionalidades Recomendadas
 
 ### Fase 1 (Corto plazo)
+
 - [ ] Autenticación 2FA (SMS o authenticator app)
 - [ ] Reconocimiento facial
 - [ ] Tema claro/oscuro
 - [ ] Modo offline en mobile
 
 ### Fase 2 (Mediano plazo)
+
 - [ ] App móvil para residentes
 - [ ] Reconocimiento de placas (ANPR)
 - [ ] Predicción de tráfico con ML
 - [ ] Integración con cámaras de seguridad
 
 ### Fase 3 (Largo plazo)
+
 - [ ] Multi-tenant (múltiples residenciales)
 - [ ] Integraciones con hardware (torniquetes, barreras)
 - [ ] Delivery automation (Uber Eats, Rappi)
@@ -290,6 +312,7 @@ EMAIL_PASSWORD=your_app_password
 ## 📚 Documentación API
 
 Documentación completa disponible en:
+
 - Swagger/OpenAPI: `http://localhost:8000/api-docs`
 - Postman Collection: `/docs/postman/SecurePass.postman_collection.json`
 
@@ -298,6 +321,7 @@ Documentación completa disponible en:
 ## 🤝 Contribuciones
 
 Para contribuir al proyecto:
+
 1. Fork el repositorio
 2. Crear branch de feature (`git checkout -b feature/AmazingFeature`)
 3. Commit cambios (`git commit -m 'Add some AmazingFeature'`)

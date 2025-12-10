@@ -1,10 +1,10 @@
-import { FaEdit, FaFileExport, FaClipboardList, FaCog } from "react-icons/fa";
-import styles from "../../styles/visits.module.css";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { QuickActionsProps } from "../../types/types";
-import { loadToken, setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
+import { FaEdit, FaFileExport, FaClipboardList, FaCog } from 'react-icons/fa';
+import styles from '../../styles/visits.module.css';
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { QuickActionsProps } from '../../types/types';
+import { loadToken, setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
 
 const QuickActions = ({ openModal }: QuickActionsProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -14,7 +14,7 @@ const QuickActions = ({ openModal }: QuickActionsProps) => {
       const token = loadToken();
       setAuthToken(token);
       const user = await getAuthenticatedUser();
-      if (user.role === "admin") setIsAdmin(true);
+      if (user.role === 'admin') setIsAdmin(true);
     };
     checkAdmin();
   }, []);

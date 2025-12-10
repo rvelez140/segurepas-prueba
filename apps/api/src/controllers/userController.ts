@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from "express";
-import { UserService } from "../services/UserService";
-import { StorageService } from "../services/StorageService";
-import { Admin, Guard, GuardShift, Resident } from "../interfaces/IUser";
+import { Request, Response, NextFunction } from 'express';
+import { UserService } from '../services/UserService';
+import { StorageService } from '../services/StorageService';
+import { Admin, Guard, GuardShift, Resident } from '../interfaces/IUser';
 
 export const userController = {
   async getResidents(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserService.getUsersByRole("residente");
+      const users = await UserService.getUsersByRole('residente');
 
       const residents = users as Resident[];
 
@@ -31,7 +31,7 @@ export const userController = {
 
   async getGuards(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserService.getUsersByRole("guardia");
+      const users = await UserService.getUsersByRole('guardia');
 
       const guards = users as Guard[];
 
@@ -51,7 +51,7 @@ export const userController = {
 
   async getAdmins(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserService.getUsersByRole("admin");
+      const users = await UserService.getUsersByRole('admin');
 
       const admins = users as Admin[];
 
@@ -96,7 +96,7 @@ export const userController = {
 
         // Propiedades específicas de roles
         switch (user.role) {
-          case "residente":
+          case 'residente':
             return {
               ...baseResponse,
               apartment: (user as Resident).apartment,
@@ -106,12 +106,12 @@ export const userController = {
               documentImage: (user as Resident).documentImage,
               vehiclePlateImage: (user as Resident).vehiclePlateImage,
             };
-          case "guardia":
+          case 'guardia':
             return {
               ...baseResponse,
               shift: (user as Guard).shift,
             };
-          case "admin":
+          case 'admin':
             return {
               ...baseResponse,
               lastAccess: (user as Admin).lastAccess,
@@ -127,52 +127,42 @@ export const userController = {
     }
   },
 
-  async updateUser(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const updateData = req.body;
 
       // Validaciones específicas por rol
-      if (updateData.role === "residente") {
+      if (updateData.role === 'residente') {
         if (!updateData.apartment || !updateData.tel) {
-          res
-            .status(400)
-            .json({
-              message: "Apartamento y teléfono son requeridos para residentes",
-            });
+          res.status(400).json({
+            message: 'Apartamento y teléfono son requeridos para residentes',
+          });
           return;
         }
         if (!updateData.document) {
-          res
-            .status(400)
-            .json({
-              message: "Documento de identidad es requerido para residentes",
-            });
+          res.status(400).json({
+            message: 'Documento de identidad es requerido para residentes',
+          });
           return;
         }
         if (!updateData.vehiclePlate) {
-          res
-            .status(400)
-            .json({
-              message: "Placa del vehículo es requerida para residentes",
-            });
+          res.status(400).json({
+            message: 'Placa del vehículo es requerida para residentes',
+          });
           return;
         }
       }
 
-      if (updateData.role === "guardia" && !updateData.shift) {
-        res.status(400).json({ message: "Turno es requerido para guardias" });
+      if (updateData.role === 'guardia' && !updateData.shift) {
+        res.status(400).json({ message: 'Turno es requerido para guardias' });
         return;
       }
 
       const updatedUser = await UserService.updateUser(id, updateData);
 
       if (!updatedUser) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        res.status(404).json({ message: 'Usuario no encontrado' });
         return;
       }
 
@@ -182,7 +172,7 @@ export const userController = {
         name: updatedUser.name,
         email: updatedUser.auth.email,
         role: updatedUser.role,
-        ...(updatedUser.role === "residente" && {
+        ...(updatedUser.role === 'residente' && {
           apartment: (updatedUser as Resident).apartment,
           tel: (updatedUser as Resident).tel,
           document: (updatedUser as Resident).document,
@@ -190,10 +180,10 @@ export const userController = {
           documentImage: (updatedUser as Resident).documentImage,
           vehiclePlateImage: (updatedUser as Resident).vehiclePlateImage,
         }),
-        ...(updatedUser.role === "guardia" && {
+        ...(updatedUser.role === 'guardia' && {
           shift: (updatedUser as Guard).shift,
         }),
-        ...(updatedUser.role === "admin" && {
+        ...(updatedUser.role === 'admin' && {
           lastAccess: (updatedUser as Admin).lastAccess,
         }),
         updateDate: updatedUser.updateDate,
@@ -211,7 +201,7 @@ export const userController = {
       const deletedUser = await UserService.deleteUser(id);
 
       if (!deletedUser) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        res.status(404).json({ message: 'Usuario no encontrado' });
         return;
       }
 
@@ -221,7 +211,7 @@ export const userController = {
         email: deletedUser.auth.email,
         role: deletedUser.role,
       };
-      res.json({ message: "Usuario eliminado correctamente", user });
+      res.json({ message: 'Usuario eliminado correctamente', user });
       res.status(204).send();
     } catch (error) {
       next(error);
@@ -233,22 +223,19 @@ export const userController = {
       const { id } = req.params;
 
       if (!req.file) {
-        res.status(400).json({ message: "No se recibió ninguna imagen" });
+        res.status(400).json({ message: 'No se recibió ninguna imagen' });
         return;
       }
 
-      const updatedUser = await StorageService.uploadUserDocumentImage(
-        id,
-        req.file.buffer
-      );
+      const updatedUser = await StorageService.uploadUserDocumentImage(id, req.file.buffer);
 
       if (!updatedUser) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        res.status(404).json({ message: 'Usuario no encontrado' });
         return;
       }
 
       res.json({
-        message: "Imagen de documento subida correctamente",
+        message: 'Imagen de documento subida correctamente',
         documentImage: (updatedUser as Resident).documentImage,
       });
     } catch (error) {
@@ -256,31 +243,24 @@ export const userController = {
     }
   },
 
-  async uploadVehiclePlateImage(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async uploadVehiclePlateImage(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
       if (!req.file) {
-        res.status(400).json({ message: "No se recibió ninguna imagen" });
+        res.status(400).json({ message: 'No se recibió ninguna imagen' });
         return;
       }
 
-      const updatedUser = await StorageService.uploadUserVehiclePlateImage(
-        id,
-        req.file.buffer
-      );
+      const updatedUser = await StorageService.uploadUserVehiclePlateImage(id, req.file.buffer);
 
       if (!updatedUser) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        res.status(404).json({ message: 'Usuario no encontrado' });
         return;
       }
 
       res.json({
-        message: "Imagen de placa subida correctamente",
+        message: 'Imagen de placa subida correctamente',
         vehiclePlateImage: (updatedUser as Resident).vehiclePlateImage,
       });
     } catch (error) {

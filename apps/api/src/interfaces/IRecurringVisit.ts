@@ -1,11 +1,11 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 export enum RecurrencePattern {
-  DAILY = "daily",
-  WEEKLY = "weekly",
-  BIWEEKLY = "biweekly",
-  MONTHLY = "monthly",
-  CUSTOM = "custom",
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  BIWEEKLY = 'biweekly',
+  MONTHLY = 'monthly',
+  CUSTOM = 'custom',
 }
 
 export enum DayOfWeek {

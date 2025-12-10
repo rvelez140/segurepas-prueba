@@ -1,5 +1,10 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { ISubscription, SubscriptionStatus, SubscriptionPlan, PaymentProvider } from '../interfaces/ISubscription';
+import {
+  ISubscription,
+  SubscriptionStatus,
+  SubscriptionPlan,
+  PaymentProvider,
+} from '../interfaces/ISubscription';
 
 const subscriptionSchema: Schema = new mongoose.Schema(
   {
@@ -85,5 +90,8 @@ const subscriptionSchema: Schema = new mongoose.Schema(
 subscriptionSchema.index({ userId: 1, status: 1 });
 subscriptionSchema.index({ endDate: 1 });
 
-export const Subscription: Model<ISubscription> = mongoose.model<ISubscription>('Subscription', subscriptionSchema);
+export const Subscription: Model<ISubscription> = mongoose.model<ISubscription>(
+  'Subscription',
+  subscriptionSchema
+);
 export default Subscription;

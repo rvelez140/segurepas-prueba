@@ -1,22 +1,17 @@
-import { VisitService } from "./VisitService";
-import { UserService } from "./UserService";
-import { CloudinaryService } from "./CloudinaryService";
-import { IVisit } from "../interfaces/IVisit";
-import { IUser } from "../interfaces/IUser";
+import { VisitService } from './VisitService';
+import { UserService } from './UserService';
+import { CloudinaryService } from './CloudinaryService';
+import { IVisit } from '../interfaces/IVisit';
+import { IUser } from '../interfaces/IUser';
 
 export class StorageService {
-  static async uploadVisitImage(
-    document: string,
-    imageBuffer: Buffer
-  ): Promise<IVisit[] | null> {
+  static async uploadVisitImage(document: string, imageBuffer: Buffer): Promise<IVisit[] | null> {
     const visits = await VisitService.getVisitsByDocument(document);
-    if (!visits || visits.length === 0) throw new Error("Visita no encontrada");
+    if (!visits || visits.length === 0) throw new Error('Visita no encontrada');
 
     // Eliminar imágenes anteriores si existen
     const uniqueImageUrls = new Set(
-      visits
-        .map((v) => v.visit.visitImage)
-        .filter((url) => url !== undefined && url !== null)
+      visits.map((v) => v.visit.visitImage).filter((url) => url !== undefined && url !== null)
     );
 
     await Promise.all(
@@ -26,32 +21,21 @@ export class StorageService {
     );
 
     // Subir nueva imagen
-    const imageUrl = await CloudinaryService.uploadImage(
-      imageBuffer,
-      `visits/${document}/profile`
-    );
+    const imageUrl = await CloudinaryService.uploadImage(imageBuffer, `visits/${document}/profile`);
 
     // Actualizar todas las visitas con el mismo documento
-    const updatedVisits = await VisitService.updateVisitImagesByDocument(
-      document,
-      imageUrl
-    );
+    const updatedVisits = await VisitService.updateVisitImagesByDocument(document, imageUrl);
 
     return updatedVisits;
   }
 
-  static async uploadVehicleImage(
-    document: string,
-    imageBuffer: Buffer
-  ): Promise<IVisit[] | null> {
+  static async uploadVehicleImage(document: string, imageBuffer: Buffer): Promise<IVisit[] | null> {
     const visits = await VisitService.getVisitsByDocument(document);
-    if (!visits || visits.length === 0) throw new Error("Visita no encontrada");
+    if (!visits || visits.length === 0) throw new Error('Visita no encontrada');
 
     // Eliminar imágenes anteriores si existen
     const uniqueImageUrls = new Set(
-      visits
-        .map((v) => v.visit.vehicleImage)
-        .filter((url) => url !== undefined && url !== null)
+      visits.map((v) => v.visit.vehicleImage).filter((url) => url !== undefined && url !== null)
     );
 
     await Promise.all(
@@ -61,16 +45,10 @@ export class StorageService {
     );
 
     // Subir nueva imagen
-    const imageUrl = await CloudinaryService.uploadImage(
-      imageBuffer,
-      `visits/${document}/vehicle`
-    );
+    const imageUrl = await CloudinaryService.uploadImage(imageBuffer, `visits/${document}/vehicle`);
 
     // Actualizar todas las visitas con el mismo documento
-    const updatedVisits = await VisitService.updateVehicleImagesByDocument(
-      document,
-      imageUrl
-    );
+    const updatedVisits = await VisitService.updateVehicleImagesByDocument(document, imageUrl);
 
     return updatedVisits;
   }
@@ -89,28 +67,19 @@ export class StorageService {
       let totalDeleted = 0;
 
       // Eliminar folder de perfil
-      const profileResult = await CloudinaryService.deleteFolder(
-        `visits/${document}/profile`
-      );
-      if (profileResult.success)
-        totalDeleted += profileResult.deletedCount || 0;
+      const profileResult = await CloudinaryService.deleteFolder(`visits/${document}/profile`);
+      if (profileResult.success) totalDeleted += profileResult.deletedCount || 0;
 
       // Eliminar folder de vehículo
-      const vehicleResult = await CloudinaryService.deleteFolder(
-        `visits/${document}/vehicle`
-      );
-      if (vehicleResult.success)
-        totalDeleted += vehicleResult.deletedCount || 0;
+      const vehicleResult = await CloudinaryService.deleteFolder(`visits/${document}/vehicle`);
+      if (vehicleResult.success) totalDeleted += vehicleResult.deletedCount || 0;
 
       // Actualizar todas las visitas con el mismo documento a un url standard
       const updatedVisits = await VisitService.updateVisitImagesByDocument(
         document,
-        "https://example.com/image.jpg"
+        'https://example.com/image.jpg'
       );
-      await VisitService.updateVehicleImagesByDocument(
-        document,
-        "https://example.com/image.jpg"
-      );
+      await VisitService.updateVehicleImagesByDocument(document, 'https://example.com/image.jpg');
 
       return {
         success: profileResult.success && vehicleResult.success,
@@ -153,7 +122,7 @@ export class StorageService {
     visits: IVisit[] | null;
   }> {
     try {
-      const result = await CloudinaryService.deleteFolder("visits");
+      const result = await CloudinaryService.deleteFolder('visits');
 
       const visits = await VisitService.updateAllImagesToDefault();
 
@@ -162,9 +131,9 @@ export class StorageService {
         message: result.message,
         deletedCount: result.deletedCount || 0,
         visits: visits,
-    };
+      };
     } catch (error: any) {
-      console.error("Error eliminando todas las visitas:", error);
+      console.error('Error eliminando todas las visitas:', error);
       return {
         success: false,
         message: `Error al eliminar visitas: ${error.message}`,
@@ -175,23 +144,17 @@ export class StorageService {
   }
 
   // Métodos para usuarios
-  static async uploadUserDocumentImage(
-    userId: string,
-    imageBuffer: Buffer
-  ): Promise<IUser | null> {
+  static async uploadUserDocumentImage(userId: string, imageBuffer: Buffer): Promise<IUser | null> {
     const user = await UserService.findById(userId);
-    if (!user) throw new Error("Usuario no encontrado");
+    if (!user) throw new Error('Usuario no encontrado');
 
     // Eliminar imagen anterior si existe
-    if (user.role === "residente" && user.documentImage) {
+    if (user.role === 'residente' && user.documentImage) {
       await CloudinaryService.deleteImage(user.documentImage);
     }
 
     // Subir nueva imagen
-    const imageUrl = await CloudinaryService.uploadImage(
-      imageBuffer,
-      `users/${userId}/document`
-    );
+    const imageUrl = await CloudinaryService.uploadImage(imageBuffer, `users/${userId}/document`);
 
     // Actualizar usuario (solo residentes tienen documentImage)
     const updatedUser = await UserService.updateUser(userId, {
@@ -206,10 +169,10 @@ export class StorageService {
     imageBuffer: Buffer
   ): Promise<IUser | null> {
     const user = await UserService.findById(userId);
-    if (!user) throw new Error("Usuario no encontrado");
+    if (!user) throw new Error('Usuario no encontrado');
 
     // Eliminar imagen anterior si existe
-    if (user.role === "residente" && user.vehiclePlateImage) {
+    if (user.role === 'residente' && user.vehiclePlateImage) {
       await CloudinaryService.deleteImage(user.vehiclePlateImage);
     }
 
@@ -240,18 +203,14 @@ export class StorageService {
       let totalDeleted = 0;
 
       // Eliminar folder de documento
-      const documentResult = await CloudinaryService.deleteFolder(
-        `users/${userId}/document`
-      );
-      if (documentResult.success)
-        totalDeleted += documentResult.deletedCount || 0;
+      const documentResult = await CloudinaryService.deleteFolder(`users/${userId}/document`);
+      if (documentResult.success) totalDeleted += documentResult.deletedCount || 0;
 
       // Eliminar folder de placa
       const vehiclePlateResult = await CloudinaryService.deleteFolder(
         `users/${userId}/vehicle-plate`
       );
-      if (vehiclePlateResult.success)
-        totalDeleted += vehiclePlateResult.deletedCount || 0;
+      if (vehiclePlateResult.success) totalDeleted += vehiclePlateResult.deletedCount || 0;
 
       // Actualizar usuario para remover URLs de imágenes (solo residentes)
       await UserService.updateUser(userId, {

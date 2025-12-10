@@ -5,12 +5,14 @@ Esta guía te ayudará a configurar una base de datos MongoDB externa para el pr
 ## Opciones de Base de Datos
 
 ### Opción 1: MongoDB Local (Desarrollo)
+
 - **Uso**: Desarrollo local
 - **Costo**: Gratis
 - **Configuración**: Simple, usa Docker
 - **URI**: `mongodb://localhost:27017/securepass`
 
 ### Opción 2: MongoDB Atlas (Producción) ⭐ RECOMENDADO
+
 - **Uso**: Producción, staging, desarrollo remoto
 - **Costo**: Plan gratuito disponible (512 MB)
 - **Configuración**: Requiere cuenta en MongoDB Atlas
@@ -81,6 +83,7 @@ Esta guía te ayudará a configurar una base de datos MongoDB externa para el pr
 5. Copia la **Connection String** que se muestra
 
 La URI se verá así:
+
 ```
 mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
 ```
@@ -97,11 +100,13 @@ MONGODB_URI=mongodb+srv://<tu_usuario>:<tu_password>@cluster0.xxxxx.mongodb.net/
 ```
 
 **Ejemplo real:**
+
 ```bash
 MONGODB_URI=mongodb+srv://securepass_admin:MiPassword123@cluster0.abc123.mongodb.net/securepass?retryWrites=true&w=majority
 ```
 
 ⚠️ **IMPORTANTE**:
+
 - Reemplaza `<tu_usuario>` con el usuario que creaste (ejemplo: `securepass_admin`)
 - Reemplaza `<tu_password>` con la contraseña del usuario
 - Reemplaza `cluster0.xxxxx` con tu cluster real
@@ -116,12 +121,14 @@ MONGODB_URI=mongodb+srv://securepass_admin:MiPassword123@cluster0.abc123.mongodb
 ### Paso 6: Verificar la conexión
 
 1. Inicia tu servidor:
+
 ```bash
 cd apps/api
 npm run dev
 ```
 
 2. Deberías ver en la consola:
+
 ```
 ✓ Se ha realizado la conexión con MongoDB
   Tipo de conexión: MongoDB Atlas (Externa)
@@ -159,21 +166,25 @@ mongorestore --uri="mongodb+srv://<usuario>:<password>@cluster0.xxxxx.mongodb.ne
 Además de MongoDB Atlas, existen otras opciones:
 
 ### 1. **MongoDB Cloud Manager**
+
 - Gestión de MongoDB auto-hosted
 - Más control pero más complejo
 - URL: https://www.mongodb.com/cloud/cloud-manager
 
 ### 2. **Railway.app**
+
 - Hosting sencillo con MongoDB
 - Plan gratuito disponible
 - URL: https://railway.app
 
 ### 3. **DigitalOcean Managed Databases**
+
 - MongoDB como servicio gestionado
 - Desde $15/mes
 - URL: https://www.digitalocean.com/products/managed-databases-mongodb
 
 ### 4. **AWS DocumentDB**
+
 - Compatible con MongoDB
 - Para aplicaciones en AWS
 - URL: https://aws.amazon.com/documentdb
@@ -183,20 +194,24 @@ Además de MongoDB Atlas, existen otras opciones:
 ## Troubleshooting (Solución de Problemas)
 
 ### Error: "MongoServerError: bad auth"
+
 - **Causa**: Usuario o contraseña incorrectos
 - **Solución**: Verifica las credenciales en MongoDB Atlas y en tu archivo `.env`
 
 ### Error: "MongooseServerSelectionError: connect ETIMEDOUT"
+
 - **Causa**: Tu IP no está en la lista blanca o hay problemas de red
 - **Solución**:
   - Verifica Network Access en MongoDB Atlas
   - Agrega tu IP actual o permite `0.0.0.0/0`
 
 ### Error: "Authentication failed"
+
 - **Causa**: Contraseña con caracteres especiales no codificados
 - **Solución**: Codifica los caracteres especiales en URL encoding
 
 ### La conexión es muy lenta
+
 - **Causa**: Cluster muy lejos geográficamente
 - **Solución**: Considera cambiar la región del cluster
 
@@ -227,6 +242,7 @@ Además de MongoDB Atlas, existen otras opciones:
 ## Soporte
 
 Si tienes problemas con la configuración:
+
 1. Revisa los logs de tu aplicación
 2. Verifica la configuración en MongoDB Atlas
 3. Consulta la documentación oficial

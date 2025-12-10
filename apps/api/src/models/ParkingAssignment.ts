@@ -1,17 +1,17 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IParkingAssignment } from "../interfaces/IParking";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IParkingAssignment } from '../interfaces/IParking';
 
 const parkingAssignmentSchema: Schema = new mongoose.Schema(
   {
     parkingSpace: {
       type: Schema.Types.ObjectId,
-      ref: "ParkingSpace",
+      ref: 'ParkingSpace',
       required: true,
       index: true,
     },
     visit: {
       type: Schema.Types.ObjectId,
-      ref: "Visit",
+      ref: 'Visit',
       index: true,
     },
     vehiclePlate: {
@@ -33,7 +33,7 @@ const parkingAssignmentSchema: Schema = new mongoose.Schema(
     },
     assignedBy: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     notes: {
@@ -64,7 +64,9 @@ const parkingAssignmentSchema: Schema = new mongoose.Schema(
 parkingAssignmentSchema.index({ parkingSpace: 1, exitTime: 1 });
 parkingAssignmentSchema.index({ vehiclePlate: 1, entryTime: -1 });
 
-export const ParkingAssignment: Model<IParkingAssignment> =
-  mongoose.model<IParkingAssignment>("ParkingAssignment", parkingAssignmentSchema);
+export const ParkingAssignment: Model<IParkingAssignment> = mongoose.model<IParkingAssignment>(
+  'ParkingAssignment',
+  parkingAssignmentSchema
+);
 
 export default ParkingAssignment;

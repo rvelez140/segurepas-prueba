@@ -762,7 +762,7 @@ html {
   background-image: var(--bg-image);
   background-position: center;
   background-size: cover;
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .loginCard {
@@ -811,7 +811,7 @@ html {
   margin-bottom: 15px;
 }
 
-.options input[type="checkbox"] {
+.options input[type='checkbox'] {
   cursor: pointer;
   margin-top: 18px;
 }
@@ -827,7 +827,7 @@ html {
   white-space: nowrap;
 }
 
-.loginCard button[type="submit"] {
+.loginCard button[type='submit'] {
   width: 100%;
   padding: 12px;
   border: none;
@@ -839,7 +839,7 @@ html {
   transition: background-color 0.3s;
 }
 
-.loginCard button[type="submit"]:hover {
+.loginCard button[type='submit']:hover {
   background-color: #005f87;
 }
 
@@ -965,16 +965,16 @@ html {
   .logo {
     display: none;
   }
-  
-  .themeBar{
-  flex-direction: row-reverse;
-  margin-left: 0;
-  padding-right: 7px;
-}
 
-.themeText {
-  display: none;
-}
+  .themeBar {
+    flex-direction: row-reverse;
+    margin-left: 0;
+    padding-right: 7px;
+  }
+
+  .themeText {
+    display: none;
+  }
 
   .navText {
     display: none;

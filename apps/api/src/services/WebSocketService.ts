@@ -1,6 +1,6 @@
-import { Server as HTTPServer } from "http";
-import { Server as SocketIOServer, Socket } from "socket.io";
-import jwt from "jsonwebtoken";
+import { Server as HTTPServer } from 'http';
+import { Server as SocketIOServer, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
 
 class WebSocketService {
   private io: SocketIOServer | null = null;
@@ -13,8 +13,8 @@ class WebSocketService {
     this.io = new SocketIOServer(httpServer, {
       cors: {
         origin: [
-          process.env.WEB_URL || "http://localhost:3000",
-          process.env.MOBILE_URL || "http://localhost:19000",
+          process.env.WEB_URL || 'http://localhost:3000',
+          process.env.MOBILE_URL || 'http://localhost:19000',
         ],
         credentials: true,
       },
@@ -26,19 +26,19 @@ class WebSocketService {
         const token = socket.handshake.auth.token;
 
         if (!token) {
-          return next(new Error("No autorizado - Token requerido"));
+          return next(new Error('No autorizado - Token requerido'));
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || '');
         (socket as any).user = decoded;
         next();
       } catch (error) {
-        next(new Error("No autorizado - Token inválido"));
+        next(new Error('No autorizado - Token inválido'));
       }
     });
 
     // Manejar conexiones
-    this.io.on("connection", (socket) => {
+    this.io.on('connection', (socket) => {
       const user = (socket as any).user;
       console.log(`Cliente conectado: ${user.email} (${user.role})`);
 
@@ -47,14 +47,14 @@ class WebSocketService {
 
       // Unirse a sala según rol
       socket.join(`role:${user.role}`);
-      if (user.role === "residente") {
+      if (user.role === 'residente') {
         socket.join(`resident:${user.id}`);
-      } else if (user.role === "guardia") {
-        socket.join("guards");
+      } else if (user.role === 'guardia') {
+        socket.join('guards');
       }
 
       // Manejar desconexión
-      socket.on("disconnect", () => {
+      socket.on('disconnect', () => {
         console.log(`Cliente desconectado: ${user.email}`);
         this.connectedClients.delete(user.id);
       });
@@ -63,7 +63,7 @@ class WebSocketService {
       this.setupEventHandlers(socket);
     });
 
-    console.log("✓ WebSocket servidor iniciado");
+    console.log('✓ WebSocket servidor iniciado');
   }
 
   /**
@@ -73,14 +73,14 @@ class WebSocketService {
     const user = (socket as any).user;
 
     // Ping/Pong para keep-alive
-    socket.on("ping", () => {
-      socket.emit("pong");
+    socket.on('ping', () => {
+      socket.emit('pong');
     });
 
     // Actualizar ubicación (para tracking)
-    socket.on("update_location", (data) => {
-      if (user.role === "guardia") {
-        this.io?.to("role:admin").emit("guard_location_updated", {
+    socket.on('update_location', (data) => {
+      if (user.role === 'guardia') {
+        this.io?.to('role:admin').emit('guard_location_updated', {
           guardId: user.id,
           location: data,
         });
@@ -88,7 +88,7 @@ class WebSocketService {
     });
 
     // Solicitar actualizaciones
-    socket.on("request_updates", () => {
+    socket.on('request_updates', () => {
       // Enviar datos actualizados al cliente
       this.sendUpdates(socket, user);
     });
@@ -108,60 +108,60 @@ class WebSocketService {
    * Notificar nueva visita a guardias
    */
   emitNewVisit(visit: any) {
-    this.io?.to("guards").emit("new_visit", visit);
-    this.io?.to("role:admin").emit("new_visit", visit);
+    this.io?.to('guards').emit('new_visit', visit);
+    this.io?.to('role:admin').emit('new_visit', visit);
   }
 
   /**
    * Notificar al residente que su visitante llegó
    */
   emitVisitorArrived(residentId: string, visit: any) {
-    this.io?.to(`resident:${residentId}`).emit("visitor_arrived", visit);
+    this.io?.to(`resident:${residentId}`).emit('visitor_arrived', visit);
   }
 
   /**
    * Notificar entrada registrada
    */
   emitVisitEntry(visit: any) {
-    this.io?.to(`resident:${visit.authorization.resident}`).emit("visit_entry", visit);
-    this.io?.to("role:admin").emit("visit_entry", visit);
+    this.io?.to(`resident:${visit.authorization.resident}`).emit('visit_entry', visit);
+    this.io?.to('role:admin').emit('visit_entry', visit);
   }
 
   /**
    * Notificar salida registrada
    */
   emitVisitExit(visit: any) {
-    this.io?.to(`resident:${visit.authorization.resident}`).emit("visit_exit", visit);
-    this.io?.to("role:admin").emit("visit_exit", visit);
+    this.io?.to(`resident:${visit.authorization.resident}`).emit('visit_exit', visit);
+    this.io?.to('role:admin').emit('visit_exit', visit);
   }
 
   /**
    * Notificar cambio en espacios de parqueo
    */
   emitParkingUpdate(data: { type: string; space: any; assignment?: any }) {
-    this.io?.emit("parking_update", data);
+    this.io?.emit('parking_update', data);
   }
 
   /**
    * Notificar espacio de parqueo asignado
    */
   emitParkingAssigned(visitId: string, assignment: any) {
-    this.io?.emit("parking_assigned", { visitId, assignment });
+    this.io?.emit('parking_assigned', { visitId, assignment });
   }
 
   /**
    * Notificar parqueadero lleno
    */
   emitParkingFull() {
-    this.io?.to("guards").emit("parking_full");
+    this.io?.to('guards').emit('parking_full');
   }
 
   /**
    * Notificar documento en lista negra
    */
   emitBlacklistAlert(document: string, details: any) {
-    this.io?.to("guards").emit("blacklist_alert", { document, details });
-    this.io?.to("role:admin").emit("blacklist_alert", { document, details });
+    this.io?.to('guards').emit('blacklist_alert', { document, details });
+    this.io?.to('role:admin').emit('blacklist_alert', { document, details });
   }
 
   /**
@@ -209,9 +209,9 @@ class WebSocketService {
   getStats() {
     return {
       total: this.getTotalConnected(),
-      guardias: this.getConnectedByRole("guardia"),
-      residentes: this.getConnectedByRole("residente"),
-      admins: this.getConnectedByRole("admin"),
+      guardias: this.getConnectedByRole('guardia'),
+      residentes: this.getConnectedByRole('residente'),
+      admins: this.getConnectedByRole('admin'),
     };
   }
 }

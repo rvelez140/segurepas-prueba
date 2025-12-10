@@ -1,7 +1,7 @@
-import { Company } from "../models/Company";
-import { ICompany } from "../interfaces/ICompany";
-import { Types } from "mongoose";
-import { CloudinaryService } from "./CloudinaryService";
+import { Company } from '../models/Company';
+import { ICompany } from '../interfaces/ICompany';
+import { Types } from 'mongoose';
+import { CloudinaryService } from './CloudinaryService';
 
 export class CompanyService {
   /**
@@ -10,16 +10,16 @@ export class CompanyService {
   static async createCompany(companyData: Partial<ICompany>): Promise<ICompany> {
     // Validar que el subdominio no exista
     const existingCompany = await Company.findOne({
-      subdomain: companyData.subdomain
+      subdomain: companyData.subdomain,
     });
 
     if (existingCompany) {
-      throw new Error("El subdominio ya está en uso");
+      throw new Error('El subdominio ya está en uso');
     }
 
     // Validar email del contacto
     if (!companyData.contact?.email) {
-      throw new Error("El email de contacto es requerido");
+      throw new Error('El email de contacto es requerido');
     }
 
     const company = new Company(companyData);
@@ -43,18 +43,14 @@ export class CompanyService {
   /**
    * Obtener todas las empresas
    */
-  static async getAllCompanies(
-    filter: { isActive?: boolean } = {}
-  ): Promise<ICompany[]> {
+  static async getAllCompanies(filter: { isActive?: boolean } = {}): Promise<ICompany[]> {
     const query: any = {};
 
     if (filter.isActive !== undefined) {
-      query["subscription.isActive"] = filter.isActive;
+      query['subscription.isActive'] = filter.isActive;
     }
 
-    return await Company.find(query)
-      .sort({ createdAt: -1 })
-      .exec();
+    return await Company.find(query).sort({ createdAt: -1 }).exec();
   }
 
   /**
@@ -72,7 +68,7 @@ export class CompanyService {
       });
 
       if (existingCompany) {
-        throw new Error("El subdominio ya está en uso");
+        throw new Error('El subdominio ya está en uso');
       }
     }
 
@@ -89,7 +85,7 @@ export class CompanyService {
   static async deleteCompany(id: string | Types.ObjectId): Promise<ICompany | null> {
     return await Company.findByIdAndUpdate(
       id,
-      { $set: { "subscription.isActive": false } },
+      { $set: { 'subscription.isActive': false } },
       { new: true }
     ).exec();
   }
@@ -110,14 +106,10 @@ export class CompanyService {
     logoFile: Express.Multer.File
   ): Promise<ICompany | null> {
     // Subir logo a Cloudinary
-    const logoUrl = await CloudinaryService.uploadImage(logoFile, "company-logos");
+    const logoUrl = await CloudinaryService.uploadImage(logoFile, 'company-logos');
 
     // Actualizar empresa con nueva URL del logo
-    return await Company.findByIdAndUpdate(
-      id,
-      { $set: { logo: logoUrl } },
-      { new: true }
-    ).exec();
+    return await Company.findByIdAndUpdate(id, { $set: { logo: logoUrl } }, { new: true }).exec();
   }
 
   /**
@@ -127,17 +119,13 @@ export class CompanyService {
     const company = await Company.findById(id);
 
     if (!company || !company.logo) {
-      throw new Error("La empresa no tiene logo");
+      throw new Error('La empresa no tiene logo');
     }
 
     // Eliminar de Cloudinary si es necesario
     // await CloudinaryService.deleteImage(company.logo);
 
-    return await Company.findByIdAndUpdate(
-      id,
-      { $unset: { logo: "" } },
-      { new: true }
-    ).exec();
+    return await Company.findByIdAndUpdate(id, { $unset: { logo: '' } }, { new: true }).exec();
   }
 
   /**
@@ -145,20 +133,19 @@ export class CompanyService {
    */
   static async checkLimits(
     companyId: string | Types.ObjectId,
-    type: "users" | "residents"
+    type: 'users' | 'residents'
   ): Promise<{ withinLimit: boolean; current: number; max: number }> {
     const company = await Company.findById(companyId);
 
     if (!company) {
-      throw new Error("Empresa no encontrada");
+      throw new Error('Empresa no encontrada');
     }
 
     // Aquí deberías contar los usuarios/residentes actuales
     // Por ahora retornamos un placeholder
     const current = 0; // TODO: Implementar conteo real
-    const max = type === "users"
-      ? company.subscription.maxUsers
-      : company.subscription.maxResidents;
+    const max =
+      type === 'users' ? company.subscription.maxUsers : company.subscription.maxResidents;
 
     return {
       withinLimit: current < max,
@@ -172,7 +159,7 @@ export class CompanyService {
    */
   static async updateSubscription(
     id: string | Types.ObjectId,
-    subscriptionData: Partial<ICompany["subscription"]>
+    subscriptionData: Partial<ICompany['subscription']>
   ): Promise<ICompany | null> {
     return await Company.findByIdAndUpdate(
       id,

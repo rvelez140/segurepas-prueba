@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -20,7 +22,8 @@
   padding: 1.5625rem;
   background-color: var(--white);
   border-radius: 0.5rem;
-  box-shadow: 0 0.25rem 0.625rem rgb(0 0 0 / 10%),
+  box-shadow:
+    0 0.25rem 0.625rem rgb(0 0 0 / 10%),
     0 0.5rem 1.25rem rgb(0 0 0 / 15%);
   max-height: 90vh;
   max-width: 550px;
@@ -48,7 +51,7 @@
 }
 
 /* Form styles */
-.visitForm {  
+.visitForm {
   margin: 0 auto;
   padding: 1.25rem;
   background-color: var(--white);
@@ -57,7 +60,7 @@
   margin-bottom: 1rem;
 }
 
-.visitFormModal {  
+.visitFormModal {
   margin: 0 auto;
   padding: 1.25rem;
   background-color: var(--white);
@@ -75,7 +78,7 @@
   margin-bottom: 1.25rem;
 }
 
-.form{
+.form {
   width: 100%;
 }
 
@@ -171,7 +174,6 @@
   font-size: 1.125rem;
   font-weight: bold;
   cursor: pointer;
-  
 }
 
 .closeBtn:hover {

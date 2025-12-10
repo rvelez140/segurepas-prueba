@@ -59,7 +59,7 @@ class SubscriptionAnalyticsService {
     }).populate('subscriptionId');
 
     const totalRevenue = payments.reduce((sum, payment) => sum + payment.amount, 0);
-    const totalSubscriptions = new Set(payments.map(p => p.subscriptionId?.toString())).size;
+    const totalSubscriptions = new Set(payments.map((p) => p.subscriptionId?.toString())).size;
 
     // Revenue por plan
     const revenueByPlan = await this.calculateRevenueByPlan(period);
@@ -87,11 +87,19 @@ class SubscriptionAnalyticsService {
   async getSubscriptionMetrics(): Promise<SubscriptionMetrics> {
     const allSubscriptions = await Subscription.find({});
 
-    const totalActive = allSubscriptions.filter(s => s.status === SubscriptionStatus.ACTIVE).length;
-    const totalCanceled = allSubscriptions.filter(s => s.status === SubscriptionStatus.CANCELED).length;
-    const totalExpired = allSubscriptions.filter(s => s.status === SubscriptionStatus.EXPIRED).length;
-    const totalPending = allSubscriptions.filter(s => s.status === SubscriptionStatus.PENDING).length;
-    const totalTrial = allSubscriptions.filter(s => s.status === SubscriptionStatus.TRIAL).length;
+    const totalActive = allSubscriptions.filter(
+      (s) => s.status === SubscriptionStatus.ACTIVE
+    ).length;
+    const totalCanceled = allSubscriptions.filter(
+      (s) => s.status === SubscriptionStatus.CANCELED
+    ).length;
+    const totalExpired = allSubscriptions.filter(
+      (s) => s.status === SubscriptionStatus.EXPIRED
+    ).length;
+    const totalPending = allSubscriptions.filter(
+      (s) => s.status === SubscriptionStatus.PENDING
+    ).length;
+    const totalTrial = allSubscriptions.filter((s) => s.status === SubscriptionStatus.TRIAL).length;
 
     // Por plan
     const byPlan = await this.calculateSubscriptionsByPlan();
@@ -141,15 +149,11 @@ class SubscriptionAnalyticsService {
 
     const previousPeriodSubscriptions = await Subscription.countDocuments({
       createdAt: { $lte: period.startDate },
-      $or: [
-        { canceledAt: { $exists: false } },
-        { canceledAt: { $gt: period.startDate } },
-      ],
+      $or: [{ canceledAt: { $exists: false } }, { canceledAt: { $gt: period.startDate } }],
     });
 
-    const growthRate = previousPeriodSubscriptions > 0
-      ? (netGrowth / previousPeriodSubscriptions) * 100
-      : 0;
+    const growthRate =
+      previousPeriodSubscriptions > 0 ? (netGrowth / previousPeriodSubscriptions) * 100 : 0;
 
     return {
       newSubscriptions,
@@ -171,11 +175,11 @@ class SubscriptionAnalyticsService {
     });
 
     const totalPayments = payments.length;
-    const successfulPayments = payments.filter(p => p.status === PaymentStatus.COMPLETED).length;
-    const failedPayments = payments.filter(p => p.status === PaymentStatus.FAILED).length;
+    const successfulPayments = payments.filter((p) => p.status === PaymentStatus.COMPLETED).length;
+    const failedPayments = payments.filter((p) => p.status === PaymentStatus.FAILED).length;
 
     const totalAmount = payments
-      .filter(p => p.status === PaymentStatus.COMPLETED)
+      .filter((p) => p.status === PaymentStatus.COMPLETED)
       .reduce((sum, p) => sum + p.amount, 0);
 
     return {
@@ -258,7 +262,9 @@ class SubscriptionAnalyticsService {
    * Métodos privados auxiliares
    */
 
-  private async calculateRevenueByPlan(period: AnalyticsPeriod): Promise<Record<SubscriptionPlan, number>> {
+  private async calculateRevenueByPlan(
+    period: AnalyticsPeriod
+  ): Promise<Record<SubscriptionPlan, number>> {
     const result = await Payment.aggregate([
       {
         $match: {
@@ -289,7 +295,7 @@ class SubscriptionAnalyticsService {
       [SubscriptionPlan.ENTERPRISE]: 0,
     };
 
-    result.forEach(item => {
+    result.forEach((item) => {
       if (item._id) {
         revenueByPlan[item._id as SubscriptionPlan] = item.total;
       }
@@ -298,7 +304,9 @@ class SubscriptionAnalyticsService {
     return revenueByPlan;
   }
 
-  private async calculateRevenueByProvider(period: AnalyticsPeriod): Promise<Record<PaymentProvider, number>> {
+  private async calculateRevenueByProvider(
+    period: AnalyticsPeriod
+  ): Promise<Record<PaymentProvider, number>> {
     const result = await Payment.aggregate([
       {
         $match: {
@@ -319,7 +327,7 @@ class SubscriptionAnalyticsService {
       [PaymentProvider.PAYPAL]: 0,
     };
 
-    result.forEach(item => {
+    result.forEach((item) => {
       if (item._id) {
         revenueByProvider[item._id as PaymentProvider] = item.total;
       }
@@ -335,7 +343,7 @@ class SubscriptionAnalyticsService {
 
     let mrr = 0;
 
-    activeSubscriptions.forEach(sub => {
+    activeSubscriptions.forEach((sub) => {
       if (sub.billingCycle === 'monthly') {
         mrr += sub.amount;
       } else if (sub.billingCycle === 'yearly') {
@@ -370,7 +378,7 @@ class SubscriptionAnalyticsService {
       [SubscriptionPlan.ENTERPRISE]: 0,
     };
 
-    result.forEach(item => {
+    result.forEach((item) => {
       if (item._id) {
         byPlan[item._id as SubscriptionPlan] = item.count;
       }
@@ -399,7 +407,7 @@ class SubscriptionAnalyticsService {
       [PaymentProvider.PAYPAL]: 0,
     };
 
-    result.forEach(item => {
+    result.forEach((item) => {
       if (item._id) {
         byProvider[item._id as PaymentProvider] = item.count;
       }
@@ -408,17 +416,17 @@ class SubscriptionAnalyticsService {
     return byProvider;
   }
 
-  private async calculateChurnAndRetention(): Promise<{ churnRate: number; retentionRate: number }> {
+  private async calculateChurnAndRetention(): Promise<{
+    churnRate: number;
+    retentionRate: number;
+  }> {
     const now = new Date();
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
     const activeAtStart = await Subscription.countDocuments({
       createdAt: { $lte: lastMonthStart },
-      $or: [
-        { canceledAt: { $exists: false } },
-        { canceledAt: { $gt: lastMonthStart } },
-      ],
+      $or: [{ canceledAt: { $exists: false } }, { canceledAt: { $gt: lastMonthStart } }],
     });
 
     const canceledDuringPeriod = await Subscription.countDocuments({

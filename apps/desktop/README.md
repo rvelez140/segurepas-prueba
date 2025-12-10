@@ -68,6 +68,7 @@ npm run dist:win
 ```
 
 Esto generará:
+
 - Instalador NSIS (`.exe`) - Instalador tradicional
 - Versión portable (`.exe`) - No requiere instalación
 
@@ -80,6 +81,7 @@ npm run dist:linux
 ```
 
 Esto generará:
+
 - AppImage (`.AppImage`) - Ejecutable universal para Linux
 - Paquete Debian (`.deb`) - Para Ubuntu/Debian
 - Paquete RPM (`.rpm`) - Para Fedora/RedHat/CentOS
@@ -115,13 +117,14 @@ Edita `src/main.ts` para cambiar la URL de la aplicación web:
 
 ```typescript
 const WEB_APP_URL = isDevelopment
-  ? 'http://localhost:3000'      // Desarrollo
-  : 'https://tu-app.com';         // Producción
+  ? 'http://localhost:3000' // Desarrollo
+  : 'https://tu-app.com'; // Producción
 ```
 
 ### Iconos
 
 Coloca tus iconos personalizados en:
+
 - `assets/icon.png` - Para Linux (512x512px recomendado)
 - `assets/icon.ico` - Para Windows (256x256px recomendado)
 
@@ -186,6 +189,7 @@ if (window.electronAPI) {
 ### La aplicación no se conecta al backend
 
 Verifica que:
+
 1. El backend esté corriendo en el puerto correcto
 2. La URL en `src/main.ts` sea correcta
 3. No haya problemas de CORS
@@ -195,6 +199,7 @@ Verifica que:
 Asegúrate de tener las dependencias del sistema instaladas:
 
 **Linux:**
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get install -y rpm
@@ -206,6 +211,7 @@ sudo dnf install dpkg
 ### La aplicación no arranca
 
 Revisa los logs:
+
 - **Windows**: Abre DevTools con `Ctrl+Shift+I`
 - **Linux**: Ejecuta desde terminal para ver errores
 

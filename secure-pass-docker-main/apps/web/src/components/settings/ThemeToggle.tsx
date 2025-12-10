@@ -1,7 +1,7 @@
 // ThemeToggle.tsx
-import { useTheme } from "../../contexts/ThemeContext";
-import { FaSun, FaMoon } from "react-icons/fa";
-import styles from "../../styles/themeToggle.module.css";
+import { useTheme } from '../../contexts/ThemeContext';
+import { FaSun, FaMoon } from 'react-icons/fa';
+import styles from '../../styles/themeToggle.module.css';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -9,12 +9,10 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className={`${styles.toggleButton} ${
-        theme === "dark" ? styles.dark : styles.light
-      }`}
+      className={`${styles.toggleButton} ${theme === 'dark' ? styles.dark : styles.light}`}
       aria-label="Cambiar tema"
     >
-      {theme === "dark" ? <FaSun /> : <FaMoon />}
+      {theme === 'dark' ? <FaSun /> : <FaMoon />}
     </button>
   );
 };

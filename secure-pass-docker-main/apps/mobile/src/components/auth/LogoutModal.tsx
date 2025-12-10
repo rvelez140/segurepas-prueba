@@ -1,15 +1,15 @@
-import React from "react";
-import { 
-  Modal, 
-  Pressable, 
-  StyleSheet, 
-  Text, 
-  View, 
+import React from 'react';
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
   Dimensions,
-  TouchableWithoutFeedback
-} from "react-native";
+  TouchableWithoutFeedback,
+} from 'react-native';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 export const LogoutConfirmationModal: React.FC<{
   visible: boolean;
@@ -38,7 +38,7 @@ export const LogoutConfirmationModal: React.FC<{
                   style={({ pressed }) => [
                     styles.button,
                     styles.cancelButton,
-                    pressed && styles.buttonPressed
+                    pressed && styles.buttonPressed,
                   ]}
                   onPress={onCancel}
                   accessibilityLabel="Cancelar cierre de sesión"
@@ -51,7 +51,7 @@ export const LogoutConfirmationModal: React.FC<{
                   style={({ pressed }) => [
                     styles.button,
                     styles.confirmButton,
-                    pressed && styles.buttonPressed
+                    pressed && styles.buttonPressed,
                   ]}
                   onPress={onConfirm}
                   accessibilityLabel="Confirmar cierre de sesión"
@@ -72,18 +72,18 @@ export const LogoutConfirmationModal: React.FC<{
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     padding: 20,
   },
   modalCard: {
-    width: "100%",
+    width: '100%',
     maxWidth: 500,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 16,
     padding: 24,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
@@ -91,39 +91,39 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 12,
-    color: "#333",
+    color: '#333',
   },
   modalText: {
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 24,
-    color: "#666",
+    color: '#666',
   },
   buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     gap: 12,
   },
   button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
-    width: "50%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelButton: {
-    backgroundColor: "#79817C",
+    backgroundColor: '#79817C',
   },
   confirmButton: {
-    backgroundColor: "#FA392B",
+    backgroundColor: '#FA392B',
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: "500",
-    color: "#fff"
+    fontWeight: '500',
+    color: '#fff',
   },
   buttonPressed: {
     opacity: 0.8,

@@ -8,9 +8,7 @@ let mainWindow: BrowserWindow | null = null;
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // URL de la aplicación web (ajusta según tu configuración)
-const WEB_APP_URL = isDevelopment
-  ? 'http://localhost:3000'
-  : 'http://localhost:3000'; // Cambia esto a tu URL de producción
+const WEB_APP_URL = isDevelopment ? 'http://localhost:3000' : 'http://localhost:3000'; // Cambia esto a tu URL de producción
 
 function createWindow(): void {
   // Crear la ventana del navegador
@@ -23,12 +21,12 @@ function createWindow(): void {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
-      webSecurity: true
+      webSecurity: true,
     },
     icon: path.join(__dirname, '../assets/icon.png'),
     title: 'SecurePass - Control de Acceso',
     backgroundColor: '#ffffff',
-    show: false // No mostrar hasta que esté lista
+    show: false, // No mostrar hasta que esté lista
   });
 
   // Cargar la aplicación web
@@ -80,7 +78,7 @@ function createApplicationMenu(): void {
           accelerator: 'CmdOrCtrl+R',
           click: () => {
             mainWindow?.reload();
-          }
+          },
         },
         { type: 'separator' },
         {
@@ -88,9 +86,9 @@ function createApplicationMenu(): void {
           accelerator: 'CmdOrCtrl+Q',
           click: () => {
             app.quit();
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       label: 'Editar',
@@ -103,8 +101,8 @@ function createApplicationMenu(): void {
         { role: 'paste', label: 'Pegar' },
         { role: 'delete', label: 'Eliminar' },
         { type: 'separator' },
-        { role: 'selectAll', label: 'Seleccionar todo' }
-      ]
+        { role: 'selectAll', label: 'Seleccionar todo' },
+      ],
     },
     {
       label: 'Ver',
@@ -113,15 +111,15 @@ function createApplicationMenu(): void {
         { role: 'zoomIn', label: 'Acercar' },
         { role: 'zoomOut', label: 'Alejar' },
         { type: 'separator' },
-        { role: 'togglefullscreen', label: 'Pantalla completa' }
-      ]
+        { role: 'togglefullscreen', label: 'Pantalla completa' },
+      ],
     },
     {
       label: 'Ventana',
       submenu: [
         { role: 'minimize', label: 'Minimizar' },
-        { role: 'close', label: 'Cerrar' }
-      ]
+        { role: 'close', label: 'Cerrar' },
+      ],
     },
     {
       label: 'Ayuda',
@@ -130,17 +128,17 @@ function createApplicationMenu(): void {
           label: 'Acerca de SecurePass',
           click: () => {
             showAboutDialog();
-          }
+          },
         },
         { type: 'separator' },
         {
           label: 'Documentación',
           click: async () => {
             await shell.openExternal('https://github.com/tzeik/secure-pass');
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   ];
 
   // En desarrollo, agregar menú de herramientas
@@ -150,8 +148,8 @@ function createApplicationMenu(): void {
       submenu: [
         { role: 'reload', label: 'Recargar' },
         { role: 'forceReload', label: 'Forzar recarga' },
-        { role: 'toggleDevTools', label: 'Herramientas de desarrollo' }
-      ]
+        { role: 'toggleDevTools', label: 'Herramientas de desarrollo' },
+      ],
     });
   }
 
@@ -166,7 +164,7 @@ function showAboutDialog(): void {
     title: 'Acerca de SecurePass',
     message: 'SecurePass Desktop',
     detail: `Versión: ${app.getVersion()}\n\nSistema de Control de Acceso para Residencias\n\n© 2025 SecurePass Team`,
-    buttons: ['OK']
+    buttons: ['OK'],
   });
 }
 
@@ -180,22 +178,24 @@ function checkForUpdates(): void {
       type: 'info',
       title: 'Actualización disponible',
       message: 'Hay una nueva versión disponible. Se descargará en segundo plano.',
-      buttons: ['OK']
+      buttons: ['OK'],
     });
   });
 
   autoUpdater.on('update-downloaded', () => {
     const { dialog } = require('electron');
-    dialog.showMessageBox(mainWindow!, {
-      type: 'info',
-      title: 'Actualización lista',
-      message: 'La actualización se ha descargado. Se instalará al reiniciar la aplicación.',
-      buttons: ['Reiniciar ahora', 'Más tarde']
-    }).then((result) => {
-      if (result.response === 0) {
-        autoUpdater.quitAndInstall();
-      }
-    });
+    dialog
+      .showMessageBox(mainWindow!, {
+        type: 'info',
+        title: 'Actualización lista',
+        message: 'La actualización se ha descargado. Se instalará al reiniciar la aplicación.',
+        buttons: ['Reiniciar ahora', 'Más tarde'],
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall();
+        }
+      });
   });
 }
 
@@ -227,7 +227,7 @@ ipcMain.handle('platform-info', () => {
   return {
     platform: process.platform,
     arch: process.arch,
-    version: process.version
+    version: process.version,
   };
 });
 
@@ -250,7 +250,7 @@ nativeTheme.on('updated', () => {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('theme-changed', {
       shouldUseDarkColors: nativeTheme.shouldUseDarkColors,
-      themeSource: nativeTheme.themeSource
+      themeSource: nativeTheme.themeSource,
     });
   }
 });

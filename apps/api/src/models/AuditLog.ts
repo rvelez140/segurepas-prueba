@@ -1,5 +1,5 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IAuditLog, AuditAction, AuditSeverity } from "../interfaces/IAuditLog";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IAuditLog, AuditAction, AuditSeverity } from '../interfaces/IAuditLog';
 
 const auditLogSchema: Schema = new mongoose.Schema(
   {
@@ -18,7 +18,7 @@ const auditLogSchema: Schema = new mongoose.Schema(
     },
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       index: true,
     },
     userEmail: {
@@ -80,9 +80,6 @@ auditLogSchema.index({ success: 1, timestamp: -1 });
 // TTL Index - Eliminar logs antiguos automáticamente después de 90 días
 auditLogSchema.index({ timestamp: 1 }, { expireAfterSeconds: 7776000 }); // 90 días
 
-export const AuditLog: Model<IAuditLog> = mongoose.model<IAuditLog>(
-  "AuditLog",
-  auditLogSchema
-);
+export const AuditLog: Model<IAuditLog> = mongoose.model<IAuditLog>('AuditLog', auditLogSchema);
 
 export default AuditLog;

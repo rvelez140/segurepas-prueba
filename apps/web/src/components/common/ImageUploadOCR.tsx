@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { createWorker } from "tesseract.js";
-import styles from "../../styles/imageUpload.module.css";
+import React, { useState } from 'react';
+import { createWorker } from 'tesseract.js';
+import styles from '../../styles/imageUpload.module.css';
 
 interface ImageUploadOCRProps {
-  onTextExtracted: (text: string, type: "cedula" | "placa") => void;
-  type: "cedula" | "placa";
+  onTextExtracted: (text: string, type: 'cedula' | 'placa') => void;
+  type: 'cedula' | 'placa';
   label: string;
   currentValue?: string;
 }
@@ -26,9 +26,9 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
 
     try {
       // Crear worker de Tesseract
-      const worker = await createWorker("spa", 1, {
+      const worker = await createWorker('spa', 1, {
         logger: (m) => {
-          if (m.status === "recognizing text") {
+          if (m.status === 'recognizing text') {
             setProgress(Math.round(m.progress * 100));
           }
         },
@@ -47,24 +47,23 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
         setOcrResult(extractedValue);
         onTextExtracted(extractedValue, type);
       } else {
-        setOcrResult("No se pudo detectar el " + (type === "cedula" ? "número de cédula" : "número de placa"));
+        setOcrResult(
+          'No se pudo detectar el ' + (type === 'cedula' ? 'número de cédula' : 'número de placa')
+        );
       }
     } catch (error) {
-      console.error("Error procesando imagen:", error);
-      setOcrResult("Error procesando la imagen");
+      console.error('Error procesando imagen:', error);
+      setOcrResult('Error procesando la imagen');
     } finally {
       setProcessing(false);
       setProgress(0);
     }
   };
 
-  const extractValue = (
-    text: string,
-    docType: "cedula" | "placa"
-  ): string | null => {
-    const cleanText = text.replace(/\s+/g, " ").trim().toUpperCase();
+  const extractValue = (text: string, docType: 'cedula' | 'placa'): string | null => {
+    const cleanText = text.replace(/\s+/g, ' ').trim().toUpperCase();
 
-    if (docType === "cedula") {
+    if (docType === 'cedula') {
       // Buscar números de 8-11 dígitos
       const cedulaMatches = cleanText.match(/\b\d{8,11}\b/g);
       if (cedulaMatches && cedulaMatches.length > 0) {
@@ -72,11 +71,11 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
       }
     }
 
-    if (docType === "placa") {
+    if (docType === 'placa') {
       // Buscar patrón de placa: 3 letras + 3 dígitos
       const placaMatch = cleanText.match(/\b[A-Z]{3}\s*\d{3}\b/);
       if (placaMatch) {
-        return placaMatch[0].replace(/\s+/g, "");
+        return placaMatch[0].replace(/\s+/g, '');
       }
     }
 
@@ -101,7 +100,7 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
   const handleRemove = () => {
     setPreview(null);
     setOcrResult(null);
-    onTextExtracted("", type);
+    onTextExtracted('', type);
   };
 
   return (
@@ -131,22 +130,14 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            <span>
-              Subir foto de {type === "cedula" ? "cédula" : "placa"}
-            </span>
-            <span className={styles.hint}>
-              Click para seleccionar o arrastrar imagen
-            </span>
+            <span>Subir foto de {type === 'cedula' ? 'cédula' : 'placa'}</span>
+            <span className={styles.hint}>Click para seleccionar o arrastrar imagen</span>
           </label>
         </div>
       ) : (
         <div className={styles.previewContainer}>
           <img src={preview} alt="Preview" className={styles.preview} />
-          <button
-            type="button"
-            onClick={handleRemove}
-            className={styles.removeBtn}
-          >
+          <button type="button" onClick={handleRemove} className={styles.removeBtn}>
             ✕
           </button>
         </div>
@@ -157,10 +148,7 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
           <div className={styles.spinner}></div>
           <span>Procesando imagen... {progress}%</span>
           <div className={styles.progressBar}>
-            <div
-              className={styles.progressFill}
-              style={{ width: `${progress}%` }}
-            ></div>
+            <div className={styles.progressFill} style={{ width: `${progress}%` }}></div>
           </div>
         </div>
       )}
@@ -168,7 +156,7 @@ const ImageUploadOCR: React.FC<ImageUploadOCRProps> = ({
       {ocrResult && !processing && (
         <div className={styles.resultContainer}>
           <span className={styles.resultLabel}>
-            {type === "cedula" ? "Cédula detectada:" : "Placa detectada:"}
+            {type === 'cedula' ? 'Cédula detectada:' : 'Placa detectada:'}
           </span>
           <span className={styles.resultValue}>{ocrResult}</span>
         </div>

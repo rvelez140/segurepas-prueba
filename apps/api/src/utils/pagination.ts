@@ -1,10 +1,10 @@
-import { Query } from "mongoose";
+import { Query } from 'mongoose';
 
 export interface PaginationOptions {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface PaginatedResult<T> {
@@ -33,7 +33,7 @@ export async function paginate<T>(
 
   // Aplicar ordenamiento
   if (options.sortBy) {
-    const sortOrder = options.sortOrder === "asc" ? 1 : -1;
+    const sortOrder = options.sortOrder === 'asc' ? 1 : -1;
     query = query.sort({ [options.sortBy]: sortOrder });
   }
 
@@ -66,6 +66,6 @@ export function getPaginationOptions(query: any): PaginationOptions {
     page: query.page ? parseInt(query.page) : undefined,
     limit: query.limit ? parseInt(query.limit) : undefined,
     sortBy: query.sortBy,
-    sortOrder: query.sortOrder === "asc" ? "asc" : "desc",
+    sortOrder: query.sortOrder === 'asc' ? 'asc' : 'desc',
   };
 }

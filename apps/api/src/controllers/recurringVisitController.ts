@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { RecurringVisitService } from "../services/RecurringVisitService";
-import { RecurrencePattern } from "../interfaces/IRecurringVisit";
+import { Request, Response, NextFunction } from 'express';
+import { RecurringVisitService } from '../services/RecurringVisitService';
+import { RecurrencePattern } from '../interfaces/IRecurringVisit';
 
 export const recurringVisitController = {
   /**
@@ -11,13 +11,13 @@ export const recurringVisitController = {
       const user = (req as any).user;
       const data = {
         ...req.body,
-        resident: user.role === "residente" ? user._id : req.body.resident,
+        resident: user.role === 'residente' ? user._id : req.body.resident,
       };
 
       const recurringVisit = await RecurringVisitService.create(data);
 
       res.status(201).json({
-        message: "Visita recurrente creada exitosamente",
+        message: 'Visita recurrente creada exitosamente',
         data: recurringVisit,
       });
     } catch (error: any) {
@@ -76,12 +76,12 @@ export const recurringVisitController = {
       const updated = await RecurringVisitService.update(id as any, updates);
 
       if (!updated) {
-        res.status(404).json({ error: "Visita recurrente no encontrada" });
+        res.status(404).json({ error: 'Visita recurrente no encontrada' });
         return;
       }
 
       res.status(200).json({
-        message: "Visita recurrente actualizada",
+        message: 'Visita recurrente actualizada',
         data: updated,
       });
     } catch (error) {
@@ -98,12 +98,12 @@ export const recurringVisitController = {
       const deactivated = await RecurringVisitService.deactivate(id as any);
 
       if (!deactivated) {
-        res.status(404).json({ error: "Visita recurrente no encontrada" });
+        res.status(404).json({ error: 'Visita recurrente no encontrada' });
         return;
       }
 
       res.status(200).json({
-        message: "Visita recurrente desactivada",
+        message: 'Visita recurrente desactivada',
         data: deactivated,
       });
     } catch (error) {
@@ -119,7 +119,7 @@ export const recurringVisitController = {
       const result = await RecurringVisitService.generateScheduledVisits();
 
       res.status(200).json({
-        message: "Generación completada",
+        message: 'Generación completada',
         ...result,
       });
     } catch (error) {

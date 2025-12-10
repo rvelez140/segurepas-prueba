@@ -1,27 +1,14 @@
-import { Request, Response, NextFunction } from "express";
-import { AuditLogService } from "../services/AuditLogService";
-import { AuditAction, AuditSeverity } from "../interfaces/IAuditLog";
+import { Request, Response, NextFunction } from 'express';
+import { AuditLogService } from '../services/AuditLogService';
+import { AuditAction, AuditSeverity } from '../interfaces/IAuditLog';
 
 export const auditController = {
   /**
    * Obtener logs de auditoría con filtros
    */
-  async getLogs(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getLogs(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const {
-        action,
-        userId,
-        startDate,
-        endDate,
-        severity,
-        success,
-        page,
-        limit,
-      } = req.query;
+      const { action, userId, startDate, endDate, severity, success, page, limit } = req.query;
 
       const result = await AuditLogService.getLogs({
         action: action as AuditAction,
@@ -29,7 +16,7 @@ export const auditController = {
         startDate: startDate ? new Date(startDate as string) : undefined,
         endDate: endDate ? new Date(endDate as string) : undefined,
         severity: severity as AuditSeverity,
-        success: success === "true" ? true : success === "false" ? false : undefined,
+        success: success === 'true' ? true : success === 'false' ? false : undefined,
         page: page ? parseInt(page as string) : undefined,
         limit: limit ? parseInt(limit as string) : undefined,
       });
@@ -43,11 +30,7 @@ export const auditController = {
   /**
    * Obtener estadísticas de auditoría
    */
-  async getStats(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getStats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { startDate, endDate } = req.query;
 
@@ -65,11 +48,7 @@ export const auditController = {
   /**
    * Obtener logs de un usuario específico
    */
-  async getUserLogs(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getUserLogs(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId } = req.params;
       const { page, limit } = req.query;
@@ -89,11 +68,7 @@ export const auditController = {
   /**
    * Obtener logs de acciones fallidas
    */
-  async getFailedActions(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getFailedActions(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { page, limit, startDate, endDate } = req.query;
 
@@ -114,11 +89,7 @@ export const auditController = {
   /**
    * Limpiar logs antiguos
    */
-  async cleanOldLogs(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async cleanOldLogs(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { days } = req.query;
       const daysOld = days ? parseInt(days as string) : 90;

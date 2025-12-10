@@ -17,12 +17,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // APIs de tema
   getSystemTheme: () => ipcRenderer.invoke('get-system-theme'),
   getThemeSource: () => ipcRenderer.invoke('get-theme-source'),
-  setThemeSource: (source: 'system' | 'light' | 'dark') => ipcRenderer.invoke('set-theme-source', source),
-  onThemeChanged: (callback: (theme: { shouldUseDarkColors: boolean; themeSource: string }) => void) => {
-    const subscription = (_event: Electron.IpcRendererEvent, theme: { shouldUseDarkColors: boolean; themeSource: string }) => callback(theme);
+  setThemeSource: (source: 'system' | 'light' | 'dark') =>
+    ipcRenderer.invoke('set-theme-source', source),
+  onThemeChanged: (
+    callback: (theme: { shouldUseDarkColors: boolean; themeSource: string }) => void
+  ) => {
+    const subscription = (
+      _event: Electron.IpcRendererEvent,
+      theme: { shouldUseDarkColors: boolean; themeSource: string }
+    ) => callback(theme);
     ipcRenderer.on('theme-changed', subscription);
     return () => ipcRenderer.removeListener('theme-changed', subscription);
-  }
+  },
 });
 
 // Tipos para TypeScript (opcional, para el lado del renderer)
@@ -38,7 +44,9 @@ export interface ElectronAPI {
   getSystemTheme: () => Promise<'light' | 'dark'>;
   getThemeSource: () => Promise<'system' | 'light' | 'dark'>;
   setThemeSource: (source: 'system' | 'light' | 'dark') => Promise<'system' | 'light' | 'dark'>;
-  onThemeChanged: (callback: (theme: { shouldUseDarkColors: boolean; themeSource: string }) => void) => () => void;
+  onThemeChanged: (
+    callback: (theme: { shouldUseDarkColors: boolean; themeSource: string }) => void
+  ) => () => void;
 }
 
 declare global {

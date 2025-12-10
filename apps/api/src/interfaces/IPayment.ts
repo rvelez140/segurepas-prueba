@@ -6,13 +6,13 @@ export enum PaymentStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   REFUNDED = 'refunded',
-  CANCELED = 'canceled'
+  CANCELED = 'canceled',
 }
 
 export enum PaymentType {
   SUBSCRIPTION = 'subscription',
   ONE_TIME = 'one_time',
-  REFUND = 'refund'
+  REFUND = 'refund',
 }
 
 export interface IPayment extends Document {

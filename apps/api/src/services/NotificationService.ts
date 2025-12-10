@@ -1,20 +1,20 @@
-import nodemailer from "nodemailer";
-import { env } from "../config/env";
-import { IVisit } from "../interfaces/IVisit";
-import { UserService } from "./UserService";
-import { IUser } from "../interfaces/IUser";
-import { ISubscription } from "../interfaces/ISubscription";
-import { IPayment } from "../interfaces/IPayment";
-import { Notification } from "../models/Notification";
-import { NotificationType, INotification } from "../interfaces/INotification";
-import { Types } from "mongoose";
+import nodemailer from 'nodemailer';
+import { env } from '../config/env';
+import { IVisit } from '../interfaces/IVisit';
+import { UserService } from './UserService';
+import { IUser } from '../interfaces/IUser';
+import { ISubscription } from '../interfaces/ISubscription';
+import { IPayment } from '../interfaces/IPayment';
+import { Notification } from '../models/Notification';
+import { NotificationType, INotification } from '../interfaces/INotification';
+import { Types } from 'mongoose';
 
 class NotificationService {
   public transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: 'Gmail',
       auth: {
         user: env.EMAIL_USER,
         pass: env.EMAIL_PASSWORD,
@@ -27,9 +27,7 @@ class NotificationService {
     toVisit: string,
     visitData: IVisit
   ): Promise<nodemailer.SentMessageInfo[]> {
-    const residentData = (await UserService.findById(
-      visitData.authorization.resident
-    )) as IUser;
+    const residentData = (await UserService.findById(visitData.authorization.resident)) as IUser;
 
     const residentMailOptions = {
       from: `${process.env.EMAIL_FROM}`,
@@ -40,15 +38,11 @@ class NotificationService {
       html: `
         <h1>Notificación de Autorización de Visitante</h1>
         <p>Estimado, ${residentData.name} su autorización de visita a ${
-        visitData.visit.name
-      } ha sido registrada<p>
+          visitData.visit.name
+        } ha sido registrada<p>
         <p><strong>Visitante:</strong> ${visitData.visit.name}</p>
-        <p><strong>Documento de Indentidad:</strong> ${
-          visitData.visit.document
-        }</p>
-        <p><strong>Motivo de Visita:</strong> ${
-          visitData.authorization.reason
-        }</p>
+        <p><strong>Documento de Indentidad:</strong> ${visitData.visit.document}</p>
+        <p><strong>Motivo de Visita:</strong> ${visitData.authorization.reason}</p>
         <p><strong>Fecha de autorización:</strong> ${visitData.authorization.date.toLocaleString()}</p>
         <p><strong>Fecha de expiración:</strong> ${visitData.authorization.exp.toLocaleString()}</p>
         <img style="text-align: center;" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${
@@ -71,12 +65,8 @@ class NotificationService {
           visitData.visit.name
         }. Usted su visita ha sido autorizada por ${residentData.name}<p>
         <p><strong>Visitante:</strong> ${visitData.visit.name}</p>
-        <p><strong>Documento de Indentidad:</strong> ${
-          visitData.visit.document
-        }</p>
-        <p><strong>Motivo de Visita:</strong> ${
-          visitData.authorization.reason
-        }</p>
+        <p><strong>Documento de Indentidad:</strong> ${visitData.visit.document}</p>
+        <p><strong>Motivo de Visita:</strong> ${visitData.authorization.reason}</p>
         <p><strong>Fecha de autorización:</strong> ${visitData.authorization.date.toLocaleString()}</p>
         <p><strong>Fecha de expiración:</strong> ${visitData.authorization.exp.toLocaleString()}</p>
         <img style="text-align: center;" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${
@@ -104,9 +94,7 @@ class NotificationService {
     visitData: IVisit,
     guardName: string
   ): Promise<nodemailer.SentMessageInfo[]> {
-    const residentData = (await UserService.findById(
-      visitData.authorization.resident
-    )) as IUser;
+    const residentData = (await UserService.findById(visitData.authorization.resident)) as IUser;
 
     const entryDate = visitData.registry?.entry?.date || new Date();
 
@@ -129,7 +117,7 @@ class NotificationService {
             <p><strong>Motivo de Visita:</strong> ${visitData.authorization.reason}</p>
             <p><strong>Fecha y Hora de Entrada:</strong> ${entryDate.toLocaleString('es-ES', {
               dateStyle: 'full',
-              timeStyle: 'short'
+              timeStyle: 'short',
             })}</p>
             <p><strong>Registrado por:</strong> ${guardName}</p>
             ${visitData.registry?.entry?.note ? `<p><strong>Nota:</strong> ${visitData.registry.entry.note}</p>` : ''}
@@ -163,7 +151,7 @@ class NotificationService {
             <p><strong>Residente que lo autoriza:</strong> ${residentData.name}${residentData.role === 'residente' ? ` - ${(residentData as any).apartment}` : ''}</p>
             <p><strong>Fecha y Hora de Entrada:</strong> ${entryDate.toLocaleString('es-ES', {
               dateStyle: 'full',
-              timeStyle: 'short'
+              timeStyle: 'short',
             })}</p>
             <p><strong>Registrado por:</strong> ${guardName}</p>
           </div>
@@ -215,7 +203,7 @@ class NotificationService {
     const planNames = {
       basic: 'Básico',
       premium: 'Premium',
-      enterprise: 'Empresarial'
+      enterprise: 'Empresarial',
     };
 
     const mailOptions = {

@@ -58,9 +58,8 @@ class PayPalPaymentService {
   private clientSecret: string;
 
   constructor() {
-    this.baseUrl = env.PAYPAL_MODE === 'live'
-      ? 'https://api-m.paypal.com'
-      : 'https://api-m.sandbox.paypal.com';
+    this.baseUrl =
+      env.PAYPAL_MODE === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
     this.clientId = env.PAYPAL_CLIENT_ID || '';
     this.clientSecret = env.PAYPAL_CLIENT_SECRET || '';
   }
@@ -75,7 +74,7 @@ class PayPalPaymentService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${auth}`,
+        Authorization: `Basic ${auth}`,
       },
       body: 'grant_type=client_credentials',
     });
@@ -101,7 +100,7 @@ class PayPalPaymentService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         plan_id: planId,
@@ -135,20 +134,20 @@ class PayPalPaymentService {
   /**
    * Activa una suscripción después de la aprobación del usuario
    */
-  async activateSubscription(
-    userId: string,
-    paypalSubscriptionId: string
-  ): Promise<any> {
+  async activateSubscription(userId: string, paypalSubscriptionId: string): Promise<any> {
     const accessToken = await this.getAccessToken();
 
     // Obtener detalles de la suscripción
-    const response = await fetch(`${this.baseUrl}/v1/billing/subscriptions/${paypalSubscriptionId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
-    });
+    const response = await fetch(
+      `${this.baseUrl}/v1/billing/subscriptions/${paypalSubscriptionId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     const paypalSubscription: PayPalSubscription = await response.json();
 
@@ -186,11 +185,7 @@ class PayPalPaymentService {
 
     // Crear registro de pago si existe
     if (paypalSubscription.billing_info?.last_payment) {
-      await this.createPaymentRecord(
-        userId,
-        subscription.id,
-        paypalSubscription
-      );
+      await this.createPaymentRecord(userId, subscription.id, paypalSubscription);
     }
 
     return subscription;
@@ -243,7 +238,7 @@ class PayPalPaymentService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         reason: reason || 'Usuario solicitó cancelación',
@@ -354,12 +349,12 @@ class PayPalPaymentService {
 
   private mapPayPalStatus(status: string): SubscriptionStatus {
     const statusMap: Record<string, SubscriptionStatus> = {
-      'ACTIVE': SubscriptionStatus.ACTIVE,
-      'APPROVAL_PENDING': SubscriptionStatus.PENDING,
-      'APPROVED': SubscriptionStatus.PENDING,
-      'SUSPENDED': SubscriptionStatus.CANCELED,
-      'CANCELLED': SubscriptionStatus.CANCELED,
-      'EXPIRED': SubscriptionStatus.EXPIRED,
+      ACTIVE: SubscriptionStatus.ACTIVE,
+      APPROVAL_PENDING: SubscriptionStatus.PENDING,
+      APPROVED: SubscriptionStatus.PENDING,
+      SUSPENDED: SubscriptionStatus.CANCELED,
+      CANCELLED: SubscriptionStatus.CANCELED,
+      EXPIRED: SubscriptionStatus.EXPIRED,
     };
 
     return statusMap[status] || SubscriptionStatus.PENDING;

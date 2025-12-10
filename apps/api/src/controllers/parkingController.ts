@@ -1,17 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import { ParkingService } from "../services/ParkingService";
-import { ParkingType } from "../interfaces/IParking";
-import { getPaginationOptions } from "../utils/pagination";
+import { Request, Response, NextFunction } from 'express';
+import { ParkingService } from '../services/ParkingService';
+import { ParkingType } from '../interfaces/IParking';
+import { getPaginationOptions } from '../utils/pagination';
 
 export const parkingController = {
   /**
    * Crear espacio de parqueo
    */
-  async createSpace(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async createSpace(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { number, type, floor, section, resident, notes } = req.body;
 
@@ -25,12 +21,12 @@ export const parkingController = {
       });
 
       res.status(201).json({
-        message: "Espacio de parqueo creado exitosamente",
+        message: 'Espacio de parqueo creado exitosamente',
         data: space,
       });
     } catch (error: any) {
       if (error.code === 11000) {
-        res.status(400).json({ error: "El número de espacio ya existe" });
+        res.status(400).json({ error: 'El número de espacio ya existe' });
       } else {
         next(error);
       }
@@ -40,11 +36,7 @@ export const parkingController = {
   /**
    * Obtener todos los espacios
    */
-  async getAllSpaces(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAllSpaces(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { type, status } = req.query;
       const filters: any = {};
@@ -63,11 +55,7 @@ export const parkingController = {
   /**
    * Obtener espacios disponibles
    */
-  async getAvailableSpaces(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAvailableSpaces(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { type } = req.query;
       const parkingType = type ? (type as ParkingType) : undefined;
@@ -86,17 +74,13 @@ export const parkingController = {
   /**
    * Obtener espacio por ID
    */
-  async getSpaceById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getSpaceById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const space = await ParkingService.getSpaceById(id);
 
       if (!space) {
-        res.status(404).json({ error: "Espacio de parqueo no encontrado" });
+        res.status(404).json({ error: 'Espacio de parqueo no encontrado' });
         return;
       }
 
@@ -109,11 +93,7 @@ export const parkingController = {
   /**
    * Actualizar espacio
    */
-  async updateSpace(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async updateSpace(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const updates = req.body;
@@ -121,12 +101,12 @@ export const parkingController = {
       const space = await ParkingService.updateSpace(id, updates);
 
       if (!space) {
-        res.status(404).json({ error: "Espacio de parqueo no encontrado" });
+        res.status(404).json({ error: 'Espacio de parqueo no encontrado' });
         return;
       }
 
       res.status(200).json({
-        message: "Espacio actualizado exitosamente",
+        message: 'Espacio actualizado exitosamente',
         data: space,
       });
     } catch (error) {
@@ -137,22 +117,18 @@ export const parkingController = {
   /**
    * Eliminar espacio
    */
-  async deleteSpace(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async deleteSpace(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const deleted = await ParkingService.deleteSpace(id);
 
       if (!deleted) {
-        res.status(404).json({ error: "Espacio de parqueo no encontrado" });
+        res.status(404).json({ error: 'Espacio de parqueo no encontrado' });
         return;
       }
 
       res.status(200).json({
-        message: "Espacio eliminado exitosamente",
+        message: 'Espacio eliminado exitosamente',
       });
     } catch (error) {
       next(error);
@@ -162,11 +138,7 @@ export const parkingController = {
   /**
    * Asignar espacio de parqueo
    */
-  async assignSpace(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async assignSpace(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { parkingSpaceId, visitId, vehiclePlate } = req.body;
       const user = (req as any).user;
@@ -179,11 +151,11 @@ export const parkingController = {
       });
 
       res.status(201).json({
-        message: "Espacio de parqueo asignado exitosamente",
+        message: 'Espacio de parqueo asignado exitosamente',
         data: assignment,
       });
     } catch (error: any) {
-      if (error.message.includes("no está disponible")) {
+      if (error.message.includes('no está disponible')) {
         res.status(400).json({ error: error.message });
       } else {
         next(error);
@@ -194,23 +166,19 @@ export const parkingController = {
   /**
    * Registrar salida de parqueadero
    */
-  async recordExit(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async recordExit(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { assignmentId } = req.params;
 
       const assignment = await ParkingService.recordExit(assignmentId);
 
       if (!assignment) {
-        res.status(404).json({ error: "Asignación no encontrada" });
+        res.status(404).json({ error: 'Asignación no encontrada' });
         return;
       }
 
       res.status(200).json({
-        message: "Salida registrada exitosamente",
+        message: 'Salida registrada exitosamente',
         data: assignment,
       });
     } catch (error) {
@@ -221,11 +189,7 @@ export const parkingController = {
   /**
    * Obtener historial de asignaciones
    */
-  async getAssignmentHistory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAssignmentHistory(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { spaceId, visitId } = req.query;
       const paginationOptions = getPaginationOptions(req.query);
@@ -245,11 +209,7 @@ export const parkingController = {
   /**
    * Obtener asignaciones activas
    */
-  async getActiveAssignments(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getActiveAssignments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const assignments = await ParkingService.getActiveAssignments();
 
@@ -265,11 +225,7 @@ export const parkingController = {
   /**
    * Obtener estadísticas de parqueadero
    */
-  async getStats(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getStats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const stats = await ParkingService.getStats();
       res.status(200).json(stats);

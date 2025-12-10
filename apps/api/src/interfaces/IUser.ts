@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 export enum GuardShift {
   MORNING = 'matutina',
   AFTERNOON = 'vespertina',
-  NIGHT = 'nocturna'
+  NIGHT = 'nocturna',
 }
 
 interface IUserInput {

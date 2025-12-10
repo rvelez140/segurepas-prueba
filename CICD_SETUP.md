@@ -38,14 +38,14 @@ Estas credenciales deben configurarse en tu repositorio de GitHub:
 
 **Ir a:** `Settings → Secrets and variables → Actions → New repository secret`
 
-| Secret Name | Descripción | Ejemplo | Obligatorio |
-|------------|-------------|---------|-------------|
-| `SERVER_HOST` | IP o dominio del servidor de producción | `123.45.67.89` o `miservidor.com` | ✅ Sí |
-| `SERVER_USER` | Usuario SSH para deployment | `securepass` o `ubuntu` | ✅ Sí |
-| `SERVER_SSH_KEY` | Clave SSH privada completa | `-----BEGIN OPENSSH PRIVATE KEY-----...` | ✅ Sí |
-| `SERVER_PORT` | Puerto SSH del servidor | `22` | ❌ No (default: 22) |
-| `DEPLOY_PATH` | Ruta donde está el proyecto en el servidor | `/opt/securepass` | ❌ No (default: /opt/securepass) |
-| `DOMAIN_NAME` | Dominio principal | `miapp.com` | ❌ No (solo para URLs) |
+| Secret Name      | Descripción                                | Ejemplo                                  | Obligatorio                      |
+| ---------------- | ------------------------------------------ | ---------------------------------------- | -------------------------------- |
+| `SERVER_HOST`    | IP o dominio del servidor de producción    | `123.45.67.89` o `miservidor.com`        | ✅ Sí                            |
+| `SERVER_USER`    | Usuario SSH para deployment                | `securepass` o `ubuntu`                  | ✅ Sí                            |
+| `SERVER_SSH_KEY` | Clave SSH privada completa                 | `-----BEGIN OPENSSH PRIVATE KEY-----...` | ✅ Sí                            |
+| `SERVER_PORT`    | Puerto SSH del servidor                    | `22`                                     | ❌ No (default: 22)              |
+| `DEPLOY_PATH`    | Ruta donde está el proyecto en el servidor | `/opt/securepass`                        | ❌ No (default: /opt/securepass) |
+| `DOMAIN_NAME`    | Dominio principal                          | `miapp.com`                              | ❌ No (solo para URLs)           |
 
 ### 2. Variables de Entorno del Servidor
 
@@ -185,6 +185,7 @@ nano .env
 4. Agrega cada uno de los secrets mencionados arriba
 
 **Ejemplo para SERVER_SSH_KEY:**
+
 ```
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
@@ -444,16 +445,19 @@ docker-compose -f docker-compose.production.yml logs web
 ### El deployment se ejecuta pero el sitio no carga
 
 1. Verificar que los contenedores están corriendo:
+
 ```bash
 docker-compose -f docker-compose.production.yml ps
 ```
 
 2. Verificar logs:
+
 ```bash
 docker-compose -f docker-compose.production.yml logs
 ```
 
 3. Verificar health endpoints:
+
 ```bash
 curl http://localhost:8000/health
 curl http://localhost:3000/health
@@ -489,12 +493,12 @@ curl http://localhost:3000/health
 
 ### Dónde configurar cada credencial:
 
-| Credencial | Ubicación | Formato |
-|-----------|-----------|---------|
-| SERVER_HOST | GitHub Secrets | IP o dominio |
-| SERVER_USER | GitHub Secrets | Nombre de usuario |
-| SERVER_SSH_KEY | GitHub Secrets | Clave privada completa |
-| Resto de variables | `/opt/securepass/.env` en servidor | Ver ejemplo arriba |
+| Credencial         | Ubicación                          | Formato                |
+| ------------------ | ---------------------------------- | ---------------------- |
+| SERVER_HOST        | GitHub Secrets                     | IP o dominio           |
+| SERVER_USER        | GitHub Secrets                     | Nombre de usuario      |
+| SERVER_SSH_KEY     | GitHub Secrets                     | Clave privada completa |
+| Resto de variables | `/opt/securepass/.env` en servidor | Ver ejemplo arriba     |
 
 ---
 

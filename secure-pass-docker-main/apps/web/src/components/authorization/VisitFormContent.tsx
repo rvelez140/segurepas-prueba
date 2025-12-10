@@ -1,6 +1,6 @@
-import React from "react";
-import styles from "../../styles/visitForm.module.css";
-import { VisitResponse } from "../../types/visit.types";
+import React from 'react';
+import styles from '../../styles/visitForm.module.css';
+import { VisitResponse } from '../../types/visit.types';
 
 type VisitFormContentProps = {
   formData: {
@@ -9,18 +9,10 @@ type VisitFormContentProps = {
     document: string;
     reason: string;
   };
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-  onNameChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-  onDocumentChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-  onLastVisitChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onNameChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onDocumentChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onLastVisitChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
   error: string | null;
   success: boolean;
@@ -46,12 +38,12 @@ const VisitFormContent: React.FC<VisitFormContentProps> = ({
 }) => {
   const setCustomRequired = (e: React.FormEvent<Element>) => {
     (e.target as HTMLInputElement | HTMLSelectElement).setCustomValidity(
-      "Por favor completa este campo"
+      'Por favor completa este campo'
     );
   };
 
   const clearCustomValidity = (e: React.FormEvent<Element>) => {
-    (e.target as HTMLInputElement | HTMLSelectElement).setCustomValidity("");
+    (e.target as HTMLInputElement | HTMLSelectElement).setCustomValidity('');
   };
 
   return (
@@ -183,7 +175,7 @@ const VisitFormContent: React.FC<VisitFormContentProps> = ({
                 Procesando...
               </>
             ) : (
-              "Solicitar Autorización"
+              'Solicitar Autorización'
             )}
           </button>
         </div>

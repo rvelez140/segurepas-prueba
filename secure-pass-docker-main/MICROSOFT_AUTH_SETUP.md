@@ -175,6 +175,7 @@ La configuración en este documento soporta tanto cuentas personales como corpor
 ## Comportamiento para Usuarios Nuevos
 
 Cuando un usuario se autentica con Microsoft por primera vez:
+
 - Se crea una cuenta automáticamente
 - El rol por defecto es **"residente"**
 - Los campos `apartment` y `tel` quedan vacíos
@@ -184,11 +185,13 @@ Cuando un usuario se autentica con Microsoft por primera vez:
 ## Diferencias entre Cuentas Personales y Corporativas
 
 ### Cuentas Personales (@hotmail, @outlook, @live)
+
 - Login directo con credenciales de Microsoft
 - No requiere permisos de administrador
 - Acceso inmediato
 
 ### Cuentas Corporativas (Work/School)
+
 - Pueden requerir permisos de administrador del tenant de Azure AD
 - El administrador puede necesitar dar consentimiento a la aplicación
 - Políticas de seguridad corporativas pueden aplicar
@@ -196,30 +199,36 @@ Cuando un usuario se autentica con Microsoft por primera vez:
 ## Troubleshooting
 
 ### Error: "AADSTS50011: The reply URL specified in the request does not match"
+
 - Verifica que la URL de callback en Azure Portal coincida exactamente con `MICROSOFT_CALLBACK_URL`
 - Asegúrate de incluir el protocolo (`http://` o `https://`)
 - Revisa que no haya espacios o caracteres adicionales
 
 ### Error: "AADSTS700016: Application not found in the directory"
+
 - Verifica que `MICROSOFT_CLIENT_ID` sea correcto
 - Asegúrate de estar usando el **Application (client) ID**, no el **Object ID**
 
 ### Error: "invalid_client"
+
 - Verifica que `MICROSOFT_CLIENT_SECRET` sea correcto
 - Asegúrate de que el secret no haya expirado
 - El secret debe ser el **Value**, no el **Secret ID**
 
 ### Error: "AADSTS65001: The user or administrator has not consented"
+
 - El usuario o administrador necesita dar consentimiento a la aplicación
 - En cuentas corporativas, contacta al administrador de Azure AD
 - Revisa los permisos configurados en **API permissions**
 
 ### El usuario no es redirigido después del login
+
 - Verifica que `FRONTEND_URL` en el backend esté configurado correctamente
 - Revisa la consola del navegador para errores de CORS
 - Asegúrate de que la ruta `/auth/microsoft/success` existe en el frontend
 
 ### Error: "Usuario no puede ser guardia"
+
 - Los usuarios con rol "guardia" no pueden acceder a la aplicación web
 - Solo residentes y administradores tienen acceso
 
@@ -228,11 +237,13 @@ Cuando un usuario se autentica con Microsoft por primera vez:
 Para producción, actualiza las siguientes configuraciones:
 
 ### En Azure Portal:
+
 1. Agrega la URL de producción en **Redirect URIs**:
    - `https://tudominio.com/api/auth/microsoft/callback`
 2. Agrega la URL del frontend en **Redirect URIs** si es necesario
 
 ### En variables de entorno:
+
 ```env
 MICROSOFT_CALLBACK_URL=https://tudominio.com/api/auth/microsoft/callback
 FRONTEND_URL=https://tufrontend.com

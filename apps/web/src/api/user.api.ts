@@ -1,5 +1,5 @@
-import axios from "axios";
-import { User } from "../types/user.types";
+import axios from 'axios';
+import { User } from '../types/user.types';
 
 const API_URL = process.env.REACT_APP_API;
 
@@ -22,23 +22,26 @@ export const getResidents = async () => {
     console.log(`Se obtuvieron los datos`);
     return response.data;
   } catch (error) {
-    console.error("Error obteniendo los datos de residentes:", error);
+    console.error('Error obteniendo los datos de residentes:', error);
     throw error;
   }
 };
 
-export const updateUser = async (id: string, data: Partial<User> ): Promise<User> => {
+export const updateUser = async (id: string, data: Partial<User>): Promise<User> => {
   try {
     const response = await axios.put(`${API_URL}/users/${id}`, data);
     return response.data;
-  }catch(error){
+  } catch (error) {
     console.error(`Error al actualizar el usiario`, error);
     throw error;
   }
-}
+};
 
 // Subir imagen de documento de identidad
-export const uploadUserDocumentImage = async (userId: string, imageFile: File): Promise<{ message: string; documentImage: string }> => {
+export const uploadUserDocumentImage = async (
+  userId: string,
+  imageFile: File
+): Promise<{ message: string; documentImage: string }> => {
   try {
     const formData = new FormData();
     formData.append('image', imageFile);
@@ -56,7 +59,10 @@ export const uploadUserDocumentImage = async (userId: string, imageFile: File): 
 };
 
 // Subir imagen de placa de vehículo
-export const uploadUserVehiclePlateImage = async (userId: string, imageFile: File): Promise<{ message: string; vehiclePlateImage: string }> => {
+export const uploadUserVehiclePlateImage = async (
+  userId: string,
+  imageFile: File
+): Promise<{ message: string; vehiclePlateImage: string }> => {
   try {
     const formData = new FormData();
     formData.append('image', imageFile);

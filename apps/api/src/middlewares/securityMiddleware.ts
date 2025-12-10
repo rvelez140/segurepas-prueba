@@ -1,8 +1,8 @@
-import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
-import hpp from "hpp";
-import cors from "cors";
-import { Express } from "express";
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
+import cors from 'cors';
+import { Express } from 'express';
 
 /**
  * Configuración de seguridad centralizada para la aplicación
@@ -16,7 +16,7 @@ export const configureSecurity = (app: Express) => {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+          imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
         },
       },
       hsts: {
@@ -29,20 +29,23 @@ export const configureSecurity = (app: Express) => {
 
   // CORS - Configuración de origen cruzado
   const corsOptions = {
-    origin: function (origin: string | undefined, callback: Function) {
+    origin: function (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void
+    ) {
       // Lista de orígenes permitidos
       const whitelist = [
-        process.env.WEB_URL || "http://localhost:3000",
-        process.env.MOBILE_URL || "http://localhost:19000",
-        "http://localhost:3000",
-        "http://localhost:19000",
+        process.env.WEB_URL || 'http://localhost:3000',
+        process.env.MOBILE_URL || 'http://localhost:19000',
+        'http://localhost:3000',
+        'http://localhost:19000',
       ];
 
       // Permitir requests sin origen (como aplicaciones móviles o Postman)
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error("No permitido por CORS"));
+        callback(new Error('No permitido por CORS'));
       }
     },
     credentials: true,
@@ -55,7 +58,7 @@ export const configureSecurity = (app: Express) => {
   // Previene inyección NoSQL
   app.use(
     mongoSanitize({
-      replaceWith: "_",
+      replaceWith: '_',
       onSanitize: ({ req, key }) => {
         console.warn(`Intento de inyección NoSQL detectado en: ${key}`);
       },
@@ -68,22 +71,19 @@ export const configureSecurity = (app: Express) => {
   // Headers de seguridad adicionales
   app.use((req, res, next) => {
     // Prevenir clickjacking
-    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader('X-Frame-Options', 'DENY');
 
     // Prevenir MIME-sniffing
-    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader('X-Content-Type-Options', 'nosniff');
 
     // Habilitar protección XSS en navegadores antiguos
-    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader('X-XSS-Protection', '1; mode=block');
 
     // Política de referrer
-    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     // Permisos de funcionalidades del navegador
-    res.setHeader(
-      "Permissions-Policy",
-      "geolocation=(self), microphone=(), camera=(self)"
-    );
+    res.setHeader('Permissions-Policy', 'geolocation=(self), microphone=(), camera=(self)');
 
     next();
   });
@@ -93,11 +93,11 @@ export const configureSecurity = (app: Express) => {
  * Middleware para validar que el request tenga un token válido
  */
 export const requireAuth = (req: any, res: any, next: any) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
     return res.status(401).json({
-      error: "No autorizado. Token requerido.",
+      error: 'No autorizado. Token requerido.',
     });
   }
 
@@ -112,13 +112,13 @@ export const requireRoles = (...roles: string[]) => {
   return (req: any, res: any, next: any) => {
     if (!req.user) {
       return res.status(401).json({
-        error: "No autorizado.",
+        error: 'No autorizado.',
       });
     }
 
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
-        error: "No tiene permisos para realizar esta acción.",
+        error: 'No tiene permisos para realizar esta acción.',
       });
     }
 

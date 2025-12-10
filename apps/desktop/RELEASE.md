@@ -5,6 +5,7 @@ Esta guía explica cómo publicar versiones oficiales de la aplicación desktop 
 ## Preparación antes del Release
 
 1. **Actualizar versión** en `apps/desktop/package.json`:
+
    ```json
    {
      "version": "1.0.0"
@@ -12,6 +13,7 @@ Esta guía explica cómo publicar versiones oficiales de la aplicación desktop 
    ```
 
 2. **Probar la compilación**:
+
    ```bash
    cd apps/desktop
    npm run dist
@@ -81,10 +83,12 @@ gh release create v1.0.0 \
 ## 📥 Descargas
 
 ### Windows
+
 - **SecurePass-Setup-1.0.0.exe** - Instalador completo (recomendado)
 - **SecurePass-1.0.0-portable.exe** - Versión portable (no requiere instalación)
 
 ### Linux
+
 - **SecurePass-1.0.0.AppImage** - Universal para todas las distribuciones
 - **securepass-desktop_1.0.0_amd64.deb** - Para Ubuntu/Debian
 - **securepass-desktop-1.0.0.x86_64.rpm** - Para Fedora/RHEL/CentOS
@@ -104,8 +108,11 @@ gh release create v1.0.0 \
 
 **Checksums (SHA256):**
 ```
+
 [Aquí irían los checksums de cada archivo para verificación]
+
 ```
+
 ```
 
 ## Versionado Semántico
@@ -117,6 +124,7 @@ Seguir el formato `MAJOR.MINOR.PATCH`:
 - **PATCH**: Correcciones de bugs compatibles con versiones anteriores
 
 Ejemplos:
+
 - `1.0.0` - Primera versión estable
 - `1.1.0` - Nueva característica
 - `1.1.1` - Corrección de bug
@@ -127,11 +135,13 @@ Ejemplos:
 Para agregar checksums de seguridad a tus releases:
 
 ### Windows (PowerShell)
+
 ```powershell
 Get-FileHash *.exe, *.AppImage, *.deb, *.rpm | Format-List
 ```
 
 ### Linux/macOS
+
 ```bash
 sha256sum release/*.{exe,AppImage,deb,rpm} > checksums.txt
 ```

@@ -81,7 +81,9 @@
   border-radius: 16px;
   padding: 40px 30px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   border: 2px solid transparent;
@@ -247,7 +249,7 @@
   --border: #e2e8f0;
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --background: #1a202c;
   --card-background: #2d3748;
   --text: #f7fafc;

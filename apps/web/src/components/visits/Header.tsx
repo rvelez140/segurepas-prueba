@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import styles from "../../styles/visits.module.css";
-import { User } from "../../types/user.types";
-import { loadToken, setAuthToken } from "../../services/auth.service";
-import { getAuthenticatedUser } from "../../api/auth.api";
-import { FaUserCircle } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import styles from '../../styles/visits.module.css';
+import { User } from '../../types/user.types';
+import { loadToken, setAuthToken } from '../../services/auth.service';
+import { getAuthenticatedUser } from '../../api/auth.api';
+import { FaUserCircle } from 'react-icons/fa';
 
 const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -15,7 +15,7 @@ const Header: React.FC = () => {
       setAuthToken(token);
       setUser(await getAuthenticatedUser());
       const user = await getAuthenticatedUser();
-      if (user.role === "admin") setIsAdmin(true);
+      if (user.role === 'admin') setIsAdmin(true);
     };
 
     getUser();
@@ -23,9 +23,7 @@ const Header: React.FC = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.title}>
-        {isAdmin ? "Dashboard Administrador" : "Dashboard"}
-      </div>
+      <div className={styles.title}>{isAdmin ? 'Dashboard Administrador' : 'Dashboard'}</div>
       {user ? (
         <div className={styles.userProfile}>
           <span>Bienvenido, {user.name}</span>

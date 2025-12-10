@@ -1,36 +1,26 @@
-import {
-  Camera,
-  CameraType,
-  CameraView,
-  useCameraPermissions,
-} from "expo-camera";
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, Alert } from "react-native";
-import { BarCodeScannerResult } from "expo-barcode-scanner";
-import {
-  RouteProp,
-  useRoute,
-  useNavigation,
-  NavigationProp,
-} from "@react-navigation/native";
-import { RootStackParamList } from "../../types/types";
-import Navigation from "@/navigation/Navigation";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import axios from "axios";
-import { RegistryData, VisitResponse } from "@/types/visit.types";
-import { getVisitsByQRId, RegisterEntry } from "@/api/visit.api";
-import { loadToken, setAuthToken } from "@/services/auth.service";
-import { getAuthenticatedUser } from "@/api/auth.api";
-import { User } from "@/types/user.types";
+import { Camera, CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { BarCodeScannerResult } from 'expo-barcode-scanner';
+import { RouteProp, useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types/types';
+import Navigation from '@/navigation/Navigation';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import axios from 'axios';
+import { RegistryData, VisitResponse } from '@/types/visit.types';
+import { getVisitsByQRId, RegisterEntry } from '@/api/visit.api';
+import { loadToken, setAuthToken } from '@/services/auth.service';
+import { getAuthenticatedUser } from '@/api/auth.api';
+import { User } from '@/types/user.types';
 
-type ScannerRouteProp = RouteProp<RootStackParamList, "ExitRegistration">;
+type ScannerRouteProp = RouteProp<RootStackParamList, 'ExitRegistration'>;
 type Nav = NavigationProp<RootStackParamList>;
 export default function ExitRegistrationScreen() {
   const route = useRoute<ScannerRouteProp>();
   const navigation = useNavigation<Nav>();
   const { qrData } = route.params;
 
-  const [cameraType, setCameraType] = useState<CameraType>("back");
+  const [cameraType, setCameraType] = useState<CameraType>('back');
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState<string | null>(null);
@@ -41,13 +31,13 @@ export default function ExitRegistrationScreen() {
   useEffect(() => {
     const SetUpCamera = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      setHasPermission(status === 'granted');
     };
 
     //Obtener visitas
     const getVisits = async () => {
       try {
-        if (!qrData) throw new Error("El QR escaneado es invalido");
+        if (!qrData) throw new Error('El QR escaneado es invalido');
 
         setVisits(await getVisitsByQRId(qrData as string));
         setIsLoading(false);
@@ -67,7 +57,7 @@ export default function ExitRegistrationScreen() {
           setGuard(user);
         }
       } catch (error) {
-        console.error("Error autenticando:", error);
+        console.error('Error autenticando:', error);
       }
     };
 
@@ -86,9 +76,9 @@ export default function ExitRegistrationScreen() {
       guardId: guard!._id,
     };
     try {
-      Alert.alert("Éxito", "La visita fue finalizada");
+      Alert.alert('Éxito', 'La visita fue finalizada');
     } catch (error) {
-      Alert.alert("Error", "No se pudo finalizar la visita");
+      Alert.alert('Error', 'No se pudo finalizar la visita');
     }
   };
 
@@ -99,21 +89,21 @@ export default function ExitRegistrationScreen() {
 
       try {
         const visit = await getVisitsByQRId(data); // valida contra la API
-        if (visit.authorization.state != "finalizada") {
+        if (visit.authorization.state != 'finalizada') {
           if (visit.qrId === data) {
             finalizarVisita();
-            Alert.alert("Éxito", "QR válido, Visita finalizada", [
+            Alert.alert('Éxito', 'QR válido, Visita finalizada', [
               {
-                text: "OK",
+                text: 'OK',
               },
             ]);
           }
         }
       } catch (error) {
-        console.error("QR inválido o no encontrado:", error);
-        Alert.alert("Error", "El QR no está registrado.", [
+        console.error('QR inválido o no encontrado:', error);
+        Alert.alert('Error', 'El QR no está registrado.', [
           {
-            text: "OK",
+            text: 'OK',
             onPress: () => {
               setScanned(false); // permite escanear de nuevo
             },
@@ -137,7 +127,7 @@ export default function ExitRegistrationScreen() {
         facing={cameraType}
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
+          barcodeTypes: ['qr'],
         }}
         style={StyleSheet.absoluteFillObject}
       />
@@ -161,8 +151,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 });

@@ -1,18 +1,12 @@
-import styles from "../../styles/visits.module.css";
-import {
-  FaHome,
-  FaUserShield,
-  FaHistory,
-  FaCog,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSidebar } from "../../contexts/SidebarContext";
-import { SidebarProps } from "../../types/types";
-import { useState } from "react";
-import { LogoutModal } from "../login/LogoutModal";
-import { delToken } from "../../services/auth.service";
-import ThemeToggle from "../settings/ThemeToggle";
+import styles from '../../styles/visits.module.css';
+import { FaHome, FaUserShield, FaHistory, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSidebar } from '../../contexts/SidebarContext';
+import { SidebarProps } from '../../types/types';
+import { useState } from 'react';
+import { LogoutModal } from '../login/LogoutModal';
+import { delToken } from '../../services/auth.service';
+import ThemeToggle from '../settings/ThemeToggle';
 
 const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
   const { isOpen, toggleSidebar } = useSidebar();
@@ -23,61 +17,39 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
   const actualSetShowLogout = setShowLogoutModal || setLocalShowLogout;
 
   const handleLogout = () => {
-    navigate("/");
+    navigate('/');
     delToken();
     actualSetShowLogout(false);
   };
 
   return (
-    <aside
-      className={`${styles.sidebar} ${
-        isOpen ? styles.sidebarOpen : styles.sidebarClosed
-      }`}
-    >
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
       <div className={styles.topBar}>
         <button className={styles.hamburger} onClick={toggleSidebar}>
           ☰
         </button>
 
-        <div
-          className={`${styles.logo} ${
-            isOpen ? styles.logoOpen : styles.logoClosed
-          }`}
-        >
+        <div className={`${styles.logo} ${isOpen ? styles.logoOpen : styles.logoClosed}`}>
           SecurePass
         </div>
       </div>
-      <div
-        className={`${styles.navArea} ${
-          isOpen ? styles.navAreaOpen : styles.navAreaClosed
-        }`}
-      >
+      <div className={`${styles.navArea} ${isOpen ? styles.navAreaOpen : styles.navAreaClosed}`}>
         <nav className={styles.nav}>
           <ul>
             <Link
               to="/home"
-              className={`${styles.navLink} ${
-                isOpen ? styles.navLinkOpen : styles.navLinkClosed
-              }`}
+              className={`${styles.navLink} ${isOpen ? styles.navLinkOpen : styles.navLinkClosed}`}
             >
               <li
                 className={
-                  location.pathname === "/home"
+                  location.pathname === '/home'
                     ? `${styles.activeNavItem} ${
-                        isOpen
-                          ? styles.activeNavItemOpen
-                          : styles.activeNavItemClosed
+                        isOpen ? styles.activeNavItemOpen : styles.activeNavItemClosed
                       }`
-                    : `${styles.navItem} ${
-                        isOpen ? styles.navItemOpen : styles.navItemClosed
-                      }`
+                    : `${styles.navItem} ${isOpen ? styles.navItemOpen : styles.navItemClosed}`
                 }
               >
-                <FaHome
-                  className={`${styles.Fa} ${
-                    isOpen ? styles.FaOpen : styles.FaClosed
-                  }`}
-                />{" "}
+                <FaHome className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`} />{' '}
                 <span
                   className={`${styles.navText} ${
                     isOpen ? styles.navTextOpen : styles.navTextClosed
@@ -89,28 +61,20 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
             </Link>
             <Link
               to="/authorizations"
-              className={`${styles.navLink} ${
-                isOpen ? styles.navLinkOpen : styles.navLinkClosed
-              }`}
+              className={`${styles.navLink} ${isOpen ? styles.navLinkOpen : styles.navLinkClosed}`}
             >
               <li
                 className={
-                  location.pathname === "/authorizations"
+                  location.pathname === '/authorizations'
                     ? `${styles.activeNavItem} ${
-                        isOpen
-                          ? styles.activeNavItemOpen
-                          : styles.activeNavItemClosed
+                        isOpen ? styles.activeNavItemOpen : styles.activeNavItemClosed
                       }`
-                    : `${styles.navItem} ${
-                        isOpen ? styles.navItemOpen : styles.navItemClosed
-                      }`
+                    : `${styles.navItem} ${isOpen ? styles.navItemOpen : styles.navItemClosed}`
                 }
               >
                 <FaUserShield
-                  className={`${styles.Fa} ${
-                    isOpen ? styles.FaOpen : styles.FaClosed
-                  }`}
-                />{" "}
+                  className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`}
+                />{' '}
                 <span
                   className={`${styles.navText} ${
                     isOpen ? styles.navTextOpen : styles.navTextClosed
@@ -122,28 +86,18 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
             </Link>
             <Link
               to="/visit-history"
-              className={`${styles.navLink} ${
-                isOpen ? styles.navLinkOpen : styles.navLinkClosed
-              }`}
+              className={`${styles.navLink} ${isOpen ? styles.navLinkOpen : styles.navLinkClosed}`}
             >
               <li
                 className={
-                  location.pathname === "/visit-history"
+                  location.pathname === '/visit-history'
                     ? `${styles.activeNavItem} ${
-                        isOpen
-                          ? styles.activeNavItemOpen
-                          : styles.activeNavItemClosed
+                        isOpen ? styles.activeNavItemOpen : styles.activeNavItemClosed
                       }`
-                    : `${styles.navItem} ${
-                        isOpen ? styles.navItemOpen : styles.navItemClosed
-                      }`
+                    : `${styles.navItem} ${isOpen ? styles.navItemOpen : styles.navItemClosed}`
                 }
               >
-                <FaHistory
-                  className={`${styles.Fa} ${
-                    isOpen ? styles.FaOpen : styles.FaClosed
-                  }`}
-                />{" "}
+                <FaHistory className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`} />{' '}
                 <span
                   className={`${styles.navText} ${
                     isOpen ? styles.navTextOpen : styles.navTextClosed
@@ -155,28 +109,18 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
             </Link>
             <Link
               to="/settings"
-              className={`${styles.navLink} ${
-                isOpen ? styles.navLinkOpen : styles.navLinkClosed
-              }`}
+              className={`${styles.navLink} ${isOpen ? styles.navLinkOpen : styles.navLinkClosed}`}
             >
               <li
                 className={
-                  location.pathname === "/settings"
+                  location.pathname === '/settings'
                     ? `${styles.activeNavItem} ${
-                        isOpen
-                          ? styles.activeNavItemOpen
-                          : styles.activeNavItemClosed
+                        isOpen ? styles.activeNavItemOpen : styles.activeNavItemClosed
                       }`
-                    : `${styles.navItem} ${
-                        isOpen ? styles.navItemOpen : styles.navItemClosed
-                      }`
+                    : `${styles.navItem} ${isOpen ? styles.navItemOpen : styles.navItemClosed}`
                 }
               >
-                <FaCog
-                  className={`${styles.Fa} ${
-                    isOpen ? styles.FaOpen : styles.FaClosed
-                  }`}
-                />{" "}
+                <FaCog className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`} />{' '}
                 <span
                   className={`${styles.navText} ${
                     isOpen ? styles.navTextOpen : styles.navTextClosed
@@ -190,9 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
         </nav>
 
         <div
-          className={`${styles.themeBar} ${
-            isOpen ? styles.themeBarOpen : styles.themeBarClosed
-          }`}
+          className={`${styles.themeBar} ${isOpen ? styles.themeBarOpen : styles.themeBarClosed}`}
         >
           <ThemeToggle />
           <span
@@ -206,28 +148,22 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
 
         <div
           style={{
-            marginTop: "auto",
-            display: "flex",
-            justifyContent: "center",
+            marginTop: 'auto',
+            display: 'flex',
+            justifyContent: 'center',
           }}
         ></div>
 
         <button
-          className={`${styles.logout} ${
-            isOpen ? styles.logoutOpen : styles.logoutClosed
-          }`}
+          className={`${styles.logout} ${isOpen ? styles.logoutOpen : styles.logoutClosed}`}
           onClick={() => actualSetShowLogout(true)}
         >
           <FaSignOutAlt
-            className={`${styles.Fa} ${
-              isOpen ? styles.FaOpen : styles.FaClosed
-            }`}
-            style={{ marginRight: "8px" }}
-          />{" "}
+            className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`}
+            style={{ marginRight: '8px' }}
+          />{' '}
           <span
-            className={`${styles.navText} ${
-              isOpen ? styles.navTextOpen : styles.navTextClosed
-            }`}
+            className={`${styles.navText} ${isOpen ? styles.navTextOpen : styles.navTextClosed}`}
           >
             Logout
           </span>

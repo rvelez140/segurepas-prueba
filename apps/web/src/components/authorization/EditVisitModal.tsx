@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { updateVisit } from "../../api/visit.api";
-import { UpdateVisitData, VisitResponse } from "../../types/visit.types";
-import styles from "../../styles/visitForm.module.css";
-import { loadToken, setAuthToken } from "../../services/auth.service";
+import React, { useEffect, useState } from 'react';
+import { updateVisit } from '../../api/visit.api';
+import { UpdateVisitData, VisitResponse } from '../../types/visit.types';
+import styles from '../../styles/visitForm.module.css';
+import { loadToken, setAuthToken } from '../../services/auth.service';
 
 interface EditVisitModalProps {
   isOpen: boolean;
@@ -18,10 +18,10 @@ const EditVisitModal: React.FC<EditVisitModalProps> = ({
   onVisitUpdated,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    document: "",
-    reason: "",
+    name: '',
+    email: '',
+    document: '',
+    reason: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,50 +43,44 @@ const EditVisitModal: React.FC<EditVisitModalProps> = ({
     setError(null);
 
     if (!formData.document.trim()) {
-      setError("El documento de identidad es requerido");
+      setError('El documento de identidad es requerido');
       valid = false;
     } else if (formData.document.length !== 11) {
-      setError("Documento de identidad inválido");
+      setError('Documento de identidad inválido');
       valid = false;
     }
 
     if (!formData.email.trim()) {
-      setError("El email es requerido");
+      setError('El email es requerido');
       valid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError("El Email introducido no es válido");
+      setError('El Email introducido no es válido');
       valid = false;
     }
 
     if (!formData.name.trim()) {
-      setError("El nombre es requerido");
+      setError('El nombre es requerido');
       valid = false;
     }
 
     return valid;
   };
 
-  const handleNameChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (value === "" || /^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(value)) {
+    if (value === '' || /^[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleDocumentChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (value === "" || /^[0-9]+$/.test(value)) {
+    if (value === '' || /^[0-9]+$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -115,9 +109,7 @@ const EditVisitModal: React.FC<EditVisitModalProps> = ({
       setSuccess(true);
       onVisitUpdated();
     } catch (err: any) {
-      setError(
-        err.message ? err.message : "Ocurrió un error al actualizar la visita"
-      );
+      setError(err.message ? err.message : 'Ocurrió un error al actualizar la visita');
     } finally {
       setLoading(false);
     }
@@ -128,11 +120,7 @@ const EditVisitModal: React.FC<EditVisitModalProps> = ({
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContainer}>
-        <button
-          className={styles.modalCloseBtn}
-          onClick={onClose}
-          aria-label="Cerrar modal"
-        >
+        <button className={styles.modalCloseBtn} onClick={onClose} aria-label="Cerrar modal">
           &times;
         </button>
         <div className={styles.visitFormModal}>
@@ -149,10 +137,7 @@ const EditVisitModal: React.FC<EditVisitModalProps> = ({
 
           {success && (
             <div className={`${styles.alert} ${styles.alertSuccess}`}>
-              <span
-                className={styles.closeBtn}
-                onClick={() => setSuccess(false)}
-              >
+              <span className={styles.closeBtn} onClick={() => setSuccess(false)}>
                 &times;
               </span>
               ¡Visita actualizada exitosamente!
@@ -231,18 +216,14 @@ const EditVisitModal: React.FC<EditVisitModalProps> = ({
             </div>
 
             <div className={styles.formActions}>
-              <button
-                type="submit"
-                className={styles.submitBtn}
-                disabled={loading}
-              >
+              <button type="submit" className={styles.submitBtn} disabled={loading}>
                 {loading ? (
                   <>
                     <span className={styles.spinner}></span>
                     Actualizando...
                   </>
                 ) : (
-                  "Actualizar Visita"
+                  'Actualizar Visita'
                 )}
               </button>
             </div>

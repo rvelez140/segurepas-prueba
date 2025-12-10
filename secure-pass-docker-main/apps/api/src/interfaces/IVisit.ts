@@ -8,7 +8,7 @@ export enum VisitState {
   EXPIRED = 'expirada', // Estado de la visita cuando llega su fecha de expiración y sigue pendiente
 }
 
-  export interface IVisitInput {
+export interface IVisitInput {
   company: Types.ObjectId; // Id de la empresa a la que pertenece la visita
   visit: {
     name: string; // Nombre del visitante

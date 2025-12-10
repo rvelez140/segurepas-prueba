@@ -1,17 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import { AccessListService } from "../services/AccessListService";
-import { ListType } from "../interfaces/IAccessList";
-import { getPaginationOptions } from "../utils/pagination";
+import { Request, Response, NextFunction } from 'express';
+import { AccessListService } from '../services/AccessListService';
+import { ListType } from '../interfaces/IAccessList';
+import { getPaginationOptions } from '../utils/pagination';
 
 export const accessListController = {
   /**
    * Agregar documento a lista negra
    */
-  async addToBlacklist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async addToBlacklist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { document, reason, expiresAt, notes } = req.body;
       const user = (req as any).user;
@@ -23,15 +19,15 @@ export const accessListController = {
         expiresAt: expiresAt ? new Date(expiresAt) : undefined,
         notes,
         addedBy: user._id,
-        status: "active" as any,
+        status: 'active' as any,
       });
 
       res.status(201).json({
-        message: "Documento agregado a lista negra",
+        message: 'Documento agregado a lista negra',
         data: entry,
       });
     } catch (error: any) {
-      if (error.message.includes("ya está en la")) {
+      if (error.message.includes('ya está en la')) {
         res.status(400).json({ error: error.message });
       } else {
         next(error);
@@ -42,11 +38,7 @@ export const accessListController = {
   /**
    * Agregar documento a lista blanca
    */
-  async addToWhitelist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async addToWhitelist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { document, reason, expiresAt, notes } = req.body;
       const user = (req as any).user;
@@ -58,15 +50,15 @@ export const accessListController = {
         expiresAt: expiresAt ? new Date(expiresAt) : undefined,
         notes,
         addedBy: user._id,
-        status: "active" as any,
+        status: 'active' as any,
       });
 
       res.status(201).json({
-        message: "Documento agregado a lista blanca",
+        message: 'Documento agregado a lista blanca',
         data: entry,
       });
     } catch (error: any) {
-      if (error.message.includes("ya está en la")) {
+      if (error.message.includes('ya está en la')) {
         res.status(400).json({ error: error.message });
       } else {
         next(error);
@@ -77,26 +69,19 @@ export const accessListController = {
   /**
    * Remover de lista negra
    */
-  async removeFromBlacklist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async removeFromBlacklist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { document } = req.params;
 
-      const entry = await AccessListService.removeFromList(
-        document,
-        ListType.BLACKLIST
-      );
+      const entry = await AccessListService.removeFromList(document, ListType.BLACKLIST);
 
       if (!entry) {
-        res.status(404).json({ error: "Documento no encontrado en lista negra" });
+        res.status(404).json({ error: 'Documento no encontrado en lista negra' });
         return;
       }
 
       res.status(200).json({
-        message: "Documento removido de lista negra",
+        message: 'Documento removido de lista negra',
         data: entry,
       });
     } catch (error) {
@@ -107,26 +92,19 @@ export const accessListController = {
   /**
    * Remover de lista blanca
    */
-  async removeFromWhitelist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async removeFromWhitelist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { document } = req.params;
 
-      const entry = await AccessListService.removeFromList(
-        document,
-        ListType.WHITELIST
-      );
+      const entry = await AccessListService.removeFromList(document, ListType.WHITELIST);
 
       if (!entry) {
-        res.status(404).json({ error: "Documento no encontrado en lista blanca" });
+        res.status(404).json({ error: 'Documento no encontrado en lista blanca' });
         return;
       }
 
       res.status(200).json({
-        message: "Documento removido de lista blanca",
+        message: 'Documento removido de lista blanca',
         data: entry,
       });
     } catch (error) {
@@ -137,18 +115,14 @@ export const accessListController = {
   /**
    * Obtener lista negra
    */
-  async getBlacklist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getBlacklist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { includeInactive } = req.query;
       const paginationOptions = getPaginationOptions(req.query);
 
       const result = await AccessListService.getList(
         ListType.BLACKLIST,
-        includeInactive === "true",
+        includeInactive === 'true',
         paginationOptions
       );
 
@@ -161,18 +135,14 @@ export const accessListController = {
   /**
    * Obtener lista blanca
    */
-  async getWhitelist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getWhitelist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { includeInactive } = req.query;
       const paginationOptions = getPaginationOptions(req.query);
 
       const result = await AccessListService.getList(
         ListType.WHITELIST,
-        includeInactive === "true",
+        includeInactive === 'true',
         paginationOptions
       );
 
@@ -185,11 +155,7 @@ export const accessListController = {
   /**
    * Verificar si documento está en blacklist
    */
-  async checkBlacklist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async checkBlacklist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { document } = req.params;
       const isBlacklisted = await AccessListService.isBlacklisted(document);
@@ -198,8 +164,8 @@ export const accessListController = {
         document,
         isBlacklisted,
         message: isBlacklisted
-          ? "El documento está en lista negra"
-          : "El documento no está en lista negra",
+          ? 'El documento está en lista negra'
+          : 'El documento no está en lista negra',
       });
     } catch (error) {
       next(error);
@@ -209,11 +175,7 @@ export const accessListController = {
   /**
    * Verificar si documento está en whitelist
    */
-  async checkWhitelist(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async checkWhitelist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { document } = req.params;
       const isWhitelisted = await AccessListService.isWhitelisted(document);
@@ -222,8 +184,8 @@ export const accessListController = {
         document,
         isWhitelisted,
         message: isWhitelisted
-          ? "El documento está en lista blanca"
-          : "El documento no está en lista blanca",
+          ? 'El documento está en lista blanca'
+          : 'El documento no está en lista blanca',
       });
     } catch (error) {
       next(error);
@@ -233,11 +195,7 @@ export const accessListController = {
   /**
    * Obtener estadísticas
    */
-  async getStats(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getStats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const stats = await AccessListService.getStats();
       res.status(200).json(stats);
@@ -249,11 +207,7 @@ export const accessListController = {
   /**
    * Limpiar entradas expiradas
    */
-  async cleanExpired(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async cleanExpired(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const count = await AccessListService.cleanExpired();
       res.status(200).json({

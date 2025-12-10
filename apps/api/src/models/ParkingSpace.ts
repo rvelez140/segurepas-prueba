@@ -1,5 +1,5 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IParkingSpace, ParkingType, ParkingStatus } from "../interfaces/IParking";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IParkingSpace, ParkingType, ParkingStatus } from '../interfaces/IParking';
 
 const parkingSpaceSchema: Schema = new mongoose.Schema(
   {
@@ -32,7 +32,7 @@ const parkingSpaceSchema: Schema = new mongoose.Schema(
     },
     resident: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       index: true,
     },
     notes: {
@@ -58,7 +58,7 @@ parkingSpaceSchema.index({ type: 1, status: 1 });
 parkingSpaceSchema.index({ floor: 1, section: 1 });
 
 export const ParkingSpace: Model<IParkingSpace> = mongoose.model<IParkingSpace>(
-  "ParkingSpace",
+  'ParkingSpace',
   parkingSpaceSchema
 );
 

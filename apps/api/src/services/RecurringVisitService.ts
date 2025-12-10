@@ -1,13 +1,13 @@
-import { RecurringVisit } from "../models/RecurringVisit";
+import { RecurringVisit } from '../models/RecurringVisit';
 import {
   IRecurringVisit,
   IRecurringVisitInput,
   RecurrencePattern,
   DayOfWeek,
-} from "../interfaces/IRecurringVisit";
-import { VisitService } from "./VisitService";
-import { IVisitInput } from "../interfaces/IVisit";
-import { Types } from "mongoose";
+} from '../interfaces/IRecurringVisit';
+import { VisitService } from './VisitService';
+import { IVisitInput } from '../interfaces/IVisit';
+import { Types } from 'mongoose';
 
 export class RecurringVisitService {
   /**
@@ -27,7 +27,7 @@ export class RecurringVisitService {
       generatedCount: 0,
     });
 
-    return recurringVisit.populate("resident", "name apartment");
+    return recurringVisit.populate('resident', 'name apartment');
   }
 
   /**
@@ -35,7 +35,7 @@ export class RecurringVisitService {
    */
   static async getByResident(residentId: Types.ObjectId): Promise<IRecurringVisit[]> {
     return await RecurringVisit.find({ resident: residentId, isActive: true })
-      .populate("resident", "name apartment")
+      .populate('resident', 'name apartment')
       .sort({ createdAt: -1 });
   }
 
@@ -44,7 +44,7 @@ export class RecurringVisitService {
    */
   static async getAllActive(): Promise<IRecurringVisit[]> {
     return await RecurringVisit.find({ isActive: true })
-      .populate("resident", "name apartment")
+      .populate('resident', 'name apartment')
       .sort({ nextGeneration: 1 });
   }
 
@@ -55,8 +55,10 @@ export class RecurringVisitService {
     id: Types.ObjectId,
     updates: Partial<IRecurringVisitInput>
   ): Promise<IRecurringVisit | null> {
-    return await RecurringVisit.findByIdAndUpdate(id, { $set: updates }, { new: true })
-      .populate("resident", "name apartment");
+    return await RecurringVisit.findByIdAndUpdate(id, { $set: updates }, { new: true }).populate(
+      'resident',
+      'name apartment'
+    );
   }
 
   /**
@@ -67,7 +69,7 @@ export class RecurringVisitService {
       id,
       { $set: { isActive: false } },
       { new: true }
-    ).populate("resident", "name apartment");
+    ).populate('resident', 'name apartment');
   }
 
   /**
@@ -110,10 +112,10 @@ export class RecurringVisitService {
           },
           authorization: {
             resident: recurring.resident,
-            state: "pendiente" as any,
+            state: 'pendiente' as any,
             date: now,
             exp: expDate,
-            reason: recurring.reason || "Visita recurrente programada",
+            reason: recurring.reason || 'Visita recurrente programada',
           },
         };
 
@@ -127,7 +129,7 @@ export class RecurringVisitService {
 
         generated++;
       } catch (error) {
-        console.error("Error generando visita recurrente:", error);
+        console.error('Error generando visita recurrente:', error);
         errors++;
       }
     }
@@ -219,22 +221,15 @@ export class RecurringVisitService {
       RecurringVisit.countDocuments(),
       RecurringVisit.countDocuments({ isActive: true }),
       RecurringVisit.countDocuments({ isActive: false }),
-      RecurringVisit.aggregate([
-        { $group: { _id: "$pattern", count: { $sum: 1 } } },
-      ]),
-      RecurringVisit.aggregate([
-        { $group: { _id: null, total: { $sum: "$generatedCount" } } },
-      ]),
+      RecurringVisit.aggregate([{ $group: { _id: '$pattern', count: { $sum: 1 } } }]),
+      RecurringVisit.aggregate([{ $group: { _id: null, total: { $sum: '$generatedCount' } } }]),
     ]);
 
     return {
       total,
       active,
       inactive,
-      byPattern: byPattern.reduce(
-        (acc, item) => ({ ...acc, [item._id]: item.count }),
-        {}
-      ),
+      byPattern: byPattern.reduce((acc, item) => ({ ...acc, [item._id]: item.count }), {}),
       totalGenerated: totalGenerated[0]?.total || 0,
     };
   }

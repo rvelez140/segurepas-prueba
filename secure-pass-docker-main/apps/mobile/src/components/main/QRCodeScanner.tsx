@@ -1,41 +1,31 @@
-import {
-  Camera,
-  CameraType,
-  CameraView,
-  useCameraPermissions,
-} from "expo-camera";
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, Alert } from "react-native";
-import { BarCodeScannerResult } from "expo-barcode-scanner";
-import {
-  RouteProp,
-  useRoute,
-  useNavigation,
-  NavigationProp,
-} from "@react-navigation/native";
-import { RootStackParamList } from "../../types/types";
-import Navigation from "@/navigation/Navigation";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import axios from "axios";
-import { RegistryData, VisitResponse } from "@/types/visit.types";
-import { getVisitsByQRId, RegisterExit } from "@/api/visit.api";
-import { getAuthenticatedUser } from "@/api/auth.api";
+import { Camera, CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { BarCodeScannerResult } from 'expo-barcode-scanner';
+import { RouteProp, useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types/types';
+import Navigation from '@/navigation/Navigation';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import axios from 'axios';
+import { RegistryData, VisitResponse } from '@/types/visit.types';
+import { getVisitsByQRId, RegisterExit } from '@/api/visit.api';
+import { getAuthenticatedUser } from '@/api/auth.api';
 
-type ScannerRouteProp = RouteProp<RootStackParamList, "Scanner">;
+type ScannerRouteProp = RouteProp<RootStackParamList, 'Scanner'>;
 type Nav = NavigationProp<RootStackParamList>;
 export default function QRScannerScreen() {
   const route = useRoute<ScannerRouteProp>();
   const navigation = useNavigation<Nav>();
   const { state } = route.params;
 
-  const [cameraType, setCameraType] = useState<CameraType>("back");
+  const [cameraType, setCameraType] = useState<CameraType>('back');
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      setHasPermission(status === 'granted');
     })();
   }, []);
 
@@ -50,42 +40,42 @@ export default function QRScannerScreen() {
         if (visit.qrId === data) {
           //Verificar que uno que ya este aprobado/desaprobado no salga para aprobar o desaprobar nuevamente.
           if (
-            (state === "entry" && visit.authorization.state === "aprobada") ||
-            (state === "exit" && visit.authorization.state === "pendiente") ||
-            visit.authorization.state === "rechazada" ||
-            visit.authorization.state === "finalizada"
+            (state === 'entry' && visit.authorization.state === 'aprobada') ||
+            (state === 'exit' && visit.authorization.state === 'pendiente') ||
+            visit.authorization.state === 'rechazada' ||
+            visit.authorization.state === 'finalizada'
           ) {
-            navigation.navigate("Main");
-            Alert.alert("Error", "Estado de visita invalido", [
+            navigation.navigate('Main');
+            Alert.alert('Error', 'Estado de visita invalido', [
               {
-                text: "OK",
+                text: 'OK',
               },
             ]);
           } else {
-            if (state === "entry") {
-              navigation.navigate("EntryForm", { qrData: data });
+            if (state === 'entry') {
+              navigation.navigate('EntryForm', { qrData: data });
               setScanned(false);
             }
 
-            if (state === "exit") {
-              navigation.navigate("Main");
+            if (state === 'exit') {
+              navigation.navigate('Main');
               const user = await getAuthenticatedUser();
               const qrRegistryData: RegistryData = {
                 qrId: data,
                 guardId: user._id,
               };
               await RegisterExit(qrRegistryData);
-              Alert.alert("Éxito", "Salida registrada", [
+              Alert.alert('Éxito', 'Salida registrada', [
                 {
-                  text: "OK",
+                  text: 'OK',
                 },
               ]);
             }
           }
         }
       } catch (error) {
-        console.error("Ocurrió un error al tratar de escanear el código", error);
-        navigation.navigate("Main");
+        console.error('Ocurrió un error al tratar de escanear el código', error);
+        navigation.navigate('Main');
       }
     }
 
@@ -103,7 +93,7 @@ export default function QRScannerScreen() {
         facing={cameraType}
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
+          barcodeTypes: ['qr'],
         }}
         style={StyleSheet.absoluteFillObject}
       />
@@ -116,8 +106,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 });

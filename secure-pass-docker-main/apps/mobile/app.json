@@ -24,9 +24,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-barcode-scanner",
-      ["react-native-permissions", {}]
-    ]
+    "plugins": ["expo-barcode-scanner", ["react-native-permissions", {}]]
   }
 }

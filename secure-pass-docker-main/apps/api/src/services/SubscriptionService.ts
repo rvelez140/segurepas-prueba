@@ -1,10 +1,6 @@
-import { Subscription } from "../models/Subscription";
-import {
-  ISubscription,
-  ISubscriptionInput,
-  PlanType,
-} from "../interfaces/ISubscription";
-import { Types } from "mongoose";
+import { Subscription } from '../models/Subscription';
+import { ISubscription, ISubscriptionInput, PlanType } from '../interfaces/ISubscription';
+import { Types } from 'mongoose';
 
 export class SubscriptionService {
   // Configuración de planes predeterminados
@@ -35,9 +31,7 @@ export class SubscriptionService {
     },
   };
 
-  static async createSubscription(
-    data: ISubscriptionInput
-  ): Promise<ISubscription> {
+  static async createSubscription(data: ISubscriptionInput): Promise<ISubscription> {
     const config = this.PLAN_CONFIGS[data.planType];
 
     const subscriptionData = {
@@ -45,8 +39,8 @@ export class SubscriptionService {
       planType: data.planType,
       pricing: {
         amount: data.pricing?.amount || config.amount,
-        currency: data.pricing?.currency || "USD",
-        billingCycle: data.pricing?.billingCycle || "monthly",
+        currency: data.pricing?.currency || 'USD',
+        billingCycle: data.pricing?.billingCycle || 'monthly',
       },
       limits: {
         maxUnits: config.maxUnits,
@@ -55,7 +49,7 @@ export class SubscriptionService {
         apiAccess: config.apiAccess,
         whiteLabel: config.whiteLabel,
       },
-      status: "trial",
+      status: 'trial',
       currentUsage: {
         unitsCount: 0,
       },
@@ -67,9 +61,7 @@ export class SubscriptionService {
     return await subscription.save();
   }
 
-  static async findById(
-    id: string | Types.ObjectId
-  ): Promise<ISubscription | null> {
+  static async findById(id: string | Types.ObjectId): Promise<ISubscription | null> {
     return await Subscription.findById(id).exec();
   }
 
@@ -79,7 +71,7 @@ export class SubscriptionService {
 
   static async getActiveSubscriptions(): Promise<ISubscription[]> {
     return await Subscription.find({
-      status: { $in: ["active", "trial"] },
+      status: { $in: ['active', 'trial'] },
     }).exec();
   }
 
@@ -103,7 +95,7 @@ export class SubscriptionService {
 
     const updateData = {
       planType: newPlan,
-      "pricing.amount": customAmount || config.amount,
+      'pricing.amount': customAmount || config.amount,
       limits: {
         maxUnits: config.maxUnits,
         advancedReports: config.advancedReports,
@@ -114,18 +106,12 @@ export class SubscriptionService {
       updatedAt: new Date(),
     };
 
-    return await Subscription.findByIdAndUpdate(
-      id,
-      { $set: updateData },
-      { new: true }
-    ).exec();
+    return await Subscription.findByIdAndUpdate(id, { $set: updateData }, { new: true }).exec();
   }
 
-  static async activateSubscription(
-    id: string | Types.ObjectId
-  ): Promise<ISubscription | null> {
+  static async activateSubscription(id: string | Types.ObjectId): Promise<ISubscription | null> {
     const subscription = await Subscription.findById(id).exec();
-    if (!subscription) throw new Error("Suscripción no encontrada");
+    if (!subscription) throw new Error('Suscripción no encontrada');
 
     const nextPaymentDate = new Date();
     nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
@@ -134,11 +120,11 @@ export class SubscriptionService {
       id,
       {
         $set: {
-          status: "active",
+          status: 'active',
           startDate: new Date(),
-          "paymentInfo.lastPaymentDate": new Date(),
-          "paymentInfo.nextPaymentDate": nextPaymentDate,
-          "paymentInfo.paymentStatus": "completed",
+          'paymentInfo.lastPaymentDate': new Date(),
+          'paymentInfo.nextPaymentDate': nextPaymentDate,
+          'paymentInfo.paymentStatus': 'completed',
           updatedAt: new Date(),
         },
       },
@@ -146,14 +132,12 @@ export class SubscriptionService {
     ).exec();
   }
 
-  static async cancelSubscription(
-    id: string | Types.ObjectId
-  ): Promise<ISubscription | null> {
+  static async cancelSubscription(id: string | Types.ObjectId): Promise<ISubscription | null> {
     return await Subscription.findByIdAndUpdate(
       id,
       {
         $set: {
-          status: "cancelled",
+          status: 'cancelled',
           endDate: new Date(),
           updatedAt: new Date(),
         },
@@ -162,14 +146,12 @@ export class SubscriptionService {
     ).exec();
   }
 
-  static async suspendSubscription(
-    id: string | Types.ObjectId
-  ): Promise<ISubscription | null> {
+  static async suspendSubscription(id: string | Types.ObjectId): Promise<ISubscription | null> {
     return await Subscription.findByIdAndUpdate(
       id,
       {
         $set: {
-          status: "suspended",
+          status: 'suspended',
           updatedAt: new Date(),
         },
       },
@@ -185,7 +167,7 @@ export class SubscriptionService {
       id,
       {
         $set: {
-          "currentUsage.unitsCount": unitsCount,
+          'currentUsage.unitsCount': unitsCount,
           updatedAt: new Date(),
         },
       },
@@ -193,9 +175,7 @@ export class SubscriptionService {
     ).exec();
   }
 
-  static async checkLimits(
-    id: string | Types.ObjectId
-  ): Promise<{
+  static async checkLimits(id: string | Types.ObjectId): Promise<{
     isValid: boolean;
     isOverLimit: boolean;
     currentUnits: number;
@@ -203,7 +183,7 @@ export class SubscriptionService {
   }> {
     const subscription = await Subscription.findById(id).exec();
     if (!subscription) {
-      throw new Error("Suscripción no encontrada");
+      throw new Error('Suscripción no encontrada');
     }
 
     const isActive = subscription.isActive();
@@ -217,9 +197,7 @@ export class SubscriptionService {
     };
   }
 
-  static async deleteSubscription(
-    id: string | Types.ObjectId
-  ): Promise<ISubscription | null> {
+  static async deleteSubscription(id: string | Types.ObjectId): Promise<ISubscription | null> {
     return await Subscription.findByIdAndDelete(id).exec();
   }
 
@@ -233,44 +211,44 @@ export class SubscriptionService {
 
     const plans = {
       [PlanType.BASIC]: {
-        name: "Plan Básico",
-        description: "Ideal para residenciales pequeños",
+        name: 'Plan Básico',
+        description: 'Ideal para residenciales pequeños',
         features: [
           `Hasta ${config.maxUnits} viviendas`,
-          "Gestión de visitas",
-          "Control de entrada/salida",
-          "Códigos QR",
-          "Reportes básicos",
+          'Gestión de visitas',
+          'Control de entrada/salida',
+          'Códigos QR',
+          'Reportes básicos',
         ],
-        pricing: { amount: config.amount, currency: "USD" },
+        pricing: { amount: config.amount, currency: 'USD' },
       },
       [PlanType.PRO]: {
-        name: "Plan Pro",
-        description: "Para residenciales medianos con necesidades avanzadas",
+        name: 'Plan Pro',
+        description: 'Para residenciales medianos con necesidades avanzadas',
         features: [
           `Hasta ${config.maxUnits} viviendas`,
-          "Gestión de visitas",
-          "Control de entrada/salida",
-          "Códigos QR",
-          "Reportes avanzados",
-          "Analíticas y estadísticas",
-          "Notificaciones personalizadas",
+          'Gestión de visitas',
+          'Control de entrada/salida',
+          'Códigos QR',
+          'Reportes avanzados',
+          'Analíticas y estadísticas',
+          'Notificaciones personalizadas',
         ],
-        pricing: { amount: config.amount, currency: "USD" },
+        pricing: { amount: config.amount, currency: 'USD' },
       },
       [PlanType.ENTERPRISE]: {
-        name: "Plan Enterprise",
-        description: "Solución personalizada para grandes residenciales",
+        name: 'Plan Enterprise',
+        description: 'Solución personalizada para grandes residenciales',
         features: [
-          "Viviendas ilimitadas",
-          "Todas las características Pro",
-          "Múltiples entradas",
-          "Acceso API REST",
-          "Marca blanca (White Label)",
-          "Soporte prioritario",
-          "Integración personalizada",
+          'Viviendas ilimitadas',
+          'Todas las características Pro',
+          'Múltiples entradas',
+          'Acceso API REST',
+          'Marca blanca (White Label)',
+          'Soporte prioritario',
+          'Integración personalizada',
         ],
-        pricing: { amount: config.amount, currency: "USD" },
+        pricing: { amount: config.amount, currency: 'USD' },
       },
     };
 

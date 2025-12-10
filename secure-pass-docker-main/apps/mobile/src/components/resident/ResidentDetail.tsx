@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/types";
-import { User } from "../../types/user.types";
-import { VisitResponse } from "@/types/visit.types";
-import { getVisitsByResidentId } from "@/api/visit.api";
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/types';
+import { User } from '../../types/user.types';
+import { VisitResponse } from '@/types/visit.types';
+import { getVisitsByResidentId } from '@/api/visit.api';
 
-type ResidentDetailScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ResidentDetail"
->;
+type ResidentDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'ResidentDetail'>;
 
 const ResidentDetail: React.FC<ResidentDetailScreenProps> = ({ route }) => {
   const resident = route.params.resident;
@@ -33,15 +30,15 @@ const ResidentDetail: React.FC<ResidentDetailScreenProps> = ({ route }) => {
     return new Date(date).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
   // Función para obtener los estilos del badge según el estado
   const getBadgeStyles = (state: string) => {
     const lowerState = state.toLowerCase();
-    
-    switch(lowerState) {
+
+    switch (lowerState) {
       case 'aprobada':
         return styles.badgeAprobada;
       case 'rechazada':
@@ -109,12 +106,9 @@ const ResidentDetail: React.FC<ResidentDetailScreenProps> = ({ route }) => {
             <Text style={styles.headerText}>Estado</Text>
             <Text style={styles.headerText}>Autorización</Text>
           </View>
-          
+
           {visits?.map((v, i) => (
-            <TouchableOpacity 
-              key={i}
-              style={styles.visitRow}
-            >
+            <TouchableOpacity key={i} style={styles.visitRow}>
               <Text style={styles.columnText}>{v.visit.name}</Text>
               <View style={[styles.badge, getBadgeStyles(v.authorization.state)]}>
                 <Text style={styles.badgeText}>{v.authorization.state.toUpperCase()}</Text>
@@ -131,23 +125,23 @@ const ResidentDetail: React.FC<ResidentDetailScreenProps> = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     padding: 16,
   },
   header: {
     marginBottom: 24,
-    alignItems: "center",
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -161,78 +155,78 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#444",
+    fontWeight: '600',
+    color: '#444',
     marginBottom: 12,
     paddingBottom: 4,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 10,
     paddingHorizontal: 8,
   },
   detailLabel: {
     fontSize: 16,
-    color: "#666",
-    fontWeight: "500",
+    color: '#666',
+    fontWeight: '500',
   },
   detailValue: {
     fontSize: 16,
-    color: "#333",
-    fontWeight: "500",
-    textAlign: "right",
+    color: '#333',
+    fontWeight: '500',
+    textAlign: 'right',
     flexShrink: 1,
-    flexWrap: "wrap",
-    maxWidth: "60%",
+    flexWrap: 'wrap',
+    maxWidth: '60%',
   },
   divider: {
     height: 1,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     marginVertical: 16,
   },
   headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 15,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: '#f0f0f0',
     borderRadius: 8,
     marginBottom: 10,
   },
   headerText: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#444",
+    fontWeight: '600',
+    color: '#444',
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   columnText: {
     fontSize: 13,
-    color: "#2c3e50",
+    color: '#2c3e50',
     flex: 1,
-    textAlign: "left",
+    textAlign: 'left',
   },
   dateText: {
     fontSize: 14,
-    color: "#2c3e50",
+    color: '#2c3e50',
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   visitRow: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
     borderRadius: 8,
     paddingVertical: 17,
     paddingHorizontal: 17,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: '#e0e0e0',
   },
   // Estilos para los badges
   badge: {

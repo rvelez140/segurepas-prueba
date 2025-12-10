@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Subscription, getSubscription } from "../../api/subscription.api";
-import styles from "./SubscriptionCard.module.css";
+import { useEffect, useState } from 'react';
+import { Subscription, getSubscription } from '../../api/subscription.api';
+import styles from './SubscriptionCard.module.css';
 
 interface SubscriptionCardProps {
   subscriptionId?: string;
@@ -21,7 +21,7 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
         const data = await getSubscription(subscriptionId);
         setSubscription(data);
       } catch (error) {
-        console.error("Error al cargar suscripción:", error);
+        console.error('Error al cargar suscripción:', error);
       } finally {
         setLoading(false);
       }
@@ -54,11 +54,11 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; className: string }> = {
-      active: { label: "Activa", className: styles.statusActive },
-      trial: { label: "Periodo de prueba", className: styles.statusTrial },
-      cancelled: { label: "Cancelada", className: styles.statusCancelled },
-      suspended: { label: "Suspendida", className: styles.statusSuspended },
-      inactive: { label: "Inactiva", className: styles.statusInactive },
+      active: { label: 'Activa', className: styles.statusActive },
+      trial: { label: 'Periodo de prueba', className: styles.statusTrial },
+      cancelled: { label: 'Cancelada', className: styles.statusCancelled },
+      suspended: { label: 'Suspendida', className: styles.statusSuspended },
+      inactive: { label: 'Inactiva', className: styles.statusInactive },
     };
 
     const statusInfo = statusMap[status] || {
@@ -67,17 +67,15 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
     };
 
     return (
-      <span className={`${styles.statusBadge} ${statusInfo.className}`}>
-        {statusInfo.label}
-      </span>
+      <span className={`${styles.statusBadge} ${statusInfo.className}`}>{statusInfo.label}</span>
     );
   };
 
   const getPlanName = (planType: string) => {
     const planNames: Record<string, string> = {
-      basico: "Plan Básico 🔒",
-      pro: "Plan Pro 🔐",
-      enterprise: "Plan Enterprise 🏢",
+      basico: 'Plan Básico 🔒',
+      pro: 'Plan Pro 🔐',
+      enterprise: 'Plan Enterprise 🏢',
     };
     return planNames[planType] || planType;
   };
@@ -89,12 +87,8 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
     <div className={styles.card}>
       <div className={styles.cardHeader}>
         <div>
-          <h3 className={styles.planTitle}>
-            {getPlanName(subscription.planType)}
-          </h3>
-          <p className={styles.residentialName}>
-            {subscription.residentialName}
-          </p>
+          <h3 className={styles.planTitle}>{getPlanName(subscription.planType)}</h3>
+          <p className={styles.residentialName}>{subscription.residentialName}</p>
         </div>
         {getStatusBadge(subscription.status)}
       </div>
@@ -111,8 +105,7 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
           <div className={styles.usageHeader}>
             <span>Uso de viviendas</span>
             <span className={styles.usageCount}>
-              {subscription.currentUsage.unitsCount} /{" "}
-              {subscription.limits.maxUnits}
+              {subscription.currentUsage.unitsCount} / {subscription.limits.maxUnits}
             </span>
           </div>
           <div className={styles.progressBar}>
@@ -121,11 +114,7 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
               style={{
                 width: `${Math.min(usagePercentage, 100)}%`,
                 backgroundColor:
-                  usagePercentage > 90
-                    ? "#ef4444"
-                    : usagePercentage > 70
-                    ? "#f59e0b"
-                    : "#10b981",
+                  usagePercentage > 90 ? '#ef4444' : usagePercentage > 70 ? '#f59e0b' : '#10b981',
               }}
             ></div>
           </div>
@@ -135,18 +124,16 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
           <h4>Características incluidas:</h4>
           <ul className={styles.featuresList}>
             <li className={subscription.limits.advancedReports ? styles.enabled : styles.disabled}>
-              {subscription.limits.advancedReports ? "✓" : "✗"} Reportes
-              avanzados
+              {subscription.limits.advancedReports ? '✓' : '✗'} Reportes avanzados
             </li>
             <li className={subscription.limits.multipleEntries ? styles.enabled : styles.disabled}>
-              {subscription.limits.multipleEntries ? "✓" : "✗"} Múltiples
-              entradas
+              {subscription.limits.multipleEntries ? '✓' : '✗'} Múltiples entradas
             </li>
             <li className={subscription.limits.apiAccess ? styles.enabled : styles.disabled}>
-              {subscription.limits.apiAccess ? "✓" : "✗"} Acceso a API
+              {subscription.limits.apiAccess ? '✓' : '✗'} Acceso a API
             </li>
             <li className={subscription.limits.whiteLabel ? styles.enabled : styles.disabled}>
-              {subscription.limits.whiteLabel ? "✓" : "✗"} Marca blanca
+              {subscription.limits.whiteLabel ? '✓' : '✗'} Marca blanca
             </li>
           </ul>
         </div>
@@ -154,17 +141,16 @@ const SubscriptionCard = ({ subscriptionId }: SubscriptionCardProps) => {
         {subscription.paymentInfo?.nextPaymentDate && (
           <div className={styles.paymentInfo}>
             <p>
-              Próximo pago:{" "}
+              Próximo pago:{' '}
               {new Date(subscription.paymentInfo.nextPaymentDate).toLocaleDateString()}
             </p>
           </div>
         )}
 
-        {subscription.trialEndDate && subscription.status === "trial" && (
+        {subscription.trialEndDate && subscription.status === 'trial' && (
           <div className={styles.trialInfo}>
             <p>
-              Periodo de prueba hasta:{" "}
-              {new Date(subscription.trialEndDate).toLocaleDateString()}
+              Periodo de prueba hasta: {new Date(subscription.trialEndDate).toLocaleDateString()}
             </p>
           </div>
         )}

@@ -1,5 +1,5 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IAccessList, ListType, AccessStatus } from "../interfaces/IAccessList";
+import mongoose, { Schema, Model } from 'mongoose';
+import { IAccessList, ListType, AccessStatus } from '../interfaces/IAccessList';
 
 const accessListSchema = new mongoose.Schema<IAccessList>(
   {
@@ -9,7 +9,7 @@ const accessListSchema = new mongoose.Schema<IAccessList>(
       index: true,
       validate: {
         validator: (v: string) => !!(v && v.length >= 8 && v.length <= 11),
-        message: "El documento debe tener entre 8 y 11 caracteres",
+        message: 'El documento debe tener entre 8 y 11 caracteres',
       },
     },
     type: {
@@ -26,11 +26,11 @@ const accessListSchema = new mongoose.Schema<IAccessList>(
     },
     reason: {
       type: String,
-      maxlength: [500, "La razón no puede exceder 500 caracteres"],
+      maxlength: [500, 'La razón no puede exceder 500 caracteres'],
     },
     addedBy: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     expiresAt: {
@@ -39,7 +39,7 @@ const accessListSchema = new mongoose.Schema<IAccessList>(
     },
     notes: {
       type: String,
-      maxlength: [1000, "Las notas no pueden exceder 1000 caracteres"],
+      maxlength: [1000, 'Las notas no pueden exceder 1000 caracteres'],
     },
   },
   {
@@ -65,7 +65,7 @@ accessListSchema.index({ document: 1, type: 1 }, { unique: true });
 accessListSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const AccessList: Model<IAccessList> = mongoose.model<IAccessList>(
-  "AccessList",
+  'AccessList',
   accessListSchema
 );
 

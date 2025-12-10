@@ -1,53 +1,53 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 export enum AuditAction {
   // Autenticación
-  LOGIN = "login",
-  LOGOUT = "logout",
-  LOGIN_FAILED = "login_failed",
-  PASSWORD_CHANGE = "password_change",
+  LOGIN = 'login',
+  LOGOUT = 'logout',
+  LOGIN_FAILED = 'login_failed',
+  PASSWORD_CHANGE = 'password_change',
 
   // Usuarios
-  USER_CREATE = "user_create",
-  USER_UPDATE = "user_update",
-  USER_DELETE = "user_delete",
+  USER_CREATE = 'user_create',
+  USER_UPDATE = 'user_update',
+  USER_DELETE = 'user_delete',
 
   // Visitas
-  VISIT_AUTHORIZE = "visit_authorize",
-  VISIT_ENTRY_APPROVE = "visit_entry_approve",
-  VISIT_ENTRY_DENY = "visit_entry_deny",
-  VISIT_EXIT = "visit_exit",
-  VISIT_UPDATE = "visit_update",
-  VISIT_DELETE = "visit_delete",
-  VISIT_IMAGE_UPLOAD = "visit_image_upload",
+  VISIT_AUTHORIZE = 'visit_authorize',
+  VISIT_ENTRY_APPROVE = 'visit_entry_approve',
+  VISIT_ENTRY_DENY = 'visit_entry_deny',
+  VISIT_EXIT = 'visit_exit',
+  VISIT_UPDATE = 'visit_update',
+  VISIT_DELETE = 'visit_delete',
+  VISIT_IMAGE_UPLOAD = 'visit_image_upload',
 
   // Pagos
-  PAYMENT_CREATE = "payment_create",
-  PAYMENT_SUCCESS = "payment_success",
-  PAYMENT_FAILED = "payment_failed",
+  PAYMENT_CREATE = 'payment_create',
+  PAYMENT_SUCCESS = 'payment_success',
+  PAYMENT_FAILED = 'payment_failed',
 
   // Seguridad
-  UNAUTHORIZED_ACCESS = "unauthorized_access",
-  RATE_LIMIT_EXCEEDED = "rate_limit_exceeded",
-  SUSPICIOUS_ACTIVITY = "suspicious_activity",
+  UNAUTHORIZED_ACCESS = 'unauthorized_access',
+  RATE_LIMIT_EXCEEDED = 'rate_limit_exceeded',
+  SUSPICIOUS_ACTIVITY = 'suspicious_activity',
 
   // Parqueo
-  PARKING_ASSIGN = "parking_assign",
-  PARKING_EXIT = "parking_exit",
-  PARKING_CREATE = "parking_create",
-  PARKING_UPDATE = "parking_update",
-  PARKING_DELETE = "parking_delete",
+  PARKING_ASSIGN = 'parking_assign',
+  PARKING_EXIT = 'parking_exit',
+  PARKING_CREATE = 'parking_create',
+  PARKING_UPDATE = 'parking_update',
+  PARKING_DELETE = 'parking_delete',
 
   // Sistema
-  SYSTEM_UPDATE = "system_update",
-  SYSTEM_CONFIG = "system_config",
+  SYSTEM_UPDATE = 'system_update',
+  SYSTEM_CONFIG = 'system_config',
 }
 
 export enum AuditSeverity {
-  INFO = "info",
-  WARNING = "warning",
-  ERROR = "error",
-  CRITICAL = "critical",
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical',
 }
 
 export interface IAuditLogInput {

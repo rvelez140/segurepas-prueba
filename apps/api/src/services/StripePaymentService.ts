@@ -52,10 +52,7 @@ class StripePaymentService {
   /**
    * Crea una suscripción después del pago exitoso
    */
-  async createSubscription(
-    userId: string,
-    stripeSubscriptionId: string
-  ): Promise<any> {
+  async createSubscription(userId: string, stripeSubscriptionId: string): Promise<any> {
     const stripeSubscription = await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
 
     const subscription = new Subscription({
@@ -200,20 +197,16 @@ class StripePaymentService {
 
   private async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
     const subscription = await Subscription.findOne({
-      providerId: invoice.subscription as string
+      providerId: invoice.subscription as string,
     });
     if (!subscription) return;
 
-    await this.createPaymentRecord(
-      subscription.userId.toString(),
-      subscription.id,
-      invoice.id
-    );
+    await this.createPaymentRecord(subscription.userId.toString(), subscription.id, invoice.id);
   }
 
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
     const subscription = await Subscription.findOne({
-      providerId: invoice.subscription as string
+      providerId: invoice.subscription as string,
     });
     if (!subscription) return;
 
@@ -221,7 +214,7 @@ class StripePaymentService {
       userId: subscription.userId,
       subscriptionId: subscription._id,
       provider: PaymentProvider.STRIPE,
-      providerId: invoice.payment_intent as string || invoice.id,
+      providerId: (invoice.payment_intent as string) || invoice.id,
       amount: invoice.amount_due,
       currency: invoice.currency.toUpperCase(),
       status: PaymentStatus.FAILED,

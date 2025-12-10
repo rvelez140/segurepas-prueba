@@ -10,54 +10,54 @@ export interface VisitData {
 }
 
 export interface VisitResponse {
-    _id: string;
-    visit: Visit;
-    authorization: Authorization;
-    registry?: Registry;
-    qrId: string;
-    createdAt: Date;
-    updatedAt: Date;
+  _id: string;
+  visit: Visit;
+  authorization: Authorization;
+  registry?: Registry;
+  qrId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface Visit {
-    name: string;
-    email: string;
-    document: string;
-    visitImage?: string;
-    vehicleImage?: string;
-    vehiclePlate?: string;
+  name: string;
+  email: string;
+  document: string;
+  visitImage?: string;
+  vehicleImage?: string;
+  vehiclePlate?: string;
 }
 
 interface Authorization {
-    resident: visitResident;
-    state: string;
-    reason: string;
-    date: Date;
-    exp: Date;
+  resident: visitResident;
+  state: string;
+  reason: string;
+  date: Date;
+  exp: Date;
 }
 
 interface Registry {
-    entry?: Entry;
-    exit?: Exit;
+  entry?: Entry;
+  exit?: Exit;
 }
 
 interface Entry {
-    guard?: string;
-    date? : Date;
+  guard?: string;
+  date?: Date;
 }
 
 interface Exit {
-    guard?: string;
-    date?: Date;
+  guard?: string;
+  date?: Date;
 }
 
 interface visitResident {
-    _id: string;
-    name: string;
-    apartment: string;
+  _id: string;
+  name: string;
+  apartment: string;
 }
 
-export interface RegistryData{
-    qrId: string;
-    guardId: string;
+export interface RegistryData {
+  qrId: string;
+  guardId: string;
 }

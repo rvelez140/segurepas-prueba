@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,29 +9,24 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../types/types";
-import { getAuthenticatedUser, loginUser } from "../../api/auth.api";
-import {
-  getAuthToken,
-  loadToken,
-  saveToken,
-  setAuthToken,
-} from "@/services/auth.service";
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../types/types';
+import { getAuthenticatedUser, loginUser } from '../../api/auth.api';
+import { getAuthToken, loadToken, saveToken, setAuthToken } from '@/services/auth.service';
 interface LoginComponentProps {
   logoImage: any;
 }
 
 const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({
-    email: "", // Estado para errores de email
-    password: "", // Estado para errrores de contraseña
-    credentials: "", // Estado para errores de credenciales
+    email: '', // Estado para errores de email
+    password: '', // Estado para errrores de contraseña
+    credentials: '', // Estado para errores de credenciales
   });
   const [pageLoading, setPageLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,9 +38,9 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
         setAuthToken(await loadToken());
         await getAuthenticatedUser();
 
-        navigation.replace("Main");
+        navigation.replace('Main');
       } catch (error) {
-        console.log("Sesión anterior no encontrada o expirada");
+        console.log('Sesión anterior no encontrada o expirada');
       } finally {
         setPageLoading(false);
       }
@@ -56,24 +51,24 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
   const validateFields = () => {
     let valid = true;
     const newErrors = {
-      email: "", // Resetear errores de email al validar
-      password: "", // Resetear errores de contraseña al validar
-      credentials: "", // Resetear error de credenciales al validar
+      email: '', // Resetear errores de email al validar
+      password: '', // Resetear errores de contraseña al validar
+      credentials: '', // Resetear error de credenciales al validar
     };
 
     if (!email.trim()) {
-      newErrors.email = "El email es requerido";
+      newErrors.email = 'El email es requerido';
       valid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-      newErrors.email = "Email no válido";
+      newErrors.email = 'Email no válido';
       valid = false;
     }
 
     if (!password.trim()) {
-      newErrors.password = "La contraseña es requerida";
+      newErrors.password = 'La contraseña es requerida';
       valid = false;
     } else if (password.length < 8) {
-      newErrors.password = "La contraseña debe tener al menos 8 caracteres";
+      newErrors.password = 'La contraseña debe tener al menos 8 caracteres';
       valid = false;
     }
 
@@ -94,27 +89,26 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
       // api/auth/me
       const verifiedUser = await getAuthenticatedUser();
 
-      if (verifiedUser.role == "residente")
-        throw new Error("Usuario no puede ser residente");
+      if (verifiedUser.role == 'residente') throw new Error('Usuario no puede ser residente');
 
-      navigation.replace("Main");
+      navigation.replace('Main');
     } catch (error: any) {
       // Manejo específico de errores de credenciales
-      if (error.message.includes("Credenciales inválidas")) {
+      if (error.message.includes('Credenciales inválidas')) {
         setErrors({
           ...errors,
-          credentials: "Email o contraseña incorrectos",
+          credentials: 'Email o contraseña incorrectos',
         });
-      } else if (error.message.includes("Usuario no puede ser residente")) {
+      } else if (error.message.includes('Usuario no puede ser residente')) {
         setErrors({
           ...errors,
-          credentials: "El usuario no puede ser residente",
+          credentials: 'El usuario no puede ser residente',
         });
       } else {
-        Alert.alert("Error", error.message || "Error al iniciar sesión");
+        Alert.alert('Error', error.message || 'Error al iniciar sesión');
         setErrors({
           ...errors,
-          credentials: "Ocurrió un error al iniciar sesión",
+          credentials: 'Ocurrió un error al iniciar sesión',
         });
       }
     } finally {
@@ -123,15 +117,11 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
   };
 
   if (pageLoading) {
-    return (
-      <View
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      ></View>
-    );
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}></View>;
   } else
     return (
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
         <View style={styles.loginContainer}>
@@ -145,14 +135,12 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
             value={email}
             onChangeText={(text) => {
               setEmail(text);
-              setErrors({ ...errors, email: "", credentials: "" });
+              setErrors({ ...errors, email: '', credentials: '' });
             }}
             autoCapitalize="none"
             keyboardType="email-address"
           />
-          {errors.email ? (
-            <Text style={styles.errorText}>{errors.email}</Text>
-          ) : null}
+          {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
           {/* Campo de Contraseña */}
           <TextInput
@@ -162,30 +150,20 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
             value={password}
             onChangeText={(text) => {
               setPassword(text);
-              setErrors({ ...errors, password: "", credentials: "" });
+              setErrors({ ...errors, password: '', credentials: '' });
             }}
             secureTextEntry
           />
-          {errors.password ? (
-            <Text style={styles.errorText}>{errors.password}</Text>
-          ) : null}
+          {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
           {/* Mensaje de error de credenciales */}
           {errors.credentials ? (
-            <Text style={[styles.errorText, styles.credentialsError]}>
-              {errors.credentials}
-            </Text>
+            <Text style={[styles.errorText, styles.credentialsError]}>{errors.credentials}</Text>
           ) : null}
 
           {/* Botón de Login */}
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-            disabled={isLoading}
-          >
-            <Text style={styles.loginButtonText}>
-              {isLoading ? "CARGANDO..." : "LOGIN"}
-            </Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={isLoading}>
+            <Text style={styles.loginButtonText}>{isLoading ? 'CARGANDO...' : 'LOGIN'}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -195,8 +173,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ logoImage }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    backgroundColor: "#fff",
+    justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   loginContainer: {
     paddingHorizontal: 30,
@@ -204,40 +182,40 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginBottom: 40,
   },
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 5,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: '#f9f9f9',
   },
   inputError: {
-    borderColor: "#ff4444",
+    borderColor: '#ff4444',
   },
   errorText: {
-    color: "#ff4444",
+    color: '#ff4444',
     marginBottom: 10,
     fontSize: 12,
   },
   credentialsError: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 15,
     fontSize: 14,
   },
   loginButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   loginButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });

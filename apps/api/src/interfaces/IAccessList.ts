@@ -1,13 +1,13 @@
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 export enum ListType {
-  BLACKLIST = "blacklist", // Lista negra - bloquear
-  WHITELIST = "whitelist", // Lista blanca - acceso rápido
+  BLACKLIST = 'blacklist', // Lista negra - bloquear
+  WHITELIST = 'whitelist', // Lista blanca - acceso rápido
 }
 
 export enum AccessStatus {
-  ACTIVE = "active",
-  INACTIVE = "inactive",
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
 }
 
 export interface IAccessListInput {

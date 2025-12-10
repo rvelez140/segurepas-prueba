@@ -1,12 +1,7 @@
-import { AccessList } from "../models/AccessList";
-import {
-  IAccessList,
-  IAccessListInput,
-  ListType,
-  AccessStatus,
-} from "../interfaces/IAccessList";
-import { Types } from "mongoose";
-import { paginate, PaginationOptions, PaginatedResult } from "../utils/pagination";
+import { AccessList } from '../models/AccessList';
+import { IAccessList, IAccessListInput, ListType, AccessStatus } from '../interfaces/IAccessList';
+import { Types } from 'mongoose';
+import { paginate, PaginationOptions, PaginatedResult } from '../utils/pagination';
 
 export class AccessListService {
   /**
@@ -17,10 +12,7 @@ export class AccessListService {
       document,
       type: ListType.BLACKLIST,
       status: AccessStatus.ACTIVE,
-      $or: [
-        { expiresAt: { $exists: false } },
-        { expiresAt: { $gt: new Date() } },
-      ],
+      $or: [{ expiresAt: { $exists: false } }, { expiresAt: { $gt: new Date() } }],
     });
 
     return !!entry;
@@ -34,10 +26,7 @@ export class AccessListService {
       document,
       type: ListType.WHITELIST,
       status: AccessStatus.ACTIVE,
-      $or: [
-        { expiresAt: { $exists: false } },
-        { expiresAt: { $gt: new Date() } },
-      ],
+      $or: [{ expiresAt: { $exists: false } }, { expiresAt: { $gt: new Date() } }],
     });
 
     return !!entry;
@@ -65,27 +54,24 @@ export class AccessListService {
       }
       throw new Error(
         `El documento ya está en la ${
-          data.type === ListType.BLACKLIST ? "lista negra" : "lista blanca"
+          data.type === ListType.BLACKLIST ? 'lista negra' : 'lista blanca'
         }`
       );
     }
 
     const entry = await AccessList.create(data);
-    return entry.populate("addedBy", "name auth.email role");
+    return entry.populate('addedBy', 'name auth.email role');
   }
 
   /**
    * Remover un documento de una lista
    */
-  static async removeFromList(
-    document: string,
-    type: ListType
-  ): Promise<IAccessList | null> {
+  static async removeFromList(document: string, type: ListType): Promise<IAccessList | null> {
     const entry = await AccessList.findOneAndUpdate(
       { document, type },
       { status: AccessStatus.INACTIVE },
       { new: true }
-    ).populate("addedBy", "name auth.email role");
+    ).populate('addedBy', 'name auth.email role');
 
     return entry;
   }
@@ -104,29 +90,22 @@ export class AccessListService {
       queryFilter.status = AccessStatus.ACTIVE;
     }
 
-    const query = AccessList.find(queryFilter)
-      .populate("addedBy", "name auth.email role");
+    const query = AccessList.find(queryFilter).populate('addedBy', 'name auth.email role');
 
     const countQuery = AccessList.countDocuments(queryFilter);
 
     return await paginate(query, countQuery, {
       ...paginationOptions,
-      sortBy: paginationOptions?.sortBy || "createdAt",
-      sortOrder: paginationOptions?.sortOrder || "desc",
+      sortBy: paginationOptions?.sortBy || 'createdAt',
+      sortOrder: paginationOptions?.sortOrder || 'desc',
     });
   }
 
   /**
    * Obtener detalles de una entrada específica
    */
-  static async getEntry(
-    document: string,
-    type: ListType
-  ): Promise<IAccessList | null> {
-    return await AccessList.findOne({ document, type }).populate(
-      "addedBy",
-      "name auth.email role"
-    );
+  static async getEntry(document: string, type: ListType): Promise<IAccessList | null> {
+    return await AccessList.findOne({ document, type }).populate('addedBy', 'name auth.email role');
   }
 
   /**
@@ -141,7 +120,7 @@ export class AccessListService {
       { document, type },
       { $set: updates },
       { new: true }
-    ).populate("addedBy", "name auth.email role");
+    ).populate('addedBy', 'name auth.email role');
   }
 
   /**
