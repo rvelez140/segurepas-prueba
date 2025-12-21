@@ -18,7 +18,12 @@
     "test:api": "cd apps/api && npm test",
     "test:web": "cd apps/web && npm test -- --watchAll=false",
     "test:all": "npm run test:api && npm run test:web",
-    "prepare": "husky"
+    "prepare": "husky",
+    "setup:env": "echo '📝 Copiando archivos .env.example...' && cp .env.example .env 2>/dev/null || true && cp apps/api/.env.example apps/api/.env 2>/dev/null || true && cp apps/desktop/.env.example apps/desktop/.env 2>/dev/null || true && echo '✅ Archivos .env creados. Edítalos con tus credenciales.' && echo '📖 Ver: docs/SEGURIDAD-DB.md'",
+    "credentials:generate": "bash scripts/generate-credentials.sh",
+    "docs:security": "cat docs/SEGURIDAD-DB.md",
+    "docs:production": "cat docs/PRODUCCION-SETUP.md",
+    "help:setup": "echo '' && echo '🔐 SecurePass - Comandos de Configuración' && echo '' && echo '  npm run setup:env          - Crear archivos .env desde ejemplos' && echo '  npm run credentials:generate - Generar credenciales seguras' && echo '  npm run docs:security       - Ver guía de seguridad' && echo '  npm run docs:production     - Ver guía de producción' && echo ''"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

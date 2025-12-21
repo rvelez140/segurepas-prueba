@@ -328,7 +328,85 @@ Una vez iniciado el servidor: http://localhost:8000/api-docs
 
 ## 🌐 Configuración de Entornos
 
-- Configurar variables de entorno en `.env` (ver `.env.example`):
+### Variables de Entorno
+
+Cada aplicación requiere su propio archivo `.env` con credenciales específicas.
+
+**⚠️ IMPORTANTE**: Los archivos `.env` **NUNCA** deben subirse a Git por seguridad.
+
+### Desarrollo Local
+
+Copia los archivos de ejemplo y configúralos:
+
+```bash
+# API
+cp apps/api/.env.example apps/api/.env
+
+# Web
+cp .env.example .env
+
+# Desktop
+cp apps/desktop/.env.example apps/desktop/.env
+```
+
+Luego edita cada archivo `.env` con tus credenciales de desarrollo.
+
+### Producción
+
+Para configurar el proyecto en producción de forma segura:
+
+**📖 Documentación Completa**:
+- **[Guía de Seguridad de Base de Datos](docs/SEGURIDAD-DB.md)** - Quick start y resumen ejecutivo
+- **[Configuración de Producción](docs/PRODUCCION-SETUP.md)** - Guía detallada paso a paso
+- **[Scripts de Ayuda](scripts/README.md)** - Herramientas para configuración segura
+
+**🔐 Generar Credenciales Seguras**:
+```bash
+./scripts/generate-credentials.sh
+```
+
+**⚙️ Configurar Servidor de Producción**:
+```bash
+# En el servidor
+sudo ./scripts/setup-production-server.sh
+```
+
+**📦 Deployment con Docker**:
+```bash
+# El proyecto incluye docker-compose para producción
+docker-compose -f docker-compose.production.yml up -d
+```
+
+Ver la [guía completa de producción](docs/PRODUCCION-SETUP.md) para más detalles.
+
+## 🔐 Seguridad y Mejores Prácticas
+
+### Gestión de Credenciales
+
+- ✅ Usar variables de entorno para todas las credenciales
+- ✅ Generar contraseñas aleatorias seguras (mínimo 32 caracteres)
+- ✅ Configurar GitHub Secrets para CI/CD
+- ✅ Proteger archivos `.env` con permisos 600 en servidores
+- ❌ NUNCA subir archivos `.env` a Git
+- ❌ NUNCA hacer commit de credenciales en el código
+
+### Archivos Protegidos
+
+El proyecto ya incluye `.gitignore` configurado para proteger:
+- Archivos `.env` y `.env.*`
+- Credenciales y certificados SSL
+- Backups de base de datos
+- Logs del sistema
+
+### Deployment Automático
+
+El proyecto incluye GitHub Actions para deployment automático con:
+- ✅ Build y push de imágenes Docker
+- ✅ Deployment por SSH al servidor
+- ✅ Health checks automáticos
+- ✅ Rollback automático en caso de fallas
+
+Ver [.github/workflows/deploy.yml](.github/workflows/deploy.yml) para detalles.
 
 ## 📄 Licencia
 
