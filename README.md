@@ -172,6 +172,33 @@ securepass/
 └── package.json     # Configuración root
 ```
 
+## 🚀 Instalación y Despliegue
+
+### 🖥️ Instalación en VPS (Producción)
+
+Para instalar SecurePass en un servidor VPS con Git y Docker:
+
+#### Instalación Automática (Recomendado)
+
+```bash
+# Con curl
+curl -fsSL https://raw.githubusercontent.com/rvelez140/segurepas-prueba/main/scripts/vps-install.sh | sudo bash
+
+# O con wget
+wget -O - https://raw.githubusercontent.com/rvelez140/segurepas-prueba/main/scripts/vps-install.sh | sudo bash
+```
+
+Este script instalará automáticamente:
+- ✅ Git
+- ✅ Docker y Docker Compose
+- ✅ Configuración del servidor
+- ✅ Firewall y seguridad
+- ✅ Clonación del repositorio
+
+Para más detalles sobre la instalación en VPS, consulta la **[Guía de Instalación en VPS](VPS_INSTALLATION.md)**.
+
+### 💻 Desarrollo Local
+
 ## 🚀 Cómo Ejecutar el Proyecto
 
 ### Opción 1: Ejecutar todas las aplicaciones simultáneamente
