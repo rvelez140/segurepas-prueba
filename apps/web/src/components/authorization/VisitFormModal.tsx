@@ -18,6 +18,7 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
     email: '',
     document: '',
     reason: '',
+    vehiclePlate: '',
   });
   const [lastVisits, setLastVisits] = useState<VisitResponse[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -86,6 +87,7 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
         email: selectedVisit.visit.email,
         document: selectedVisit.visit.document,
         reason: selectedVisit.authorization.reason,
+        vehiclePlate: '',
       });
     } else {
       setFormData({
@@ -93,6 +95,7 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
         email: '',
         document: '',
         reason: '',
+        vehiclePlate: '',
       });
     }
   };
@@ -100,6 +103,18 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCedulaExtracted = (text: string, type: 'cedula' | 'placa') => {
+    if (type === 'cedula') {
+      setFormData((prev) => ({ ...prev, document: text }));
+    }
+  };
+
+  const handlePlacaExtracted = (text: string, type: 'cedula' | 'placa') => {
+    if (type === 'placa') {
+      setFormData((prev) => ({ ...prev, vehiclePlate: text }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,7 +139,7 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
       const visit = await authorizeVisit(visitData as VisitData);
       await sendVisitNotificationEmail(visit.data.id);
       setSuccess(true);
-      setFormData({ name: '', email: '', document: '', reason: '' });
+      setFormData({ name: '', email: '', document: '', reason: '', vehiclePlate: '' });
     } catch (err: any) {
       setError('Ya existe una visita activa con este documento');
     } finally {
@@ -154,6 +169,8 @@ const VisitFormModal: React.FC<VisitFormModalProps> = ({ isOpen, onClose }) => {
             lastVisits={lastVisits}
             resetError={() => setError(null)}
             resetSuccess={() => setSuccess(false)}
+            onCedulaExtracted={handleCedulaExtracted}
+            onPlacaExtracted={handlePlacaExtracted}
           />
         </div>
       </div>
