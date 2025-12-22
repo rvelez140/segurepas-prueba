@@ -30,7 +30,7 @@ fi
 # Variables de configuración
 DEPLOY_USER="segurepas2"
 DEPLOY_PATH="/opt/segurepas2"
-REPO_URL="https://github.com/rvelez140/segurepas-prueba.git"
+REPO_URL="git@github.com:rvelez140/segurepas-prueba.git"
 BRANCH="main"
 
 # Función para mostrar progreso
