@@ -37,7 +37,7 @@ app.use(express.json({ limit: '10mb' }));
 setupSwagger(app);
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 48721;
 
 // Opciones de conexión para MongoDB (soporta tanto local como MongoDB Atlas)
 const mongooseOptions = {

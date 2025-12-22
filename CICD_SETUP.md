@@ -271,10 +271,10 @@ docker-compose -f docker-compose.production.yml ps
 
 ```bash
 # Health check de API
-curl http://localhost:8000/health
+curl http://localhost:48721/health
 
 # Health check de Web
-curl http://localhost:3000/health
+curl http://localhost:52341/health
 
 # Verificar desde fuera del servidor
 curl https://api.tudominio.com/health
@@ -357,7 +357,7 @@ docker system prune -af --volumes
 3. APIs & Services → Credentials → Create Credentials → OAuth 2.0 Client ID
 4. Application type: Web application
 5. Authorized redirect URIs:
-   - `http://localhost:3000/auth/google/callback`
+   - `http://localhost:52341/auth/google/callback`
    - `https://tudominio.com/auth/google/callback`
 6. Copia `Client ID` y `Client Secret`
 
@@ -459,8 +459,8 @@ docker-compose -f docker-compose.production.yml logs
 3. Verificar health endpoints:
 
 ```bash
-curl http://localhost:8000/health
-curl http://localhost:3000/health
+curl http://localhost:48721/health
+curl http://localhost:52341/health
 ```
 
 ---

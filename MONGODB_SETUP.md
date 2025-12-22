@@ -9,7 +9,7 @@ Esta guía te ayudará a configurar una base de datos MongoDB externa para el pr
 - **Uso**: Desarrollo local
 - **Costo**: Gratis
 - **Configuración**: Simple, usa Docker
-- **URI**: `mongodb://localhost:27017/securepass`
+- **URI**: `mongodb://localhost:37849/securepass`
 
 ### Opción 2: MongoDB Atlas (Producción) ⭐ RECOMENDADO
 
@@ -145,7 +145,7 @@ Si ya tienes datos en tu MongoDB local y quieres migrarlos a Atlas:
 
 ```bash
 # 1. Exportar datos de MongoDB local
-mongodump --uri="mongodb://localhost:27017/securepass" --out=./backup
+mongodump --uri="mongodb://localhost:37849/securepass" --out=./backup
 
 # 2. Importar a MongoDB Atlas
 mongorestore --uri="mongodb+srv://<usuario>:<password>@cluster0.xxxxx.mongodb.net/securepass" ./backup/securepass

@@ -312,7 +312,7 @@ docker-compose -f docker-compose.production.yml exec mongodb mongosh \
 
 ```bash
 # Desde el servidor
-curl http://localhost:8000/health
+curl http://localhost:48721/health
 
 # Desde fuera (si está expuesto)
 curl https://api.tudominio.com/health
