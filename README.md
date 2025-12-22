@@ -351,7 +351,7 @@ REACT_APP_SENTRY_DSN=tu-dsn-aqui
 
 ### Ver documentación de API
 
-Una vez iniciado el servidor: http://localhost:8000/api-docs
+Una vez iniciado el servidor: http://localhost:48721/api-docs
 
 ## 🌐 Configuración de Entornos
 
