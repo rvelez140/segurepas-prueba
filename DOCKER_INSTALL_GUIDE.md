@@ -178,7 +178,22 @@ Luego abre en tu navegador:
 - **API**: `http://TU_IP:8472/api`
 - **Documentación API**: `http://TU_IP:8472/api/api-docs`
 
-### 3. Verificar los logs
+### 3. Crear Usuario Administrador
+
+Después de que los contenedores estén corriendo, necesitas crear un usuario administrador para acceder al sistema:
+
+```bash
+cd /opt/securepass
+
+# Ejecutar el script de corrección (esto crea el usuario admin)
+bash scripts/fix-admin-user.sh
+```
+
+**Credenciales de acceso:**
+- Email: `admin@securepass.com`
+- Password: `secret`
+
+### 4. Verificar los logs
 
 ```bash
 # Ver todos los logs
@@ -420,6 +435,20 @@ docker-compose -f docker-compose.local.yml logs web
 # Verificar configuración de Nginx
 docker-compose -f docker-compose.local.yml logs nginx
 ```
+
+### Error al iniciar sesión "Credenciales inválidas"
+
+Si no puedes iniciar sesión con las credenciales admin, ejecuta el script de corrección:
+
+```bash
+cd /opt/securepass
+bash scripts/fix-admin-user.sh
+```
+
+Este script:
+- Elimina cualquier usuario admin mal formateado
+- Crea un nuevo usuario admin con la estructura correcta
+- Establece las credenciales: `admin@securepass.com` / `secret`
 
 ### Problemas de memoria
 
