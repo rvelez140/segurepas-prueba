@@ -44,7 +44,7 @@ db.users.deleteOne({ "auth.email": "admin@securepass.com" });
 db.users.insertOne({
   auth: {
     email: "admin@securepass.com",
-    password: "$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW"
+    password: "$2b$10$FPkn/EIg2q/.JDhcF6HE/Ol5l78MHtj9MH/bnBuq5wGYFL5/jsQay"
   },
   name: "Administrador",
   role: "admin",
@@ -57,7 +57,7 @@ db.users.insertOne({
 print("\n✓ Usuario admin creado correctamente");
 print("\nCredenciales de acceso:");
 print("  Email: admin@securepass.com");
-print("  Password: secret");
+print("  Password: admin123");
 EOF
 
 echo ""
@@ -67,5 +67,5 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "${YELLOW}Ahora puedes iniciar sesión con:${NC}"
 echo -e "  Email: ${GREEN}admin@securepass.com${NC}"
-echo -e "  Password: ${GREEN}secret${NC}"
+echo -e "  Password: ${GREEN}admin123${NC}"
 echo ""

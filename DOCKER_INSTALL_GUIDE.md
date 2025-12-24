@@ -191,7 +191,7 @@ bash scripts/fix-admin-user.sh
 
 **Credenciales de acceso:**
 - Email: `admin@securepass.com`
-- Password: `secret`
+- Password: `admin123`
 
 ### 4. Verificar los logs
 
@@ -448,7 +448,7 @@ bash scripts/fix-admin-user.sh
 Este script:
 - Elimina cualquier usuario admin mal formateado
 - Crea un nuevo usuario admin con la estructura correcta
-- Establece las credenciales: `admin@securepass.com` / `secret`
+- Establece las credenciales: `admin@securepass.com` / `admin123`
 
 ### Problemas de memoria
 
