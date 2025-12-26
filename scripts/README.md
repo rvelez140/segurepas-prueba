@@ -2,7 +2,107 @@
 
 Este directorio contiene scripts útiles para configurar y desplegar SecurePass en producción de forma segura.
 
+## 🚀 Inicio Rápido con aaPanel
+
+Si estás usando **aaPanel** (recomendado), sigue estos pasos:
+
+1. **Lee la guía completa:** `AAPANEL_SETUP.md` en la raíz del proyecto
+2. **Genera archivo .env:** `./scripts/generate-env.sh`
+3. **Configura Git Engine** en aaPanel con el script: `./scripts/aapanel-deploy.sh`
+4. **Push a git** y el despliegue será automático
+
+¿Primera vez? Ve directo a `AAPANEL_SETUP.md` para configuración paso a paso.
+
+---
+
 ## 📋 Scripts Disponibles
+
+### 🆕 Scripts para aaPanel (Recomendado)
+
+#### `aapanel-deploy.sh`
+
+Script de despliegue automático optimizado para aaPanel Git Engine.
+
+**Uso:**
+```bash
+./scripts/aapanel-deploy.sh
+```
+
+**Lo que hace:**
+1. ✅ Detiene contenedores actuales
+2. ✅ Descarga nuevas imágenes Docker
+3. ✅ Inicia todos los contenedores
+4. ✅ Crea usuario administrador automáticamente (si no existe)
+5. ✅ Genera log detallado en `deployment.log`
+6. ✅ Verifica que todo esté funcionando
+
+**Configuración en aaPanel:**
+- Ver guía completa: `AAPANEL_SETUP.md`
+- Se ejecuta automáticamente con cada push a git
+
+---
+
+#### `setup-admin.sh`
+
+Script para crear usuario administrador de forma manual.
+
+**Uso:**
+```bash
+./scripts/setup-admin.sh
+
+# Con credenciales personalizadas
+ADMIN_EMAIL="admin@example.com" ADMIN_PASSWORD="MiPassword123!" ./scripts/setup-admin.sh
+```
+
+**Lo que hace:**
+1. Verifica que el contenedor esté corriendo
+2. Copia script al contenedor Docker
+3. Ejecuta creación de usuario admin
+4. Muestra credenciales de acceso
+
+---
+
+#### `generate-env.sh`
+
+Generador interactivo de archivo `.env` con valores seguros.
+
+**Uso:**
+```bash
+./scripts/generate-env.sh
+```
+
+**Lo que hace:**
+- Genera contraseña MongoDB segura (32 caracteres)
+- Genera JWT secret (64 caracteres)
+- Solicita IP del servidor
+- Solicita email para notificaciones
+- Crea archivo `.env` con permisos seguros (600)
+
+**Ventajas:**
+- No necesitas generar contraseñas manualmente
+- Configura automáticamente URLs según tu IP
+- Protege el archivo con permisos correctos
+
+---
+
+#### `create-admin.js`
+
+Script Node.js para crear usuario administrador (usado internamente por `setup-admin.sh`).
+
+**Uso directo:**
+```bash
+# Dentro del contenedor Docker
+docker exec securepass-api node /app/create-admin.js
+```
+
+**Variables de entorno opcionales:**
+- `ADMIN_EMAIL` - Email del admin
+- `ADMIN_PASSWORD` - Contraseña del admin
+- `ADMIN_NAME` - Nombre del admin
+
+---
+
+### Scripts Tradicionales
 
 ### 1. `generate-credentials.sh`
 
@@ -79,7 +179,35 @@ Plantilla para configurar GitHub Secrets necesarios para CI/CD.
 
 ---
 
-## 🚀 Flujo de Trabajo Recomendado
+## 🚀 Flujos de Trabajo Recomendados
+
+### Opción A: Con aaPanel (Recomendado - Más Fácil)
+
+1. **Configura aaPanel en tu VPS:**
+   - Instala aaPanel
+   - Instala Git Engine en aaPanel
+   - Ver: `AAPANEL_SETUP.md`
+
+2. **Genera archivo .env:**
+   ```bash
+   ./scripts/generate-env.sh
+   ```
+
+3. **Configura el repositorio en aaPanel:**
+   - URL: `git@github.com:rvelez140/segurepas-prueba.git`
+   - Branch: `claude/update-ubuntu-lts-ahbqj`
+   - Deploy Path: `/opt/securepass`
+   - Deploy Script: `./scripts/aapanel-deploy.sh`
+
+4. **Configura Webhook en GitHub:**
+   - Agrega la URL del webhook de aaPanel
+   - Ver: `AAPANEL_SETUP.md` sección "Configurar Webhook"
+
+5. **¡Listo!** Cada push desplegará automáticamente
+
+---
+
+### Opción B: Configuración Manual Tradicional
 
 ### Para configurar un nuevo servidor de producción:
 
@@ -162,6 +290,8 @@ Plantilla para configurar GitHub Secrets necesarios para CI/CD.
 
 ## 📚 Documentación Relacionada
 
+- **⭐ Guía de aaPanel (NUEVO)**: `AAPANEL_SETUP.md` - Configuración con aaPanel y Git Engine
+- **Guía de Admin**: `ADMIN_SETUP_GUIDE.md` - Crear usuarios administradores
 - **Guía completa de producción**: `docs/PRODUCCION-SETUP.md`
 - **Configuración de Docker**: `docker-compose.production.yml`
 - **Workflow de CI/CD**: `.github/workflows/deploy.yml`
@@ -206,4 +336,17 @@ Si necesitas ayuda:
 
 ---
 
-**Última actualización**: 2025-12-21
+**Última actualización**: 2025-12-26
+
+---
+
+## 🎯 Resumen de Scripts
+
+| Script | Propósito | Cuándo Usar |
+|--------|-----------|-------------|
+| `aapanel-deploy.sh` | Despliegue automático | aaPanel post-deployment hook |
+| `setup-admin.sh` | Crear usuario admin | Manualmente cuando necesites un admin |
+| `generate-env.sh` | Generar .env | Primera configuración del servidor |
+| `create-admin.js` | Script interno admin | No usar directamente (usado por setup-admin.sh) |
+| `generate-credentials.sh` | Generar contraseñas | Necesitas contraseñas aleatorias |
+| `setup-production-server.sh` | Configuración completa | Servidor nuevo sin aaPanel |
