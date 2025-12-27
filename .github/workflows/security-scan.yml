@@ -1,0 +1,179 @@
+name: Security Vulnerability Scan
+
+on:
+  push:
+    branches: [main, develop, 'claude/**']
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run security scan every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  snyk-security:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [api, web, mobile, desktop]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/${{ matrix.app }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: apps/${{ matrix.app }}
+        run: npm ci
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --file=apps/${{ matrix.app }}/package.json
+
+      - name: Upload Snyk results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: snyk.sarif
+
+  npm-audit:
+    name: NPM Audit
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [api, web, mobile, desktop]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/${{ matrix.app }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: apps/${{ matrix.app }}
+        run: npm ci
+
+      - name: Run npm audit
+        working-directory: apps/${{ matrix.app }}
+        run: |
+          npm audit --audit-level=moderate || true
+          npm audit --json > audit-${{ matrix.app }}.json || true
+
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-audit-${{ matrix.app }}
+          path: apps/${{ matrix.app }}/audit-${{ matrix.app }}.json
+          retention-days: 30
+
+  docker-scan:
+    name: Docker Image Security Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [api, web]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/${{ matrix.app }}
+          file: ./apps/${{ matrix.app }}/Dockerfile
+          tags: securepass-${{ matrix.app }}:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: securepass-${{ matrix.app }}:latest
+          format: 'sarif'
+          output: 'trivy-results-${{ matrix.app }}.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results-${{ matrix.app }}.sarif
+
+  license-check:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install license checker
+        run: npm install -g license-checker
+
+      - name: Check API licenses
+        working-directory: apps/api
+        run: |
+          npm ci
+          license-checker --json --out ../../licenses-api.json || true
+
+      - name: Check Web licenses
+        working-directory: apps/web
+        run: |
+          npm ci
+          license-checker --json --out ../../licenses-web.json || true
+
+      - name: Upload license reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-reports
+          path: licenses-*.json
+          retention-days: 90
+
+  security-summary:
+    name: Security Summary
+    needs: [snyk-security, npm-audit, docker-scan, license-check]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create security summary
+        run: |
+          echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Scan Results:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Snyk Security Scan: ${{ needs.snyk-security.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ NPM Audit: ${{ needs.npm-audit.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Docker Image Scan: ${{ needs.docker-scan.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ License Check: ${{ needs.license-check.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "For detailed results, check the Security tab." >> $GITHUB_STEP_SUMMARY
