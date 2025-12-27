@@ -1,0 +1,96 @@
+{
+  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.\n",
+  "types": [
+    {
+      "type": "feat",
+      "section": "✨ Features"
+    },
+    {
+      "type": "fix",
+      "section": "🐛 Bug Fixes"
+    },
+    {
+      "type": "perf",
+      "section": "🚀 Performance Improvements"
+    },
+    {
+      "type": "revert",
+      "section": "⏪ Reverts"
+    },
+    {
+      "type": "docs",
+      "section": "📚 Documentation",
+      "hidden": false
+    },
+    {
+      "type": "style",
+      "section": "💎 Styles",
+      "hidden": true
+    },
+    {
+      "type": "chore",
+      "section": "♻️ Miscellaneous Chores",
+      "hidden": true
+    },
+    {
+      "type": "refactor",
+      "section": "📦 Code Refactoring",
+      "hidden": false
+    },
+    {
+      "type": "test",
+      "section": "🚨 Tests",
+      "hidden": false
+    },
+    {
+      "type": "build",
+      "section": "🛠 Build System",
+      "hidden": false
+    },
+    {
+      "type": "ci",
+      "section": "⚙️ Continuous Integration",
+      "hidden": false
+    }
+  ],
+  "commitUrlFormat": "https://github.com/rvelez140/segurepas-prueba/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/rvelez140/segurepas-prueba/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/rvelez140/segurepas-prueba/issues/{{id}}",
+  "userUrlFormat": "https://github.com/{{user}}",
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "skip": {
+    "changelog": false
+  },
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "apps/api/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "apps/web/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "apps/mobile/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "apps/desktop/package.json",
+      "type": "json"
+    }
+  ],
+  "packageFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    }
+  ],
+  "scripts": {
+    "prerelease": "npm run lint && npm run test:all",
+    "postchangelog": "prettier --write CHANGELOG.md"
+  }
+}

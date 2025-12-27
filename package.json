@@ -18,9 +18,16 @@
     "test:api": "cd apps/api && npm test",
     "test:web": "cd apps/web && npm test -- --watchAll=false",
     "test:all": "npm run test:api && npm run test:web",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch",
+    "release:dry-run": "standard-version --dry-run",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
     "@eslint/js": "^9.39.1",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
@@ -31,6 +38,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
+    "standard-version": "^9.5.0",
     "typescript-eslint": "^8.49.0"
   }
 }
