@@ -1,0 +1,42 @@
+{
+  "recommendations": [
+    // Essential
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+
+    // Git
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // Docker
+    "ms-azuretools.vscode-docker",
+
+    // Testing
+    "orta.vscode-jest",
+
+    // Database
+    "mongodb.mongodb-vscode",
+
+    // Utilities
+    "christian-kohler.path-intellisense",
+    "formulahendry.auto-rename-tag",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens",
+    "wayou.vscode-todo-highlight",
+    "gruntfuggly.todo-tree",
+
+    // React
+    "dsznajder.es7-react-js-snippets",
+
+    // Conventional Commits
+    "vivaxy.vscode-conventional-commits",
+
+    // REST Client
+    "humao.rest-client",
+
+    // Markdown
+    "yzhang.markdown-all-in-one"
+  ],
+  "unwantedRecommendations": []
+}
