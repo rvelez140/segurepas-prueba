@@ -18,6 +18,20 @@ const userSchema: Schema = new mongoose.Schema(
         minlength: [8, 'La contraseña debe tener al menos 8 caracteres'],
         select: false,
       },
+      twoFactorSecret: {
+        type: String,
+        select: false,
+        default: null,
+      },
+      twoFactorEnabled: {
+        type: Boolean,
+        default: false,
+      },
+      twoFactorBackupCodes: {
+        type: [String],
+        select: false,
+        default: [],
+      },
     },
     name: {
       type: String,

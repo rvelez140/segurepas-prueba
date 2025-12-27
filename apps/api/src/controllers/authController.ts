@@ -4,6 +4,9 @@ import { Request, Response } from 'express';
 import { UserService } from '../services/UserService';
 import { IUser } from '../interfaces/IUser';
 import { AuditLogService } from '../services/AuditLogService';
+import { TwoFactorService } from '../services/TwoFactorService';
+import { DeviceService } from '../services/DeviceService';
+import User from '../models/User';
 
 interface AuthenticatedRequest extends Request {
   user?: IUser;
@@ -69,10 +72,13 @@ export const authController = {
   },
 
   async loginUser(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const { email, password } = req.body;
+    const { email, password, twoFactorToken, deviceName } = req.body;
 
     try {
-      const user = await UserService.findByEmail(email);
+      // Obtener usuario con campos de 2FA
+      const user = await User.findOne({ 'auth.email': email })
+        .select('+auth.password +auth.twoFactorSecret +auth.twoFactorEnabled +auth.twoFactorBackupCodes');
+
       if (!user) {
         // Registrar login fallido
         await AuditLogService.logLoginFailure(req, email, 'Usuario no encontrado');
@@ -80,12 +86,43 @@ export const authController = {
         return;
       }
 
-      const isPasswordValid = await UserService.comparePasswords(user._id, password);
+      const isPasswordValid = await user.comparePassword(password);
       if (!isPasswordValid) {
         // Registrar login fallido
         await AuditLogService.logLoginFailure(req, email, 'Contraseña incorrecta');
         res.status(401).json({ error: 'Credenciales inválidas' });
         return;
+      }
+
+      // Verificar si tiene 2FA habilitado
+      if (user.auth.twoFactorEnabled) {
+        if (!twoFactorToken) {
+          res.status(200).json({
+            requiresTwoFactor: true,
+            message: 'Se requiere código de autenticación de dos factores',
+          });
+          return;
+        }
+
+        // Verificar el token 2FA
+        const isValidToken = TwoFactorService.verifyToken(
+          user.auth.twoFactorSecret!,
+          twoFactorToken
+        );
+
+        // Si el token no es válido, verificar si es un código de respaldo
+        if (!isValidToken) {
+          const isValidBackupCode = await TwoFactorService.verifyBackupCode(
+            user,
+            twoFactorToken
+          );
+
+          if (!isValidBackupCode) {
+            await AuditLogService.logLoginFailure(req, email, 'Código 2FA inválido');
+            res.status(401).json({ error: 'Código de autenticación inválido' });
+            return;
+          }
+        }
       }
 
       const token = jwt.sign(
@@ -95,7 +132,15 @@ export const authController = {
           email: user.auth.email,
         },
         `${process.env.JWT_SECRET}`,
-        { expiresIn: '1h' }
+        { expiresIn: '7d' }
+      );
+
+      // Registrar dispositivo
+      const device = await DeviceService.registerDevice(
+        user._id.toString(),
+        req,
+        token,
+        deviceName
       );
 
       const userResponse = {
@@ -103,6 +148,7 @@ export const authController = {
         name: user.name,
         email: user.auth.email,
         role: user.role,
+        twoFactorEnabled: user.auth.twoFactorEnabled,
         ...(user.role === 'residente' && {
           apartment: user.apartment,
           tel: user.tel,
@@ -119,7 +165,8 @@ export const authController = {
       res.status(200).json({
         token,
         user: userResponse,
-        expiresIn: 3600,
+        deviceId: device._id,
+        expiresIn: 7 * 24 * 3600, // 7 días
       });
     } catch (error: any) {
       res.status(500).json({ error: error.message || 'Error al iniciar sesión' });
