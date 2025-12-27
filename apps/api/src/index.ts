@@ -8,6 +8,11 @@ import authRoutes from './routes/authRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import bookingRoutes from './routes/bookingRoutes';
+import chatRoutes from './routes/chatRoutes';
+import packageRoutes from './routes/packageRoutes';
+import eventRoutes from './routes/eventRoutes';
+import parkingRoutes from './routes/parkingRoutes';
 
 const app = express();
 
@@ -21,7 +26,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Se ha realizado la conexión con MongoDB'))
     .catch((err: Error) => console.error('Error al conectar a Mongo: ', err));
 
-app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes);
+app.use('/api', visitRoutes, userRoutes, authRoutes, subscriptionRoutes, analyticsRoutes, paymentRoutes, bookingRoutes, chatRoutes, packageRoutes, eventRoutes, parkingRoutes);
 
 app.get('/', (req, res) => {
     res.send(
