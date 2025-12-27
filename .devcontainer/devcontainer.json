@@ -1,0 +1,159 @@
+{
+  "name": "SecurePass Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  // Configure tool-specific properties
+  "customizations": {
+    "vscode": {
+      // Extensions to install
+      "extensions": [
+        // Language support
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-next",
+
+        // Git
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+
+        // Docker
+        "ms-azuretools.vscode-docker",
+
+        // Testing
+        "orta.vscode-jest",
+
+        // MongoDB
+        "mongodb.mongodb-vscode",
+
+        // Utilities
+        "christian-kohler.path-intellisense",
+        "formulahendry.auto-rename-tag",
+        "streetsidesoftware.code-spell-checker",
+        "usernamehw.errorlens",
+        "wayou.vscode-todo-highlight",
+        "gruntfuggly.todo-tree",
+
+        // React
+        "dsznajder.es7-react-js-snippets",
+
+        // Conventional Commits
+        "vivaxy.vscode-conventional-commits",
+
+        // REST Client
+        "humao.rest-client",
+
+        // Markdown
+        "yzhang.markdown-all-in-one"
+      ],
+
+      // Settings
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "eslint.validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact"
+        ],
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "files.eol": "\n",
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "git.enableSmartCommit": true,
+        "git.confirmSync": false,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "conventionalCommits.scopes": [
+          "api",
+          "web",
+          "mobile",
+          "desktop",
+          "nginx",
+          "docker",
+          "ci",
+          "deps",
+          "auth",
+          "db",
+          "security",
+          "logging",
+          "monitoring",
+          "docs",
+          "tests"
+        ]
+      }
+    }
+  },
+
+  // Features to add to the dev container
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally
+  "forwardPorts": [
+    3000,  // Web app
+    5000,  // API
+    27017, // MongoDB
+    6379,  // Redis
+    19006  // Expo mobile
+  ],
+
+  "portsAttributes": {
+    "3000": {
+      "label": "Web App",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "API",
+      "onAutoForward": "notify"
+    },
+    "27017": {
+      "label": "MongoDB",
+      "onAutoForward": "silent"
+    },
+    "6379": {
+      "label": "Redis",
+      "onAutoForward": "silent"
+    },
+    "19006": {
+      "label": "Expo Mobile",
+      "onAutoForward": "notify"
+    }
+  },
+
+  // Use 'postCreateCommand' to run commands after the container is created
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  // Use 'postStartCommand' to run commands after the container starts
+  "postStartCommand": "echo '🚀 SecurePass Dev Container is ready!'",
+
+  // Comment out to connect as root instead
+  "remoteUser": "node",
+
+  // Mount the host's Docker socket into the container
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+
+  // Environment variables
+  "remoteEnv": {
+    "NODE_ENV": "development"
+  }
+}
