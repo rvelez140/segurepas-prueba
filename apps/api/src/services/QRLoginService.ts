@@ -72,7 +72,8 @@ export class QRLoginService {
       throw new Error('Sesión expirada o ya utilizada');
     }
 
-    await session.markAsScanned(userId);
+    const mongoose = require('mongoose');
+    await session.markAsScanned(new mongoose.Types.ObjectId(userId));
     return session;
   }
 

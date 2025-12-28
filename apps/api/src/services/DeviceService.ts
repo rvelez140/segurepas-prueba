@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import Device, { IDevice } from '../models/Device';
 import mongoose from 'mongoose';
 
