@@ -12,6 +12,10 @@ export interface IMagicLink extends Document {
   usedAt?: Date;
   isUsed: boolean;
   createdAt: Date;
+
+  // Métodos
+  markAsUsed(): Promise<this>;
+  isValid(): boolean;
 }
 
 const MagicLinkSchema = new Schema<IMagicLink>(

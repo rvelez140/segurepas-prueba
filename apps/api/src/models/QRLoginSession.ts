@@ -16,6 +16,12 @@ export interface IQRLoginSession extends Document {
   token?: string; // Token JWT generado tras aprobación
   expiresAt: Date;
   createdAt: Date;
+
+  // Métodos
+  markAsScanned(userId: mongoose.Types.ObjectId): Promise<this>;
+  approve(token: string): Promise<this>;
+  reject(): Promise<this>;
+  isValid(): boolean;
 }
 
 const QRLoginSessionSchema = new Schema<IQRLoginSession>(

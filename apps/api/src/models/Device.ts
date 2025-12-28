@@ -22,6 +22,10 @@ export interface IDevice extends Document {
     lon?: number;
   };
   trustScore?: number; // Nivel de confianza del dispositivo (0-100)
+
+  // Métodos
+  deactivate(): Promise<this>;
+  updateActivity(): Promise<this>;
 }
 
 const DeviceSchema = new Schema<IDevice>(
