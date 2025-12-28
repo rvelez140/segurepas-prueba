@@ -1,6 +1,7 @@
 import { accessListController } from '../../../src/controllers/accessListController';
 import { AccessListService } from '../../../src/services/AccessListService';
 import { ListType } from '../../../src/interfaces/IAccessList';
+import { getPaginationOptions } from '../../../src/utils/pagination';
 import { mockRequest, mockResponse } from '../../helpers/mockRequest';
 import { mockUser, mockObjectId } from '../../helpers/mockModels';
 
@@ -183,6 +184,9 @@ describe('accessListController', () => {
       await accessListController.addToWhitelist(req as any, res as any, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: 'El documento ya está en la lista blanca',
+      });
     });
   });
 
@@ -275,6 +279,10 @@ describe('accessListController', () => {
         ListType.WHITELIST
       );
       expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Documento removido de lista blanca',
+        data: mockEntry,
+      });
     });
 
     it('debería retornar 404 si el documento no existe', async () => {
@@ -312,13 +320,16 @@ describe('accessListController', () => {
         total: 2,
       };
 
+      const mockPaginationOptions = { page: undefined, limit: undefined, sortBy: undefined, sortOrder: 'desc' };
+      (getPaginationOptions as jest.Mock).mockReturnValue(mockPaginationOptions);
       (AccessListService.getList as jest.Mock).mockResolvedValue(mockResult);
 
       await accessListController.getBlacklist(req as any, res as any, next);
 
       expect(AccessListService.getList).toHaveBeenCalledWith(
         ListType.BLACKLIST,
-        false
+        false,
+        mockPaginationOptions
       );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockResult);
@@ -331,13 +342,16 @@ describe('accessListController', () => {
       const res = mockResponse();
       const next = jest.fn();
 
+      const mockPaginationOptions = { page: undefined, limit: undefined, sortBy: undefined, sortOrder: 'desc' };
+      (getPaginationOptions as jest.Mock).mockReturnValue(mockPaginationOptions);
       (AccessListService.getList as jest.Mock).mockResolvedValue({ entries: [], total: 0 });
 
       await accessListController.getBlacklist(req as any, res as any, next);
 
       expect(AccessListService.getList).toHaveBeenCalledWith(
         ListType.BLACKLIST,
-        true
+        true,
+        mockPaginationOptions
       );
     });
 
@@ -370,13 +384,16 @@ describe('accessListController', () => {
         total: 1,
       };
 
+      const mockPaginationOptions = { page: undefined, limit: undefined, sortBy: undefined, sortOrder: 'desc' };
+      (getPaginationOptions as jest.Mock).mockReturnValue(mockPaginationOptions);
       (AccessListService.getList as jest.Mock).mockResolvedValue(mockResult);
 
       await accessListController.getWhitelist(req as any, res as any, next);
 
       expect(AccessListService.getList).toHaveBeenCalledWith(
         ListType.WHITELIST,
-        false
+        false,
+        mockPaginationOptions
       );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockResult);

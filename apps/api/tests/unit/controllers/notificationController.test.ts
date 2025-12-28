@@ -352,13 +352,13 @@ describe('notificationController', () => {
       const userId = mockObjectId().toString();
       const req = mockRequest({
         params: { userId },
-        query: { type: 'visit', limit: '50' },
+        query: { type: 'visita_autorizada', limit: '50' },
       });
       const res = mockResponse();
       const next = jest.fn();
 
       const mockNotifications = [
-        { _id: mockObjectId(), type: 'visit', title: 'Visita autorizada' },
+        { _id: mockObjectId(), type: 'visita_autorizada', title: 'Visita autorizada' },
       ];
 
       (NotificationHistoryService.getNotificationsByType as jest.Mock).mockResolvedValue(
@@ -369,7 +369,7 @@ describe('notificationController', () => {
 
       expect(NotificationHistoryService.getNotificationsByType).toHaveBeenCalledWith(
         expect.any(Types.ObjectId),
-        'visit',
+        'visita_autorizada',
         50
       );
       expect(res.status).toHaveBeenCalledWith(200);

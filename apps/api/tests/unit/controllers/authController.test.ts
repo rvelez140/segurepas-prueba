@@ -50,7 +50,7 @@ describe('authController', () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: 'Usuario creado exitosamente',
+          message: 'Usuario registrado exitosamente',
         })
       );
     });
@@ -107,9 +107,9 @@ describe('authController', () => {
       });
       const res = mockResponse();
 
-      (UserService.createUser as jest.Mock).mockRejectedValue({
-        code: 11000,
-      });
+      (UserService.createUser as jest.Mock).mockRejectedValue(
+        new Error('E11000 duplicate key error')
+      );
 
       await authController.registerUser(req as any, res as any);
 
@@ -130,25 +130,42 @@ describe('authController', () => {
       });
       const res = mockResponse();
 
+      const comparePasswordMock = jest.fn().mockResolvedValue(true);
       const user = {
         ...mockUser,
-        twoFactorEnabled: false,
-        comparePassword: jest.fn().mockResolvedValue(true),
+        _id: mockObjectId(),
+        auth: {
+          email: 'test@example.com',
+          password: 'hashed_password',
+          twoFactorEnabled: false,
+        },
+        comparePassword: comparePasswordMock,
       };
 
-      (User.findOne as jest.Mock).mockResolvedValue(user);
+      const mockDevice = {
+        _id: mockObjectId(),
+        userId: user._id,
+        token: 'test-token',
+      };
+
+      (User.findOne as jest.Mock).mockReturnValue({
+        select: jest.fn().mockResolvedValue(user),
+      });
       (jwt.sign as jest.Mock).mockReturnValue('test-token');
-      (AuditLogService.log as jest.Mock).mockResolvedValue(undefined);
+      (DeviceService.registerDevice as jest.Mock).mockResolvedValue(mockDevice);
+      (AuditLogService.logLoginSuccess as jest.Mock).mockResolvedValue(undefined);
 
       await authController.loginUser(req as any, res as any);
 
       expect(User.findOne).toHaveBeenCalledWith({ 'auth.email': 'test@example.com' });
-      expect(user.comparePassword).toHaveBeenCalledWith('password123');
+      expect(comparePasswordMock).toHaveBeenCalledWith('password123');
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: 'Login exitoso',
           token: 'test-token',
+          user: expect.any(Object),
+          deviceId: expect.any(Object),
+          expiresIn: expect.any(Number),
         })
       );
     });
@@ -162,7 +179,10 @@ describe('authController', () => {
       });
       const res = mockResponse();
 
-      (User.findOne as jest.Mock).mockResolvedValue(null);
+      (User.findOne as jest.Mock).mockReturnValue({
+        select: jest.fn().mockResolvedValue(null),
+      });
+      (AuditLogService.logLoginFailure as jest.Mock).mockResolvedValue(undefined);
 
       await authController.loginUser(req as any, res as any);
 
@@ -181,21 +201,29 @@ describe('authController', () => {
       });
       const res = mockResponse();
 
+      const comparePasswordMock = jest.fn().mockResolvedValue(true);
       const user = {
         ...mockUser,
-        twoFactorEnabled: true,
-        comparePassword: jest.fn().mockResolvedValue(true),
+        _id: mockObjectId(),
+        auth: {
+          email: 'test@example.com',
+          password: 'hashed_password',
+          twoFactorEnabled: true,
+          twoFactorSecret: 'secret123',
+        },
+        comparePassword: comparePasswordMock,
       };
 
-      (User.findOne as jest.Mock).mockResolvedValue(user);
+      (User.findOne as jest.Mock).mockReturnValue({
+        select: jest.fn().mockResolvedValue(user),
+      });
 
       await authController.loginUser(req as any, res as any);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         requiresTwoFactor: true,
-        userId: user._id,
-        message: 'Se requiere código 2FA',
+        message: 'Se requiere código de autenticación de dos factores',
       });
     });
   });
@@ -207,26 +235,23 @@ describe('authController', () => {
       });
       const res = mockResponse();
 
-      (User.findById as jest.Mock).mockResolvedValue(mockUser);
-
       await authController.getCurrentUser(req as any, res as any);
 
-      expect(User.findById).toHaveBeenCalledWith(mockUser._id);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          user: expect.any(Object),
+          _id: mockUser._id,
+          name: mockUser.name,
+          email: mockUser.auth.email,
         })
       );
     });
 
     it('debería manejar usuario no encontrado', async () => {
       const req = mockRequest({
-        user: mockUser,
+        user: undefined,
       });
       const res = mockResponse();
-
-      (User.findById as jest.Mock).mockResolvedValue(null);
 
       await authController.getCurrentUser(req as any, res as any);
 
