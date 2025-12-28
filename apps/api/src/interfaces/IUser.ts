@@ -10,6 +10,9 @@ interface IUserInput {
   auth: {
     email: string; // Email del usuario
     password: string; // Contraseña del usuario
+    twoFactorSecret?: string; // Secreto TOTP para Google Authenticator
+    twoFactorEnabled: boolean; // Indica si el 2FA está habilitado
+    twoFactorBackupCodes?: string[]; // Códigos de respaldo para 2FA
   };
   name: string; // Nombre real del usuario
   registerDate: Date; // Fecha de registro del usuario

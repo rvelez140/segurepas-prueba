@@ -13,6 +13,10 @@ import accessListRoutes from './routes/accessListRoutes';
 import recurringVisitRoutes from './routes/recurringVisitRoutes';
 import parkingRoutes from './routes/parkingRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import twoFactorRoutes from './routes/twoFactorRoutes';
+import deviceRoutes from './routes/deviceRoutes';
+import qrLoginRoutes from './routes/qrLoginRoutes';
+import magicLinkRoutes from './routes/magicLinkRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
 import { webSocketService } from './services/WebSocketService';
@@ -74,6 +78,12 @@ app.use(
   parkingRoutes,
   notificationRoutes
 );
+
+// Nuevas rutas para autenticación avanzada
+app.use('/api/2fa', twoFactorRoutes);
+app.use('/api/devices', deviceRoutes);
+app.use('/api/qr-login', qrLoginRoutes);
+app.use('/api/magic-link', magicLinkRoutes);
 
 // Configurar error handler de Sentry (debe ser después de las rutas)
 setupSentryErrorHandler(app);
