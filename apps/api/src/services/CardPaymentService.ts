@@ -102,7 +102,7 @@ class CardPaymentService {
       // Si el pago fue exitoso, enviar email de confirmación
       if (paymentIntent.status === 'succeeded') {
         const user = await UserService.findById(userId);
-        if (user) {
+        if (user && user.auth.email) {
           await notificationService.sendPaymentSuccess(user.auth.email, user.name, payment);
         }
       }
@@ -134,7 +134,7 @@ class CardPaymentService {
 
       // Enviar email de pago fallido
       const user = await UserService.findById(userId);
-      if (user) {
+      if (user && user.auth.email) {
         await notificationService.sendPaymentFailed(user.auth.email, user.name, payment);
       }
 
@@ -157,7 +157,7 @@ class CardPaymentService {
       // Si el pago fue exitoso, enviar email
       if (paymentIntent.status === 'succeeded') {
         const user = await UserService.findById(payment.userId.toString());
-        if (user) {
+        if (user && user.auth.email) {
           await notificationService.sendPaymentSuccess(user.auth.email, user.name, payment);
         }
       }

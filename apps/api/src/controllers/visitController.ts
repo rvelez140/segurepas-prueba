@@ -230,6 +230,10 @@ export const visitController = {
       const { id } = req.params;
       const visit = (await VisitService.getVisitById(id)) as IVisit;
       const resident = (await UserService.findById(visit.authorization.resident)) as IUser;
+      if (!resident.auth.email) {
+        res.status(400).json({ error: 'El residente no tiene email configurado' });
+        return;
+      }
       const notification = await notificationService.sendVisitNotification(
         resident.auth.email,
         visit.visit.email,

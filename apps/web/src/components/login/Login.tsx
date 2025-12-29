@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import style from '../../styles/visits.module.css';
 import { getAuthenticatedUser, loginUser } from '../../api/auth.api';
+import { checkSetupNeeded, isTemporaryAdminActive } from '../../api/setup.api';
 import {
   delToken,
   loadRememberMe,
@@ -29,6 +30,17 @@ const Login: React.FC = () => {
   // Use Effect para verificar si hay un usuario autenticado antes de realizar Login
   useEffect(() => {
     const validateLogedOnUser = async () => {
+      // Primero verificar si necesita configuración inicial
+      try {
+        const setupCheck = await checkSetupNeeded();
+        if (setupCheck.needsWizard) {
+          navigate('/setup');
+          return;
+        }
+      } catch (error) {
+        console.error('Error al verificar setup:', error);
+      }
+
       const checkRemember = loadRememberMe();
       if (checkRemember && checkRemember === 'true') {
         try {
@@ -36,7 +48,7 @@ const Login: React.FC = () => {
           const userLogedOn = await getAuthenticatedUser();
           if (userLogedOn) navigate('/home');
         } catch (error) {
-          console.error('Sesión anterior no encontrada o expirada', error);
+          console.error('Sesion anterior no encontrada o expirada', error);
         } finally {
           setPageLoading(false);
         }
@@ -96,13 +108,20 @@ const Login: React.FC = () => {
 
       if (verifiedUser.role === 'guardia') throw new Error('Usuario no puede ser un guardia');
 
+      // Verificar si es el admin temporal y necesita crear admin permanente
+      const isTempAdmin = await isTemporaryAdminActive();
+      if (isTempAdmin && email === 'admin@securepass.local') {
+        navigate('/create-admin');
+        return;
+      }
+
       navigate('/home');
     } catch (error: any) {
-      // Manejo específico de errores de credenciales
-      if (error.message.includes('Credenciales inválidas')) {
+      // Manejo especifico de errores de credenciales
+      if (error.message.includes('Credenciales invalidas') || error.message.includes('Credenciales inválidas')) {
         setErrors((prev) => ({
           ...prev,
-          credentials: 'Email o contraseña incorrectos',
+          credentials: 'Email o contrasena incorrectos',
         }));
       } else if (error.message.includes('Usuario no puede ser guardia')) {
         setErrors((prev) => ({
@@ -112,7 +131,7 @@ const Login: React.FC = () => {
       } else {
         setErrors((prev) => ({
           ...prev,
-          credentials: 'Ocurrió un error al iniciar sesión',
+          credentials: 'Ocurrio un error al iniciar sesion',
         }));
       }
     } finally {

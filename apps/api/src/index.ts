@@ -18,6 +18,7 @@ import deviceRoutes from './routes/deviceRoutes';
 import qrLoginRoutes from './routes/qrLoginRoutes';
 import magicLinkRoutes from './routes/magicLinkRoutes';
 import apiConfigRoutes from './routes/apiConfigRoutes';
+import setupRoutes from './routes/setupRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
 import { webSocketService } from './services/WebSocketService';
@@ -97,6 +98,9 @@ app.use('/api/magic-link', magicLinkRoutes);
 
 // Rutas de configuración de APIs (solo admin)
 app.use('/api/config/apis', apiConfigRoutes);
+
+// Rutas de setup inicial (configuración de primera vez)
+app.use('/api/setup', setupRoutes);
 
 // Configurar error handler de Sentry (debe ser después de las rutas)
 setupSentryErrorHandler(app);

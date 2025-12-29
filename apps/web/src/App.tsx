@@ -6,6 +6,8 @@ import History from './pages/main/History';
 import { SidebarProvider } from './contexts/SidebarContext';
 import Home from './pages/login/Home';
 import Report from './pages/main/Report';
+import Setup from './pages/setup/Setup';
+import CreateAdmin from './pages/setup/CreateAdmin';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './styles/theme.css';
 
@@ -15,6 +17,8 @@ const App = () => {
       <SidebarProvider>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/setup" element={<Setup />} />
+          <Route path="/create-admin" element={<CreateAdmin />} />
           <Route path="/home" element={<Dashboard />} />
           <Route path="/authorizations" element={<Authorizations />} />
           <Route path="/settings" element={<Settings />} />
