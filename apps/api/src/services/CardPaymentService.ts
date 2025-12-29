@@ -61,7 +61,7 @@ class CardPaymentService {
     currency: string = 'USD',
     description?: string,
     metadata?: Record<string, any>
-  ): Promise<any> {
+  ): Promise<{ payment: InstanceType<typeof Payment>; paymentIntent: Stripe.PaymentIntent }> {
     try {
       // Crear el payment intent
       const paymentIntent = await this.stripe.paymentIntents.create({
@@ -111,21 +111,22 @@ class CardPaymentService {
         payment,
         paymentIntent,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const stripeError = error as Stripe.StripeError;
       // Crear registro de pago fallido
       const payment = new Payment({
         userId: new Types.ObjectId(userId),
         provider: PaymentProvider.STRIPE,
-        providerId: error.payment_intent?.id || 'unknown',
+        providerId: stripeError.payment_intent?.id || 'unknown',
         amount: amount,
         currency: currency.toUpperCase(),
         status: PaymentStatus.FAILED,
         type: PaymentType.ONE_TIME,
         description: description || 'Pago único con tarjeta',
         paymentMethod: 'card',
-        failureReason: error.message,
+        failureReason: stripeError.message,
         metadata: {
-          errorCode: error.code,
+          errorCode: stripeError.code,
           ...metadata,
         },
       });
@@ -145,7 +146,7 @@ class CardPaymentService {
   /**
    * Confirma un Payment Intent existente
    */
-  async confirmPaymentIntent(paymentIntentId: string): Promise<any> {
+  async confirmPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
     const paymentIntent = await this.stripe.paymentIntents.confirm(paymentIntentId);
 
     // Actualizar el registro de pago en la base de datos
@@ -169,7 +170,13 @@ class CardPaymentService {
   /**
    * Obtiene el estado de un Payment Intent
    */
-  async getPaymentIntentStatus(paymentIntentId: string): Promise<any> {
+  async getPaymentIntentStatus(paymentIntentId: string): Promise<{
+    id: string;
+    status: string;
+    amount: number;
+    currency: string;
+    created: Date;
+  }> {
     const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
 
     return {
@@ -184,7 +191,7 @@ class CardPaymentService {
   /**
    * Cancela un Payment Intent
    */
-  async cancelPaymentIntent(paymentIntentId: string): Promise<any> {
+  async cancelPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
     const paymentIntent = await this.stripe.paymentIntents.cancel(paymentIntentId);
 
     // Actualizar el registro de pago
@@ -222,7 +229,13 @@ class CardPaymentService {
   /**
    * Obtiene los métodos de pago guardados de un usuario
    */
-  async getPaymentMethods(customerId: string): Promise<any[]> {
+  async getPaymentMethods(customerId: string): Promise<Array<{
+    id: string;
+    brand?: string;
+    last4?: string;
+    expMonth?: number;
+    expYear?: number;
+  }>> {
     const paymentMethods = await this.stripe.paymentMethods.list({
       customer: customerId,
       type: 'card',
@@ -247,7 +260,10 @@ class CardPaymentService {
   /**
    * Procesa un reembolso
    */
-  async refundPayment(paymentId: string, amount?: number, reason?: string): Promise<any> {
+  async refundPayment(paymentId: string, amount?: number, reason?: string): Promise<{
+    refund: Stripe.Refund;
+    refundPayment: InstanceType<typeof Payment>;
+  }> {
     const payment = await Payment.findById(paymentId);
     if (!payment) {
       throw new Error('Pago no encontrado');
@@ -256,7 +272,7 @@ class CardPaymentService {
     const refund = await this.stripe.refunds.create({
       payment_intent: payment.providerId,
       amount: amount, // Si no se especifica, se reembolsa el monto completo
-      reason: reason as any,
+      reason: reason as Stripe.RefundCreateParams.Reason | undefined,
     });
 
     // Crear registro de reembolso
@@ -292,7 +308,12 @@ class CardPaymentService {
   /**
    * Obtiene el historial de pagos de un usuario
    */
-  async getUserPayments(userId: string, limit: number = 10, offset: number = 0): Promise<any> {
+  async getUserPayments(userId: string, limit: number = 10, offset: number = 0): Promise<{
+    payments: Array<InstanceType<typeof Payment>>;
+    total: number;
+    limit: number;
+    offset: number;
+  }> {
     const payments = await Payment.find({ userId })
       .sort({ createdAt: -1 })
       .skip(offset)
@@ -311,7 +332,7 @@ class CardPaymentService {
   /**
    * Obtiene un pago específico por ID
    */
-  async getPaymentById(paymentId: string): Promise<any> {
+  async getPaymentById(paymentId: string): Promise<InstanceType<typeof Payment> | null> {
     return await Payment.findById(paymentId);
   }
 

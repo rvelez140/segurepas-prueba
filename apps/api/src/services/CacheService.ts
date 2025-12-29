@@ -1,11 +1,21 @@
 import Redis from 'ioredis';
+import { logInfo, logWarn, logError } from '../config/logger';
 
 class CacheService {
   private client: Redis | null = null;
   private isConnected: boolean = false;
+  private isEnabled: boolean = false;
 
   constructor() {
-    this.connect();
+    // Solo conectar si está habilitado en configuración
+    const redisEnabled = process.env.REDIS_ENABLED === 'true';
+    this.isEnabled = redisEnabled;
+
+    if (redisEnabled) {
+      this.connect();
+    } else {
+      logInfo('Redis está deshabilitado (REDIS_ENABLED=false). Sistema funcionará sin caché.');
+    }
   }
 
   private connect() {
@@ -18,34 +28,40 @@ class CacheService {
           return delay;
         },
         maxRetriesPerRequest: 3,
+        lazyConnect: true, // No conectar inmediatamente
       });
 
       this.client.on('connect', () => {
-        console.log('✓ Conectado a Redis');
+        logInfo('✓ Conectado a Redis');
         this.isConnected = true;
       });
 
       this.client.on('error', (error) => {
-        console.error('Error de Redis:', error);
+        logWarn('Redis no disponible - Sistema funcionará sin caché', { error: error.message });
         this.isConnected = false;
       });
 
       this.client.on('close', () => {
-        console.log('Conexión a Redis cerrada');
+        logInfo('Conexión a Redis cerrada');
         this.isConnected = false;
       });
-    } catch (error) {
-      console.error('Error conectando a Redis:', error);
+
+      // Intentar conectar
+      this.client.connect().catch((err) => {
+        logWarn('No se pudo conectar a Redis - Continuando sin caché', { error: err.message });
+      });
+    } catch (error: any) {
+      logError('Error configurando Redis', error);
       this.client = null;
       this.isConnected = false;
     }
   }
 
   /**
-   * Verificar si Redis está disponible
+   * Verificar si Redis está disponible y habilitado
    */
   isAvailable(): boolean {
-    return this.isConnected && this.client !== null;
+    return this.isEnabled && this.isConnected && this.client !== null;
   }
 
   /**

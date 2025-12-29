@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import { cardPaymentService } from '../services/CardPaymentService';
 
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  return String(error);
+};
+
 export class PaymentController {
   /**
    * Crea un Payment Intent para procesar un pago
@@ -30,11 +35,11 @@ export class PaymentController {
         clientSecret: result.clientSecret,
         paymentIntentId: result.paymentIntentId,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al crear payment intent',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -68,11 +73,11 @@ export class PaymentController {
         payment: result.payment,
         paymentIntent: result.paymentIntent,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
         message: 'Error al procesar el pago',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -90,11 +95,11 @@ export class PaymentController {
         success: true,
         paymentIntent,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al confirmar payment intent',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -112,11 +117,11 @@ export class PaymentController {
         success: true,
         status,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al obtener estado del payment intent',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -134,11 +139,11 @@ export class PaymentController {
         success: true,
         paymentIntent,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al cancelar payment intent',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -165,11 +170,11 @@ export class PaymentController {
         clientSecret: result.clientSecret,
         setupIntentId: result.setupIntentId,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al crear setup intent',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -187,11 +192,11 @@ export class PaymentController {
         success: true,
         paymentMethods,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al obtener métodos de pago',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -209,11 +214,11 @@ export class PaymentController {
         success: true,
         message: 'Método de pago eliminado',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al eliminar método de pago',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -233,11 +238,11 @@ export class PaymentController {
         refund: result.refund,
         refundPayment: result.refundPayment,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al procesar reembolso',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -257,11 +262,11 @@ export class PaymentController {
         success: true,
         ...result,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al obtener historial de pagos',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -287,11 +292,11 @@ export class PaymentController {
         success: true,
         payment,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al obtener pago',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -317,11 +322,11 @@ export class PaymentController {
         success: true,
         customerId,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al crear cliente',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -347,11 +352,11 @@ export class PaymentController {
         success: true,
         message: 'Método de pago asociado al cliente',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al asociar método de pago',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }

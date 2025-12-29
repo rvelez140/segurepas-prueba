@@ -357,6 +357,194 @@ Una vez iniciado el servidor: http://localhost:48721/api-docs
 
 - Configurar variables de entorno en `.env` (ver `.env.example`):
 
+## 🔧 Troubleshooting
+
+### Problemas Comunes y Soluciones
+
+#### 1. Error: "ADMIN_PASSWORD no está configurado"
+
+**Síntoma:** La API no inicia y muestra un error sobre ADMIN_PASSWORD
+
+**Solución:**
+```bash
+# Generar credenciales seguras
+node scripts/generate-credentials.js
+
+# Copiar ADMIN_PASSWORD generado a .env
+# Asegúrate de que tenga al menos 12 caracteres
+```
+
+#### 2. Error de Conexión a MongoDB
+
+**Síntoma:** `Error al conectar a MongoDB: Connection refused`
+
+**Soluciones:**
+- Verificar que MongoDB esté ejecutándose
+- Revisar que MONGODB_URI en `.env` sea correcta
+- Para MongoDB local: Verificar que el puerto 37849 esté disponible
+- Para MongoDB Atlas: Verificar credenciales y whitelist de IP
+
+```bash
+# Verificar si MongoDB está corriendo (local)
+docker ps | grep mongodb
+
+# Reiniciar MongoDB con Docker
+docker-compose -f docker-compose.production.yml restart mongodb
+```
+
+#### 3. Error: "JWT_SECRET no definida"
+
+**Síntoma:** Error al iniciar la API relacionado con JWT
+
+**Solución:**
+```bash
+# Asegúrate de tener JWT_SECRET en .env
+# Genera una con:
+node scripts/generate-credentials.js
+```
+
+#### 4. Puerto ya en Uso
+
+**Síntoma:** `Error: listen EADDRINUSE: address already in use :::48721`
+
+**Solución:**
+```bash
+# Encontrar proceso usando el puerto
+lsof -i :48721
+
+# Matar el proceso (reemplaza PID)
+kill -9 <PID>
+
+# O usar un puerto diferente en .env
+PORT=48722
+```
+
+#### 5. Errores de TypeScript en Compilación
+
+**Síntoma:** Errores de tipo al ejecutar `npm run build`
+
+**Solución:**
+```bash
+# Limpiar y reinstalar dependencias
+rm -rf node_modules package-lock.json
+npm install
+
+# Verificar versión de TypeScript
+npm list typescript
+
+# Ejecutar type check
+npx tsc --noEmit
+```
+
+#### 6. Tests Fallando
+
+**Síntoma:** Tests no pasan o hay errores en Jest
+
+**Solución:**
+```bash
+# Limpiar caché de Jest
+npm test -- --clearCache
+
+# Ejecutar tests en modo verbose
+npm test -- --verbose
+
+# Verificar configuración de test
+cat jest.config.js
+```
+
+#### 7. Docker Build Falla
+
+**Síntoma:** Error al construir imágenes Docker
+
+**Solución:**
+```bash
+# Limpiar caché de Docker
+docker builder prune -a
+
+# Reconstruir sin caché
+docker build --no-cache -t securepass-api ./apps/api
+
+# Verificar logs detallados
+docker build --progress=plain -t securepass-api ./apps/api
+```
+
+#### 8. Logs No Aparecen
+
+**Síntoma:** No se ven logs en desarrollo
+
+**Solución:**
+```bash
+# Verificar que Winston esté configurado
+cat apps/api/src/config/logger.ts
+
+# Verificar nivel de log
+NODE_ENV=development npm run dev
+
+# Verificar carpeta de logs existe
+ls -la apps/api/logs/
+```
+
+#### 9. Redis No Conecta (Opcional)
+
+**Síntoma:** Advertencias sobre Redis
+
+**Solución:**
+```bash
+# Redis es OPCIONAL - El sistema funciona sin él
+# Si no usas Redis, asegúrate:
+REDIS_ENABLED=false
+
+# Si quieres usarlo, verifica que esté corriendo
+docker ps | grep redis
+```
+
+#### 10. ESLint/Prettier Conflictos
+
+**Síntoma:** Errores de linting contradictorios
+
+**Solución:**
+```bash
+# Ejecutar formateo
+npm run format
+
+# Ejecutar lint fix
+npm run lint:fix
+
+# Verificar configuración
+cat eslint.config.js
+cat .prettierrc.json
+```
+
+### Verificar Salud del Sistema
+
+```bash
+# Verificar health de la API
+curl http://localhost:48721/health
+
+# Ver logs en tiempo real
+tail -f apps/api/logs/combined.log
+
+# Verificar variables de entorno cargadas
+node -e "require('dotenv').config(); console.log(process.env.PORT)"
+```
+
+### Obtener Ayuda
+
+Si ninguna solución funciona:
+
+1. **Revisa los logs:**
+   - `apps/api/logs/error.log`
+   - `apps/api/logs/combined.log`
+   - Output de console
+
+2. **Verifica configuración:**
+   - `.env` tiene todas las variables requeridas
+   - Versiones de Node.js (18+) y npm
+
+3. **Reporta el problema:**
+   - Issues: https://github.com/rvelez140/segurepas-prueba/issues
+   - Incluye: logs, configuración (sin credenciales), pasos para reproducir
+
 ## 📄 Licencia
 
 [MIT License] - Ver archivo LICENSE para más detalles.

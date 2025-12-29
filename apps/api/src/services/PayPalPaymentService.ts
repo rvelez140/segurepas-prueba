@@ -6,6 +6,12 @@ import { PaymentStatus, PaymentType } from '../interfaces/IPayment';
 import { Types } from 'mongoose';
 
 // PayPal SDK types
+interface PayPalLink {
+  href: string;
+  rel: string;
+  method: string;
+}
+
 interface PayPalSubscription {
   id: string;
   status: string;
@@ -45,11 +51,28 @@ interface PayPalSubscription {
   };
 }
 
+interface PayPalWebhookResource {
+  id: string;
+  status?: string;
+  custom_id?: string;
+  billing_agreement_id?: string;
+  amount?: {
+    total: string;
+    currency: string;
+  };
+  links?: PayPalLink[];
+}
+
 interface PayPalWebhookEvent {
   id: string;
   event_type: string;
-  resource: any;
+  resource: PayPalWebhookResource;
   create_time: string;
+}
+
+interface PayPalSubscriptionResponse {
+  id: string;
+  links?: PayPalLink[];
 }
 
 class PayPalPaymentService {
@@ -92,7 +115,7 @@ class PayPalPaymentService {
     billingCycle: 'monthly' | 'yearly',
     returnUrl: string,
     cancelUrl: string
-  ): Promise<any> {
+  ): Promise<{ subscriptionId: string; approvalUrl?: string }> {
     const accessToken = await this.getAccessToken();
     const planId = this.getPlanId(plan, billingCycle);
 
@@ -120,10 +143,10 @@ class PayPalPaymentService {
       }),
     });
 
-    const data = await response.json();
+    const data: PayPalSubscriptionResponse = await response.json();
 
     // Encontrar el link de aprobación
-    const approvalLink = data.links?.find((link: any) => link.rel === 'approve');
+    const approvalLink = data.links?.find((link: PayPalLink) => link.rel === 'approve');
 
     return {
       subscriptionId: data.id,
@@ -134,7 +157,7 @@ class PayPalPaymentService {
   /**
    * Activa una suscripción después de la aprobación del usuario
    */
-  async activateSubscription(userId: string, paypalSubscriptionId: string): Promise<any> {
+  async activateSubscription(userId: string, paypalSubscriptionId: string): Promise<InstanceType<typeof Subscription>> {
     const accessToken = await this.getAccessToken();
 
     // Obtener detalles de la suscripción
@@ -198,7 +221,7 @@ class PayPalPaymentService {
     userId: string,
     subscriptionId: string,
     paypalSubscription: PayPalSubscription
-  ): Promise<any> {
+  ): Promise<InstanceType<typeof Payment> | null> {
     const lastPayment = paypalSubscription.billing_info?.last_payment;
     if (!lastPayment) return null;
 
@@ -226,7 +249,7 @@ class PayPalPaymentService {
   /**
    * Cancela una suscripción
    */
-  async cancelSubscription(subscriptionId: string, reason?: string): Promise<any> {
+  async cancelSubscription(subscriptionId: string, reason?: string): Promise<InstanceType<typeof Subscription>> {
     const subscription = await Subscription.findById(subscriptionId);
     if (!subscription) {
       throw new Error('Suscripción no encontrada');
@@ -256,7 +279,7 @@ class PayPalPaymentService {
   /**
    * Procesa webhook de PayPal
    */
-  async handleWebhook(webhookEvent: PayPalWebhookEvent): Promise<any> {
+  async handleWebhook(webhookEvent: PayPalWebhookEvent): Promise<void> {
     switch (webhookEvent.event_type) {
       case 'BILLING.SUBSCRIPTION.ACTIVATED':
         return await this.handleSubscriptionActivated(webhookEvent.resource);
@@ -281,22 +304,22 @@ class PayPalPaymentService {
     }
   }
 
-  private async handleSubscriptionActivated(resource: any): Promise<void> {
+  private async handleSubscriptionActivated(resource: PayPalWebhookResource): Promise<void> {
     const userId = resource.custom_id;
     if (!userId) return;
 
     await this.activateSubscription(userId, resource.id);
   }
 
-  private async handleSubscriptionUpdated(resource: any): Promise<void> {
+  private async handleSubscriptionUpdated(resource: PayPalWebhookResource): Promise<void> {
     const subscription = await Subscription.findOne({ providerId: resource.id });
-    if (!subscription) return;
+    if (!subscription || !resource.status) return;
 
     subscription.status = this.mapPayPalStatus(resource.status);
     await subscription.save();
   }
 
-  private async handleSubscriptionCancelled(resource: any): Promise<void> {
+  private async handleSubscriptionCancelled(resource: PayPalWebhookResource): Promise<void> {
     const subscription = await Subscription.findOne({ providerId: resource.id });
     if (!subscription) return;
 
@@ -306,7 +329,7 @@ class PayPalPaymentService {
     await subscription.save();
   }
 
-  private async handleSubscriptionSuspended(resource: any): Promise<void> {
+  private async handleSubscriptionSuspended(resource: PayPalWebhookResource): Promise<void> {
     const subscription = await Subscription.findOne({ providerId: resource.id });
     if (!subscription) return;
 
@@ -314,7 +337,7 @@ class PayPalPaymentService {
     await subscription.save();
   }
 
-  private async handleSubscriptionExpired(resource: any): Promise<void> {
+  private async handleSubscriptionExpired(resource: PayPalWebhookResource): Promise<void> {
     const subscription = await Subscription.findOne({ providerId: resource.id });
     if (!subscription) return;
 
@@ -322,7 +345,7 @@ class PayPalPaymentService {
     await subscription.save();
   }
 
-  private async handlePaymentCompleted(resource: any): Promise<void> {
+  private async handlePaymentCompleted(resource: PayPalWebhookResource): Promise<void> {
     // Este evento se dispara cuando se completa un pago de suscripción
     const subscriptionId = resource.billing_agreement_id;
     if (!subscriptionId) return;
@@ -341,7 +364,7 @@ class PayPalPaymentService {
       type: PaymentType.SUBSCRIPTION,
       description: 'Pago de suscripción vía PayPal',
       paymentMethod: 'paypal',
-      receiptUrl: resource.links?.find((link: any) => link.rel === 'self')?.href,
+      receiptUrl: resource.links?.find((link: PayPalLink) => link.rel === 'self')?.href,
     });
 
     await payment.save();

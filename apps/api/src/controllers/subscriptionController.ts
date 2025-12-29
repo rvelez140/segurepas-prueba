@@ -5,6 +5,11 @@ import { Subscription } from '../models/Subscription';
 import { notificationService } from '../services/NotificationService';
 import { UserService } from '../services/UserService';
 
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  return String(error);
+};
+
 export class SubscriptionController {
   /**
    * Crea una sesión de checkout de Stripe
@@ -28,11 +33,11 @@ export class SubscriptionController {
         sessionId: session.id,
         url: session.url,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al crear sesión de checkout',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -59,11 +64,11 @@ export class SubscriptionController {
         subscriptionId: result.subscriptionId,
         approvalUrl: result.approvalUrl,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al crear suscripción de PayPal',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -87,11 +92,11 @@ export class SubscriptionController {
         success: true,
         subscription,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al activar suscripción',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -109,11 +114,11 @@ export class SubscriptionController {
         success: true,
         subscriptions,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al obtener suscripciones',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -134,11 +139,11 @@ export class SubscriptionController {
         success: true,
         subscription,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al obtener suscripción activa',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -184,11 +189,11 @@ export class SubscriptionController {
         success: true,
         subscription: canceledSubscription,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
         message: 'Error al cancelar suscripción',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -204,12 +209,12 @@ export class SubscriptionController {
       await stripePaymentService.handleWebhook(payload, signature);
 
       res.status(200).json({ received: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error en webhook de Stripe:', error);
       res.status(400).json({
         success: false,
         message: 'Error al procesar webhook',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
@@ -224,12 +229,12 @@ export class SubscriptionController {
       await paypalPaymentService.handleWebhook(webhookEvent);
 
       res.status(200).json({ received: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error en webhook de PayPal:', error);
       res.status(400).json({
         success: false,
         message: 'Error al procesar webhook',
-        error: error.message,
+        error: getErrorMessage(error),
       });
     }
   }
