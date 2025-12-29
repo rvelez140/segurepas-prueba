@@ -1,18 +1,43 @@
 import Stripe from 'stripe';
-import { env } from '../config/env';
 import { Payment } from '../models/Payment';
 import { Subscription } from '../models/Subscription';
 import { PaymentProvider, SubscriptionPlan, SubscriptionStatus } from '../interfaces/ISubscription';
 import { PaymentStatus, PaymentType } from '../interfaces/IPayment';
 import { Types } from 'mongoose';
+import { getApiConfig, isApiAvailable } from '../utils/apiConfigHelper';
+import { ApiProvider } from '../interfaces/IApiConfig';
 
 class StripePaymentService {
-  private stripe: Stripe;
+  private stripe: Stripe | null = null;
+  private config: Record<string, string> = {};
+  private lastConfigKey: string = '';
 
-  constructor() {
-    this.stripe = new Stripe(env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2025-02-24.acacia',
-    });
+  /**
+   * Inicializa o reinicializa el cliente de Stripe con la configuración actual
+   */
+  private async ensureStripeClient(): Promise<Stripe> {
+    this.config = await getApiConfig(ApiProvider.STRIPE);
+
+    if (!this.config.STRIPE_SECRET_KEY) {
+      throw new Error('Stripe no está configurado. Configure las credenciales en el panel de administración.');
+    }
+
+    // Crear nuevo cliente si no existe o si la key cambió
+    if (!this.stripe || this.lastConfigKey !== this.config.STRIPE_SECRET_KEY) {
+      this.stripe = new Stripe(this.config.STRIPE_SECRET_KEY, {
+        apiVersion: '2025-02-24.acacia',
+      });
+      this.lastConfigKey = this.config.STRIPE_SECRET_KEY;
+    }
+
+    return this.stripe;
+  }
+
+  /**
+   * Verifica si Stripe está disponible
+   */
+  async isAvailable(): Promise<boolean> {
+    return await isApiAvailable(ApiProvider.STRIPE);
   }
 
   /**
@@ -25,9 +50,10 @@ class StripePaymentService {
     successUrl: string,
     cancelUrl: string
   ): Promise<Stripe.Checkout.Session> {
+    const stripe = await this.ensureStripeClient();
     const priceId = this.getPriceId(plan, billingCycle);
 
-    const session = await this.stripe.checkout.sessions.create({
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
@@ -53,7 +79,8 @@ class StripePaymentService {
    * Crea una suscripción después del pago exitoso
    */
   async createSubscription(userId: string, stripeSubscriptionId: string): Promise<any> {
-    const stripeSubscription = await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
+    const stripe = await this.ensureStripeClient();
+    const stripeSubscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
 
     const subscription = new Subscription({
       userId: new Types.ObjectId(userId),
@@ -93,7 +120,8 @@ class StripePaymentService {
     subscriptionId: string,
     invoiceId: string
   ): Promise<any> {
-    const invoice = await this.stripe.invoices.retrieve(invoiceId);
+    const stripe = await this.ensureStripeClient();
+    const invoice = await stripe.invoices.retrieve(invoiceId);
 
     const payment = new Payment({
       userId: new Types.ObjectId(userId),
@@ -120,12 +148,13 @@ class StripePaymentService {
    * Cancela una suscripción
    */
   async cancelSubscription(subscriptionId: string): Promise<any> {
+    const stripe = await this.ensureStripeClient();
     const subscription = await Subscription.findById(subscriptionId);
     if (!subscription) {
       throw new Error('Suscripción no encontrada');
     }
 
-    await this.stripe.subscriptions.cancel(subscription.providerId);
+    await stripe.subscriptions.cancel(subscription.providerId);
 
     subscription.status = SubscriptionStatus.CANCELED;
     subscription.canceledAt = new Date();
@@ -139,10 +168,17 @@ class StripePaymentService {
    * Procesa webhook de Stripe
    */
   async handleWebhook(payload: string | Buffer, signature: string): Promise<any> {
-    const event = this.stripe.webhooks.constructEvent(
+    const stripe = await this.ensureStripeClient();
+    const webhookSecret = this.config.STRIPE_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+      throw new Error('Webhook secret de Stripe no configurado');
+    }
+
+    const event = stripe.webhooks.constructEvent(
       payload,
       signature,
-      env.STRIPE_WEBHOOK_SECRET || ''
+      webhookSecret
     );
 
     switch (event.type) {
@@ -245,19 +281,18 @@ class StripePaymentService {
   }
 
   private getPriceId(plan: SubscriptionPlan, billingCycle: 'monthly' | 'yearly'): string {
-    // Estos son IDs de ejemplo. En producción, debes usar los IDs reales de tus productos en Stripe
     const priceIds: Record<SubscriptionPlan, Record<string, string>> = {
       [SubscriptionPlan.BASIC]: {
-        monthly: env.STRIPE_PRICE_BASIC_MONTHLY || 'price_basic_monthly',
-        yearly: env.STRIPE_PRICE_BASIC_YEARLY || 'price_basic_yearly',
+        monthly: this.config.STRIPE_PRICE_BASIC_MONTHLY || 'price_basic_monthly',
+        yearly: this.config.STRIPE_PRICE_BASIC_YEARLY || 'price_basic_yearly',
       },
       [SubscriptionPlan.PREMIUM]: {
-        monthly: env.STRIPE_PRICE_PREMIUM_MONTHLY || 'price_premium_monthly',
-        yearly: env.STRIPE_PRICE_PREMIUM_YEARLY || 'price_premium_yearly',
+        monthly: this.config.STRIPE_PRICE_PREMIUM_MONTHLY || 'price_premium_monthly',
+        yearly: this.config.STRIPE_PRICE_PREMIUM_YEARLY || 'price_premium_yearly',
       },
       [SubscriptionPlan.ENTERPRISE]: {
-        monthly: env.STRIPE_PRICE_ENTERPRISE_MONTHLY || 'price_enterprise_monthly',
-        yearly: env.STRIPE_PRICE_ENTERPRISE_YEARLY || 'price_enterprise_yearly',
+        monthly: this.config.STRIPE_PRICE_ENTERPRISE_MONTHLY || 'price_enterprise_monthly',
+        yearly: this.config.STRIPE_PRICE_ENTERPRISE_YEARLY || 'price_enterprise_yearly',
       },
     };
 
