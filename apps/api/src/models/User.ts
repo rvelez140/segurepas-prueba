@@ -7,9 +7,19 @@ const userSchema: Schema = new mongoose.Schema(
     auth: {
       email: {
         type: String,
-        required: [true, 'El email es requerido'],
+        required: false,
         unique: true,
+        sparse: true,
         match: [/^\S+@\S+\.\S+$/, 'Email inválido'],
+        index: true,
+      },
+      username: {
+        type: String,
+        required: false,
+        unique: true,
+        sparse: true,
+        trim: true,
+        minlength: [3, 'El nombre de usuario debe tener al menos 3 caracteres'],
         index: true,
       },
       password: {
@@ -130,6 +140,14 @@ const userSchema: Schema = new mongoose.Schema(
     },
   }
 );
+
+// Validación personalizada para asegurar que al menos email o username esté presente
+userSchema.pre('validate', function (next) {
+  if (!this.auth.email && !this.auth.username) {
+    this.invalidate('auth', 'Se requiere al menos un email o nombre de usuario');
+  }
+  next();
+});
 
 // Middleware para hashear la contraseña antes de guardar
 userSchema.pre<IUser>('save', async function (next) {

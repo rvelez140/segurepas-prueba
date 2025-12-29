@@ -8,7 +8,8 @@ export enum GuardShift {
 
 interface IUserInput {
   auth: {
-    email: string; // Email del usuario
+    email?: string; // Email del usuario (opcional si se usa username)
+    username?: string; // Nombre de usuario (opcional si se usa email)
     password: string; // Contraseña del usuario
     twoFactorSecret?: string; // Secreto TOTP para Google Authenticator
     twoFactorEnabled: boolean; // Indica si el 2FA está habilitado

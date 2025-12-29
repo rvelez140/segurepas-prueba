@@ -75,9 +75,13 @@ export const authController = {
     const { email, password, twoFactorToken, deviceName } = req.body;
 
     try {
-      // Obtener usuario con campos de 2FA
-      const user = await User.findOne({ 'auth.email': email })
-        .select('+auth.password +auth.twoFactorSecret +auth.twoFactorEnabled +auth.twoFactorBackupCodes');
+      // Buscar usuario por email o username
+      const user = await User.findOne({
+        $or: [
+          { 'auth.email': email },
+          { 'auth.username': email } // El campo 'email' del request puede contener username
+        ]
+      }).select('+auth.password +auth.twoFactorSecret +auth.twoFactorEnabled +auth.twoFactorBackupCodes');
 
       if (!user) {
         // Registrar login fallido

@@ -15,12 +15,14 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 // Configuración por defecto
-const DEFAULT_ADMIN_EMAIL = 'admin@securepass.com';
-const DEFAULT_ADMIN_PASSWORD = 'Admin123!';
+const DEFAULT_ADMIN_EMAIL = 'admin@solucionesrv.net';
+const DEFAULT_ADMIN_USERNAME = 'admin';
+const DEFAULT_ADMIN_PASSWORD = 'Admin12345!';
 const DEFAULT_ADMIN_NAME = 'Administrador';
 
 // Leer configuración desde variables de entorno
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL;
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || DEFAULT_ADMIN_USERNAME;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD;
 const ADMIN_NAME = process.env.ADMIN_NAME || DEFAULT_ADMIN_NAME;
 
@@ -33,8 +35,15 @@ const userSchema = new mongoose.Schema(
     auth: {
       email: {
         type: String,
-        required: true,
+        required: false,
         unique: true,
+        sparse: true,
+      },
+      username: {
+        type: String,
+        required: false,
+        unique: true,
+        sparse: true,
       },
       password: {
         type: String,
@@ -78,9 +87,14 @@ async function createAdmin() {
     await mongoose.connect(MONGODB_URI);
     console.log('✅ Conexión exitosa a MongoDB\n');
 
-    // Verificar si ya existe un admin con ese email
-    console.log(`🔍 Verificando si existe usuario con email: ${ADMIN_EMAIL}`);
-    const existingUser = await User.findOne({ 'auth.email': ADMIN_EMAIL });
+    // Verificar si ya existe un admin con ese email o username
+    console.log(`🔍 Verificando si existe usuario con email: ${ADMIN_EMAIL} o username: ${ADMIN_USERNAME}`);
+    const existingUser = await User.findOne({
+      $or: [
+        { 'auth.email': ADMIN_EMAIL },
+        { 'auth.username': ADMIN_USERNAME }
+      ]
+    });
 
     if (existingUser) {
       console.log('\n⚠️  Ya existe un usuario con ese email');
@@ -105,6 +119,8 @@ async function createAdmin() {
 
         // Actualizar usuario
         existingUser.auth.password = hashedPassword;
+        existingUser.auth.email = ADMIN_EMAIL;
+        existingUser.auth.username = ADMIN_USERNAME;
         existingUser.updateDate = new Date();
         existingUser.role = 'admin';
         existingUser.lastAccess = new Date();
@@ -112,7 +128,8 @@ async function createAdmin() {
 
         console.log('\n✅ Usuario actualizado exitosamente!');
         console.log('\n📋 Credenciales:');
-        console.log(`   Email: ${ADMIN_EMAIL}`);
+        console.log(`   Email:    ${ADMIN_EMAIL}`);
+        console.log(`   Username: ${ADMIN_USERNAME}`);
         console.log(`   Password: ${ADMIN_PASSWORD}`);
         console.log('\n⚠️  IMPORTANTE: Guarda estas credenciales en un lugar seguro');
       } else {
@@ -132,6 +149,7 @@ async function createAdmin() {
       const admin = new User({
         auth: {
           email: ADMIN_EMAIL,
+          username: ADMIN_USERNAME,
           password: hashedPassword,
         },
         name: ADMIN_NAME,
@@ -147,6 +165,7 @@ async function createAdmin() {
       console.log('📋 Credenciales de acceso:');
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.log(`   Email:    ${ADMIN_EMAIL}`);
+      console.log(`   Username: ${ADMIN_USERNAME}`);
       console.log(`   Password: ${ADMIN_PASSWORD}`);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
       console.log('⚠️  IMPORTANTE: Guarda estas credenciales en un lugar seguro');

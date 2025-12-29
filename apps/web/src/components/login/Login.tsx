@@ -15,8 +15,9 @@ import ThemeToggle from '../settings/ThemeToggle';
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState({
-    email: '', // Estado para errores de email
+    email: '', // Estado para errores de email/usuario
     password: '', // Estado para errrores de contraseña
     credentials: '', // Estado para errores de credenciales
   });
@@ -56,10 +57,7 @@ const Login: React.FC = () => {
     };
 
     if (!email.trim()) {
-      newErrors.email = 'El email es requerido';
-      valid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-      newErrors.email = 'El email introducido no es válido';
+      newErrors.email = 'El usuario o email es requerido';
       valid = false;
     }
 
@@ -136,20 +134,43 @@ const Login: React.FC = () => {
           <form onSubmit={handleSubmit}>
             {errors.email && <div className={style.errorMessage}>{errors.email}</div>}
             <input
-              placeholder="Correo Electrónico"
+              placeholder="Usuario o Correo Electrónico"
               value={email}
               className={`${style.loginInput}`}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             />
 
             {errors.password && <div className={style.errorMessage}>{errors.password}</div>}
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              className={`${style.loginInput}`}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                value={password}
+                className={`${style.loginInput}`}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
 
             <div className={style.options}>
               <label>
