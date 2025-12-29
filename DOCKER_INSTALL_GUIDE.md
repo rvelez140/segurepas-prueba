@@ -99,7 +99,7 @@ JWT_SECRET=TuClaveSecretaJWTAqui123!
 
 # URLs de tu aplicación (reemplaza con tu IP o dominio)
 FRONTEND_URL=http://TU_IP:8472
-REACT_APP_API_URL=http://TU_IP:8472/api
+REACT_APP_API=http://TU_IP:8472/api
 
 # Cloudinary (opcional pero recomendado)
 CLOUDINARY_CLOUD_NAME=tu_cloud_name

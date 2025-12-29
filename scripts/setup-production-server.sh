@@ -148,7 +148,7 @@ JWT_EXPIRES_IN=7d
 # Frontend Configuration
 # ============================================
 WEB_PORT=3000
-REACT_APP_API_URL=https://api.$DOMAIN_NAME
+REACT_APP_API=https://api.$DOMAIN_NAME
 FRONTEND_URL=https://$DOMAIN_NAME
 
 # ============================================

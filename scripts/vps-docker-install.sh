@@ -161,7 +161,7 @@ NGINX_HTTPS_PORT=8473
 
 # URLs (actualiza con tu dominio o IP)
 FRONTEND_URL=http://localhost:8472
-REACT_APP_API_URL=http://localhost:8472/api
+REACT_APP_API=http://localhost:8472/api
 
 # GitHub Container Registry (para usar imágenes pre-construidas)
 GITHUB_REPOSITORY=rvelez140/segurepas-prueba

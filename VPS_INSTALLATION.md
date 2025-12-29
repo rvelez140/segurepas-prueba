@@ -74,7 +74,7 @@ JWT_SECRET=tu_clave_secreta_muy_larga_y_aleatoria
 
 # Dominios
 FRONTEND_URL=https://tudominio.com
-REACT_APP_API_URL=https://api.tudominio.com/api
+REACT_APP_API=https://api.tudominio.com/api
 
 # Cloudinary (para subida de archivos)
 CLOUDINARY_CLOUD_NAME=tu_cloud_name

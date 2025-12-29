@@ -99,7 +99,7 @@ CLOUDINARY_API_SECRET=tu-api-secret
 
 # URLs
 FRONTEND_URL=https://tudominio.com
-REACT_APP_API_URL=https://api.tudominio.com/api
+REACT_APP_API=https://api.tudominio.com/api
 ```
 
 ### Paso 4: Configurar SSL con Let's Encrypt (Opcional)

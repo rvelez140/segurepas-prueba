@@ -80,7 +80,7 @@ API_PORT=8000
 # Frontend Configuration
 # ============================================
 WEB_PORT=3000
-REACT_APP_API_URL=https://api.tudominio.com/api
+REACT_APP_API=https://api.tudominio.com/api
 FRONTEND_URL=https://tudominio.com
 
 # ============================================

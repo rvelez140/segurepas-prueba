@@ -95,7 +95,7 @@ JWT_EXPIRES_IN=7d
 
 # Dominios (diferentes a la instalación principal)
 FRONTEND_URL=https://segurepas2.tudominio.com
-REACT_APP_API_URL=https://api-segurepas2.tudominio.com/api
+REACT_APP_API=https://api-segurepas2.tudominio.com/api
 
 # Cloudinary (puede ser el mismo o diferente)
 CLOUDINARY_CLOUD_NAME=tu_cloud_name

@@ -70,7 +70,7 @@ cp "$ENV_EXAMPLE" "$ENV_FILE"
 # Reemplazar valores
 sed -i "s/MONGO_ROOT_PASSWORD=.*/MONGO_ROOT_PASSWORD=${MONGO_PASSWORD}/" "$ENV_FILE"
 sed -i "s/JWT_SECRET=.*/JWT_SECRET=${JWT_SECRET}/" "$ENV_FILE"
-sed -i "s|REACT_APP_API_URL=.*|REACT_APP_API_URL=http://${SERVER_IP}:8472/api|" "$ENV_FILE"
+sed -i "s|REACT_APP_API=.*|REACT_APP_API=http://${SERVER_IP}:8472/api|" "$ENV_FILE"
 sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=http://${SERVER_IP}:8472|" "$ENV_FILE"
 
 if [ ! -z "$EMAIL_USER" ]; then
