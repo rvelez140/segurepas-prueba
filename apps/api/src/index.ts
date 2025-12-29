@@ -22,6 +22,7 @@ import { generalLimiter } from './middlewares/rateLimitMiddleware';
 import { webSocketService } from './services/WebSocketService';
 import { setupSwagger } from './config/swagger';
 import { initSentry, setupSentryErrorHandler } from './config/sentry';
+import { initAdminUser } from './utils/initAdminUser';
 
 const app = express();
 
@@ -53,10 +54,13 @@ const mongooseOptions = {
 
 mongoose
   .connect(MONGODB_URI, mongooseOptions)
-  .then(() => {
+  .then(async () => {
     console.log('✓ Se ha realizado la conexión con MongoDB');
     const isAtlas = MONGODB_URI.includes('mongodb+srv://');
     console.log(`  Tipo de conexión: ${isAtlas ? 'MongoDB Atlas (Externa)' : 'MongoDB Local'}`);
+
+    // Inicializar usuario administrador por defecto
+    await initAdminUser();
   })
   .catch((err: Error) => {
     console.error('✗ Error al conectar a MongoDB:', err.message);
