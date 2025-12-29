@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import crypto from 'crypto';
 import { SetupConfig } from '../models/SetupConfig';
 import { SetupStatus, IDatabaseConfig, ISetupInput } from '../interfaces/ISetupConfig';
@@ -44,17 +44,18 @@ class SetupService {
    * Prueba la conexión a la base de datos
    */
   async testDatabaseConnection(dbConfig: IDatabaseConfig): Promise<{ success: boolean; message: string }> {
-    let testConnection: typeof mongoose | null = null;
+    let testConnection: Connection | null = null;
 
     try {
       const uri = this.buildMongoURI(dbConfig);
 
       // Crear conexión temporal para probar
-      testConnection = await mongoose.createConnection(uri, {
+      testConnection = mongoose.createConnection(uri, {
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 10000,
-      }).asPromise();
+      });
 
+      await testConnection.asPromise();
       await testConnection.close();
 
       return {

@@ -50,15 +50,16 @@ router.get('/needs-wizard', async (_req: Request, res: Response) => {
  * @desc Prueba la conexión a la base de datos
  * @access Public (solo durante setup)
  */
-router.post('/test-database', async (req: Request, res: Response) => {
+router.post('/test-database', async (req: Request, res: Response): Promise<void> => {
   try {
     const { host, port, database, username, password } = req.body;
 
     if (!host || !database) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Host y nombre de base de datos son requeridos',
       });
+      return;
     }
 
     const result = await setupService.testDatabaseConnection({
@@ -111,15 +112,16 @@ router.post('/install-mongodb', async (req: Request, res: Response) => {
  * @desc Completa la configuración inicial
  * @access Public (solo durante setup inicial)
  */
-router.post('/complete', async (req: Request, res: Response) => {
+router.post('/complete', async (req: Request, res: Response): Promise<void> => {
   try {
     const { database, apis } = req.body;
 
     if (!database || !database.host || !database.database) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Configuración de base de datos es requerida',
       });
+      return;
     }
 
     const result = await setupService.completeSetup({
@@ -158,31 +160,34 @@ router.get('/apis', async (_req: Request, res: Response) => {
  * @desc Crea el usuario administrador permanente
  * @access Authenticated (con admin temporal)
  */
-router.post('/create-admin', authMiddleware, async (req: Request, res: Response) => {
+router.post('/create-admin', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password, name, username } = req.body;
 
     // Validaciones
     if (!email || !password || !name) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Email, contraseña y nombre son requeridos',
       });
+      return;
     }
 
     if (password.length < 8) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'La contraseña debe tener al menos 8 caracteres',
       });
+      return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'El formato del email no es válido',
       });
+      return;
     }
 
     const result = await setupService.createPermanentAdmin({

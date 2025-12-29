@@ -43,3 +43,17 @@ export const roleMiddleware = (requiredRoles: string[]) => {
     next();
   };
 };
+
+// Alias para authorize - verifica si el usuario tiene el rol requerido
+export const authorize = (...roles: string[]) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (!user || !roles.includes(user.role)) {
+      res.status(403).json({ error: 'Acceso no autorizado para este rol' });
+      return;
+    }
+
+    next();
+  };
+};
