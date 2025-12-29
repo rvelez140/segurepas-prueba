@@ -3,6 +3,10 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+# Argumento de construcción para la URL de la API
+ARG REACT_APP_API
+ENV REACT_APP_API=$REACT_APP_API
+
 # Copiar package files primero (mejor caching)
 COPY package*.json ./
 

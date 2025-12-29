@@ -79,7 +79,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      REACT_APP_API_URL: ${REACT_APP_API_URL}
+      REACT_APP_API: ${REACT_APP_API}
     ports:
       - "127.0.0.1:${WEB_PORT:-52341}:80"
     depends_on:

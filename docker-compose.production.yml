@@ -73,7 +73,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      REACT_APP_API_URL: ${REACT_APP_API_URL}
+      REACT_APP_API: ${REACT_APP_API}
     ports:
       - "127.0.0.1:${WEB_PORT:-52341}:80"  # El contenedor web ahora usa puerto 80 (nginx interno)
     depends_on:

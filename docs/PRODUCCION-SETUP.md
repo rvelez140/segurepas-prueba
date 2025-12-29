@@ -89,7 +89,7 @@ JWT_EXPIRES_IN=7d
 # Frontend Configuration
 # ============================================
 WEB_PORT=3000
-REACT_APP_API_URL=https://api.tudominio.com
+REACT_APP_API=https://api.tudominio.com
 FRONTEND_URL=https://tudominio.com
 
 # ============================================
