@@ -1,0 +1,347 @@
+/* API Configuration Styles */
+.apiConfigContainer {
+  margin: 20px auto;
+  padding: 24px;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
+  max-width: 900px;
+}
+
+.apiConfigTitle {
+  font-size: 24px;
+  color: var(--text);
+  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.apiConfigTitle svg {
+  width: 28px;
+  height: 28px;
+}
+
+.providersList {
+  display: grid;
+  gap: 16px;
+}
+
+.providerCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.providerCard:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+}
+
+.providerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.providerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.providerIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.providerIcon.stripe { background: #635bff20; color: #635bff; }
+.providerIcon.paypal { background: #003087; color: white; }
+.providerIcon.cloudinary { background: #3448c520; color: #3448c5; }
+.providerIcon.email { background: #ea433520; color: #ea4335; }
+.providerIcon.firebase { background: #ffca2820; color: #ffca28; }
+.providerIcon.sentry { background: #36234420; color: #362344; }
+
+.providerName {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.providerDescription {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.providerStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadge.available {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.statusBadge.unavailable {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusBadge.envConfigured {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.toggleSwitch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+}
+
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.toggleSlider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggleSwitch input:checked + .toggleSlider {
+  background-color: #10b981;
+}
+
+.toggleSwitch input:checked + .toggleSlider::before {
+  transform: translateX(24px);
+}
+
+.expandIcon {
+  transition: transform 0.2s;
+}
+
+.expandIcon.expanded {
+  transform: rotate(180deg);
+}
+
+.providerContent {
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.fieldGroup {
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.fieldLabel .required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 10%);
+}
+
+.fieldInput.secret {
+  font-family: monospace;
+}
+
+.providerActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.saveButton,
+.testButton {
+  padding: 10px 20px;
+  border: none;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.saveButton {
+  background-color: var(--blue);
+  color: white;
+}
+
+.saveButton:hover {
+  background-color: #2563eb;
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.testButton {
+  background-color: #f3f4f6;
+  color: var(--text);
+}
+
+.testButton:hover {
+  background-color: #e5e7eb;
+}
+
+.testButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.testResult {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.testResult.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.testResult.error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgb(0 0 0 / 10%);
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  border-top: 4px solid var(--blue);
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorMessage {
+  padding: 16px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.successMessage {
+  padding: 12px;
+  text-align: center;
+  color: #065f46;
+  background-color: #d1fae5;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.infoBox {
+  padding: 12px 16px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  color: #1e40af;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .apiConfigContainer {
+    padding: 16px;
+    margin: 10px;
+    max-width: 100%;
+  }
+
+  .providerHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .providerStatus {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .providerActions {
+    flex-direction: column;
+  }
+
+  .saveButton,
+  .testButton {
+    width: 100%;
+  }
+}

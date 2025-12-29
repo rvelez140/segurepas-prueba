@@ -17,12 +17,14 @@ import twoFactorRoutes from './routes/twoFactorRoutes';
 import deviceRoutes from './routes/deviceRoutes';
 import qrLoginRoutes from './routes/qrLoginRoutes';
 import magicLinkRoutes from './routes/magicLinkRoutes';
+import apiConfigRoutes from './routes/apiConfigRoutes';
 import { configureSecurity } from './middlewares/securityMiddleware';
 import { generalLimiter } from './middlewares/rateLimitMiddleware';
 import { webSocketService } from './services/WebSocketService';
 import { setupSwagger } from './config/swagger';
 import { initSentry, setupSentryErrorHandler } from './config/sentry';
 import { initAdminUser } from './utils/initAdminUser';
+import { apiConfigService } from './services/ApiConfigService';
 
 const app = express();
 
@@ -61,6 +63,10 @@ mongoose
 
     // Inicializar usuario administrador por defecto
     await initAdminUser();
+
+    // Inicializar proveedores de API en la base de datos
+    await apiConfigService.initializeProviders();
+    console.log('✓ Proveedores de API inicializados');
   })
   .catch((err: Error) => {
     console.error('✗ Error al conectar a MongoDB:', err.message);
@@ -88,6 +94,9 @@ app.use('/api/2fa', twoFactorRoutes);
 app.use('/api/devices', deviceRoutes);
 app.use('/api/qr-login', qrLoginRoutes);
 app.use('/api/magic-link', magicLinkRoutes);
+
+// Rutas de configuración de APIs (solo admin)
+app.use('/api/config/apis', apiConfigRoutes);
 
 // Configurar error handler de Sentry (debe ser después de las rutas)
 setupSentryErrorHandler(app);

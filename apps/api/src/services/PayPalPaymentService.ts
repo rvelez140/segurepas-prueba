@@ -1,9 +1,10 @@
-import { env } from '../config/env';
 import { Payment } from '../models/Payment';
 import { Subscription } from '../models/Subscription';
 import { PaymentProvider, SubscriptionPlan, SubscriptionStatus } from '../interfaces/ISubscription';
 import { PaymentStatus, PaymentType } from '../interfaces/IPayment';
 import { Types } from 'mongoose';
+import { getApiConfig, isApiAvailable } from '../utils/apiConfigHelper';
+import { ApiProvider } from '../interfaces/IApiConfig';
 
 // PayPal SDK types
 interface PayPalSubscription {
@@ -53,24 +54,43 @@ interface PayPalWebhookEvent {
 }
 
 class PayPalPaymentService {
-  private baseUrl: string;
-  private clientId: string;
-  private clientSecret: string;
+  private config: Record<string, string> = {};
 
-  constructor() {
-    this.baseUrl =
-      env.PAYPAL_MODE === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
-    this.clientId = env.PAYPAL_CLIENT_ID || '';
-    this.clientSecret = env.PAYPAL_CLIENT_SECRET || '';
+  /**
+   * Carga la configuración actual de PayPal
+   */
+  private async loadConfig(): Promise<void> {
+    this.config = await getApiConfig(ApiProvider.PAYPAL);
+  }
+
+  /**
+   * Obtiene la URL base según el modo (sandbox o live)
+   */
+  private getBaseUrl(): string {
+    const mode = this.config.PAYPAL_MODE || 'sandbox';
+    return mode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+  }
+
+  /**
+   * Verifica si PayPal está disponible
+   */
+  async isAvailable(): Promise<boolean> {
+    return await isApiAvailable(ApiProvider.PAYPAL);
   }
 
   /**
    * Obtiene el token de acceso de PayPal
    */
   private async getAccessToken(): Promise<string> {
-    const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
+    await this.loadConfig();
 
-    const response = await fetch(`${this.baseUrl}/v1/oauth2/token`, {
+    if (!this.config.PAYPAL_CLIENT_ID || !this.config.PAYPAL_CLIENT_SECRET) {
+      throw new Error('PayPal no está configurado. Configure las credenciales en el panel de administración.');
+    }
+
+    const auth = Buffer.from(`${this.config.PAYPAL_CLIENT_ID}:${this.config.PAYPAL_CLIENT_SECRET}`).toString('base64');
+
+    const response = await fetch(`${this.getBaseUrl()}/v1/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -96,7 +116,7 @@ class PayPalPaymentService {
     const accessToken = await this.getAccessToken();
     const planId = this.getPlanId(plan, billingCycle);
 
-    const response = await fetch(`${this.baseUrl}/v1/billing/subscriptions`, {
+    const response = await fetch(`${this.getBaseUrl()}/v1/billing/subscriptions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +159,7 @@ class PayPalPaymentService {
 
     // Obtener detalles de la suscripción
     const response = await fetch(
-      `${this.baseUrl}/v1/billing/subscriptions/${paypalSubscriptionId}`,
+      `${this.getBaseUrl()}/v1/billing/subscriptions/${paypalSubscriptionId}`,
       {
         method: 'GET',
         headers: {
@@ -234,7 +254,7 @@ class PayPalPaymentService {
 
     const accessToken = await this.getAccessToken();
 
-    await fetch(`${this.baseUrl}/v1/billing/subscriptions/${subscription.providerId}/cancel`, {
+    await fetch(`${this.getBaseUrl()}/v1/billing/subscriptions/${subscription.providerId}/cancel`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -368,19 +388,18 @@ class PayPalPaymentService {
   }
 
   private getPlanId(plan: SubscriptionPlan, billingCycle: 'monthly' | 'yearly'): string {
-    // Estos son IDs de ejemplo. En producción, debes usar los IDs reales de tus planes en PayPal
     const planIds: Record<SubscriptionPlan, Record<string, string>> = {
       [SubscriptionPlan.BASIC]: {
-        monthly: env.PAYPAL_PLAN_BASIC_MONTHLY || 'P-basic-monthly',
-        yearly: env.PAYPAL_PLAN_BASIC_YEARLY || 'P-basic-yearly',
+        monthly: this.config.PAYPAL_PLAN_BASIC_MONTHLY || 'P-basic-monthly',
+        yearly: this.config.PAYPAL_PLAN_BASIC_YEARLY || 'P-basic-yearly',
       },
       [SubscriptionPlan.PREMIUM]: {
-        monthly: env.PAYPAL_PLAN_PREMIUM_MONTHLY || 'P-premium-monthly',
-        yearly: env.PAYPAL_PLAN_PREMIUM_YEARLY || 'P-premium-yearly',
+        monthly: this.config.PAYPAL_PLAN_PREMIUM_MONTHLY || 'P-premium-monthly',
+        yearly: this.config.PAYPAL_PLAN_PREMIUM_YEARLY || 'P-premium-yearly',
       },
       [SubscriptionPlan.ENTERPRISE]: {
-        monthly: env.PAYPAL_PLAN_ENTERPRISE_MONTHLY || 'P-enterprise-monthly',
-        yearly: env.PAYPAL_PLAN_ENTERPRISE_YEARLY || 'P-enterprise-yearly',
+        monthly: this.config.PAYPAL_PLAN_ENTERPRISE_MONTHLY || 'P-enterprise-monthly',
+        yearly: this.config.PAYPAL_PLAN_ENTERPRISE_YEARLY || 'P-enterprise-yearly',
       },
     };
 

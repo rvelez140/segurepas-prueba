@@ -1,25 +1,63 @@
 import nodemailer from 'nodemailer';
-import { env } from '../config/env';
 import { IVisit } from '../interfaces/IVisit';
 import { UserService } from './UserService';
 import { IUser } from '../interfaces/IUser';
 import { ISubscription } from '../interfaces/ISubscription';
 import { IPayment } from '../interfaces/IPayment';
 import { Notification } from '../models/Notification';
-import { NotificationType, INotification } from '../interfaces/INotification';
-import { Types } from 'mongoose';
+import { NotificationType } from '../interfaces/INotification';
+import { getApiConfig, isApiAvailable } from '../utils/apiConfigHelper';
+import { ApiProvider } from '../interfaces/IApiConfig';
 
 class NotificationService {
-  public transporter;
+  private transporter: nodemailer.Transporter | null = null;
+  private config: Record<string, string> = {};
+  private lastConfigHash: string = '';
 
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: env.EMAIL_USER,
-        pass: env.EMAIL_PASSWORD,
-      },
-    });
+  /**
+   * Verifica si el servicio de email está disponible
+   */
+  async isAvailable(): Promise<boolean> {
+    return await isApiAvailable(ApiProvider.EMAIL);
+  }
+
+  /**
+   * Obtiene o crea el transporter de email con la configuración actual
+   */
+  private async ensureTransporter(): Promise<nodemailer.Transporter> {
+    this.config = await getApiConfig(ApiProvider.EMAIL);
+
+    if (!this.config.EMAIL_USER || !this.config.EMAIL_PASSWORD) {
+      throw new Error('Email no está configurado. Configure las credenciales en el panel de administración.');
+    }
+
+    // Crear hash para detectar cambios de configuración
+    const configHash = `${this.config.EMAIL_USER}-${this.config.EMAIL_PASSWORD}`;
+
+    // Solo recrear el transporter si ha cambiado la configuración
+    if (!this.transporter || this.lastConfigHash !== configHash) {
+      this.transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: this.config.EMAIL_USER,
+          pass: this.config.EMAIL_PASSWORD,
+        },
+      });
+      this.lastConfigHash = configHash;
+    }
+
+    return this.transporter;
+  }
+
+  /**
+   * Obtiene las opciones de email por defecto
+   */
+  private getDefaultMailOptions() {
+    return {
+      from: this.config.EMAIL_FROM || this.config.EMAIL_USER,
+      sender: this.config.EMAIL_SENDER || this.config.EMAIL_USER,
+      replyTo: this.config.EMAIL_REPLY || this.config.EMAIL_USER,
+    };
   }
 
   async sendVisitNotification(
@@ -27,12 +65,13 @@ class NotificationService {
     toVisit: string,
     visitData: IVisit
   ): Promise<nodemailer.SentMessageInfo[]> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+
     const residentData = (await UserService.findById(visitData.authorization.resident)) as IUser;
 
     const residentMailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: toResident,
       subject: `Autorización de visitante ${visitData.visit.name}`,
       html: `
@@ -54,9 +93,7 @@ class NotificationService {
     };
 
     const visitMailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: toVisit,
       subject: `Autorización de visitante ${visitData.visit.name}`,
       html: `
@@ -78,30 +115,27 @@ class NotificationService {
     };
 
     const emailInfo: nodemailer.SentMessageInfo[] = [
-      await this.transporter.sendMail(residentMailOptions),
-      await this.transporter.sendMail(visitMailOptions),
+      await transporter.sendMail(residentMailOptions),
+      await transporter.sendMail(visitMailOptions),
     ];
 
     return emailInfo;
   }
 
-  /**
-   * Envía notificación cuando se registra la entrada de un visitante
-   */
   async sendEntryRegistrationNotification(
     toResident: string,
     toVisit: string,
     visitData: IVisit,
     guardName: string
   ): Promise<nodemailer.SentMessageInfo[]> {
-    const residentData = (await UserService.findById(visitData.authorization.resident)) as IUser;
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
 
+    const residentData = (await UserService.findById(visitData.authorization.resident)) as IUser;
     const entryDate = visitData.registry?.entry?.date || new Date();
 
     const residentMailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: toResident,
       subject: `Entrada registrada - Visitante ${visitData.visit.name}`,
       html: `
@@ -133,9 +167,7 @@ class NotificationService {
     };
 
     const visitMailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: toVisit,
       subject: `Bienvenido - Entrada registrada`,
       html: `
@@ -168,8 +200,8 @@ class NotificationService {
     };
 
     const emailInfo: nodemailer.SentMessageInfo[] = [
-      await this.transporter.sendMail(residentMailOptions),
-      await this.transporter.sendMail(visitMailOptions),
+      await transporter.sendMail(residentMailOptions),
+      await transporter.sendMail(visitMailOptions),
     ];
 
     // Guardar notificación en la base de datos para el residente
@@ -192,14 +224,14 @@ class NotificationService {
     return emailInfo;
   }
 
-  /**
-   * Envía notificación de bienvenida al suscribirse
-   */
   async sendSubscriptionWelcome(
     userEmail: string,
     userName: string,
     subscription: ISubscription
   ): Promise<nodemailer.SentMessageInfo> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+
     const planNames = {
       basic: 'Básico',
       premium: 'Premium',
@@ -207,9 +239,7 @@ class NotificationService {
     };
 
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: userEmail,
       subject: '¡Bienvenido a SecurePass!',
       html: `
@@ -238,21 +268,19 @@ class NotificationService {
       `,
     };
 
-    return await this.transporter.sendMail(mailOptions);
+    return await transporter.sendMail(mailOptions);
   }
 
-  /**
-   * Envía notificación de pago exitoso
-   */
   async sendPaymentSuccess(
     userEmail: string,
     userName: string,
     payment: IPayment
   ): Promise<nodemailer.SentMessageInfo> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: userEmail,
       subject: 'Confirmación de pago - SecurePass',
       html: `
@@ -279,21 +307,20 @@ class NotificationService {
       `,
     };
 
-    return await this.transporter.sendMail(mailOptions);
+    return await transporter.sendMail(mailOptions);
   }
 
-  /**
-   * Envía notificación de pago fallido
-   */
   async sendPaymentFailed(
     userEmail: string,
     userName: string,
     payment: IPayment
   ): Promise<nodemailer.SentMessageInfo> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: userEmail,
       subject: 'Problema con tu pago - SecurePass',
       html: `
@@ -311,7 +338,7 @@ class NotificationService {
 
           <p>Por favor, verifica tu método de pago e intenta nuevamente. Si el problema persiste, contacta con tu banco o proveedor de pagos.</p>
 
-          <p><a href="${process.env.FRONTEND_URL}/subscription" style="display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Actualizar método de pago</a></p>
+          <p><a href="${frontendUrl}/subscription" style="display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Actualizar método de pago</a></p>
 
           <p>Saludos,<br/>El equipo de SecurePass</p>
 
@@ -320,21 +347,20 @@ class NotificationService {
       `,
     };
 
-    return await this.transporter.sendMail(mailOptions);
+    return await transporter.sendMail(mailOptions);
   }
 
-  /**
-   * Envía notificación de cancelación de suscripción
-   */
   async sendSubscriptionCanceled(
     userEmail: string,
     userName: string,
     subscription: ISubscription
   ): Promise<nodemailer.SentMessageInfo> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: userEmail,
       subject: 'Cancelación de suscripción - SecurePass',
       html: `
@@ -352,7 +378,7 @@ class NotificationService {
 
           <p>Lamentamos verte partir. Si cambias de opinión, siempre puedes reactivar tu suscripción.</p>
 
-          <p><a href="${process.env.FRONTEND_URL}/subscription" style="display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reactivar suscripción</a></p>
+          <p><a href="${frontendUrl}/subscription" style="display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reactivar suscripción</a></p>
 
           <p>Saludos,<br/>El equipo de SecurePass</p>
 
@@ -361,22 +387,21 @@ class NotificationService {
       `,
     };
 
-    return await this.transporter.sendMail(mailOptions);
+    return await transporter.sendMail(mailOptions);
   }
 
-  /**
-   * Envía recordatorio de próxima renovación
-   */
   async sendRenewalReminder(
     userEmail: string,
     userName: string,
     subscription: ISubscription,
     daysUntilRenewal: number
   ): Promise<nodemailer.SentMessageInfo> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: userEmail,
       subject: 'Próxima renovación de suscripción - SecurePass',
       html: `
@@ -396,7 +421,7 @@ class NotificationService {
 
           <p>Si deseas cambiar tu plan o método de pago, puedes hacerlo desde tu cuenta.</p>
 
-          <p><a href="${process.env.FRONTEND_URL}/subscription" style="display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Gestionar suscripción</a></p>
+          <p><a href="${frontendUrl}/subscription" style="display: inline-block; background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Gestionar suscripción</a></p>
 
           <p>Saludos,<br/>El equipo de SecurePass</p>
 
@@ -405,21 +430,20 @@ class NotificationService {
       `,
     };
 
-    return await this.transporter.sendMail(mailOptions);
+    return await transporter.sendMail(mailOptions);
   }
 
-  /**
-   * Envía notificación de suscripción expirada
-   */
   async sendSubscriptionExpired(
     userEmail: string,
     userName: string,
     subscription: ISubscription
   ): Promise<nodemailer.SentMessageInfo> {
+    const transporter = await this.ensureTransporter();
+    const defaultOptions = this.getDefaultMailOptions();
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM}`,
-      sender: process.env.EMAIL_SENDER,
-      replyTo: process.env.EMAIL_REPLY,
+      ...defaultOptions,
       to: userEmail,
       subject: 'Tu suscripción ha expirado - SecurePass',
       html: `
@@ -434,7 +458,7 @@ class NotificationService {
 
           <p>Ya no tienes acceso a las funcionalidades premium de SecurePass. Para recuperar el acceso, por favor renueva tu suscripción.</p>
 
-          <p><a href="${process.env.FRONTEND_URL}/subscription" style="display: inline-block; background-color: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Renovar suscripción</a></p>
+          <p><a href="${frontendUrl}/subscription" style="display: inline-block; background-color: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Renovar suscripción</a></p>
 
           <p>Saludos,<br/>El equipo de SecurePass</p>
 
@@ -443,7 +467,7 @@ class NotificationService {
       `,
     };
 
-    return await this.transporter.sendMail(mailOptions);
+    return await transporter.sendMail(mailOptions);
   }
 }
 
