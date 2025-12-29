@@ -24,7 +24,8 @@ export default [
       ],
       'no-unused-vars': 'warn',
       'prefer-const': 'warn',
-      'no-console': 'off',
+      // Advertir sobre console.log - usar logger en su lugar
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       '@typescript-eslint/no-require-imports': 'warn',
       '@typescript-eslint/no-unused-expressions': 'warn',

@@ -1,4 +1,51 @@
+# Dependencies
 node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Build artifacts
 dist/
+build/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+*.test.ts
+*.spec.ts
+tests/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+README*
+CHANGELOG*
+LICENSE*
+docs/
+
+# Logs
 *.log
-.git
+logs/
+
+# Misc
+*.orig
+.cache/

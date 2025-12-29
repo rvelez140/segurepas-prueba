@@ -12,7 +12,10 @@ export const authMiddleware = async (
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
-      res.status(401).json({ error: 'Autenticación requerida' });
+      res.status(401).json({
+        error: 'Autenticación requerida',
+        code: 'NO_TOKEN'
+      });
       return;
     }
 
@@ -20,14 +23,49 @@ export const authMiddleware = async (
     const user = await UserService.findById(decoded.id);
 
     if (!user) {
-      res.status(401).json({ error: 'Usuario no encontrado' });
+      res.status(401).json({
+        error: 'Usuario no encontrado',
+        code: 'USER_NOT_FOUND'
+      });
       return;
     }
 
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Autenticación fallida' });
+    // Distinguir entre diferentes tipos de errores de JWT
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({
+        error: 'Token expirado',
+        code: 'TOKEN_EXPIRED',
+        expiredAt: error.expiredAt
+      });
+      return;
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({
+        error: 'Token inválido',
+        code: 'INVALID_TOKEN',
+        message: error.message
+      });
+      return;
+    }
+
+    if (error instanceof jwt.NotBeforeError) {
+      res.status(401).json({
+        error: 'Token aún no es válido',
+        code: 'TOKEN_NOT_ACTIVE',
+        date: error.date
+      });
+      return;
+    }
+
+    // Error genérico
+    res.status(500).json({
+      error: 'Error de autenticación',
+      code: 'AUTH_ERROR'
+    });
   }
 };
 
