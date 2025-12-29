@@ -142,7 +142,7 @@ const userSchema: Schema = new mongoose.Schema(
 );
 
 // Validación personalizada para asegurar que al menos email o username esté presente
-userSchema.pre('validate', function (next) {
+userSchema.pre('validate', function (this: IUser, next) {
   if (!this.auth.email && !this.auth.username) {
     this.invalidate('auth', 'Se requiere al menos un email o nombre de usuario');
   }

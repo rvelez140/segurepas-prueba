@@ -164,7 +164,7 @@ export const authController = {
       };
 
       // Registrar login exitoso
-      await AuditLogService.logLoginSuccess(req, user._id, user.auth.email);
+      await AuditLogService.logLoginSuccess(req, user._id, user.auth.email || '');
 
       res.status(200).json({
         token,

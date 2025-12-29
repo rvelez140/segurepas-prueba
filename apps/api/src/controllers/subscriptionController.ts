@@ -79,7 +79,7 @@ export class SubscriptionController {
 
       // Enviar email de bienvenida
       const user = await UserService.findById(userId);
-      if (user) {
+      if (user && user.auth.email) {
         await notificationService.sendSubscriptionWelcome(user.auth.email, user.name, subscription);
       }
 
@@ -172,7 +172,7 @@ export class SubscriptionController {
 
       // Enviar email de cancelación
       const user = await UserService.findById(subscription.userId.toString());
-      if (user) {
+      if (user && user.auth.email) {
         await notificationService.sendSubscriptionCanceled(
           user.auth.email,
           user.name,
