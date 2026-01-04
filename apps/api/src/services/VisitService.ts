@@ -122,12 +122,14 @@ export class VisitService {
           updatedVisit.authorization.resident
         )) as IUser;
 
-        await notificationService.sendEntryRegistrationNotification(
-          residentData.auth.email,
-          updatedVisit.visit.email,
-          updatedVisit,
-          guard.name
-        );
+        if (residentData && residentData.auth.email) {
+          await notificationService.sendEntryRegistrationNotification(
+            residentData.auth.email,
+            updatedVisit.visit.email,
+            updatedVisit,
+            guard.name
+          );
+        }
       } catch (emailError) {
         // Log del error pero no fallar el registro de entrada
         console.error('Error al enviar notificación de entrada:', emailError);
