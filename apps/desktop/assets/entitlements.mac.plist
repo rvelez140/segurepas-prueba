@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Permite que la aplicacion se ejecute en macOS con Hardened Runtime -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+
+    <!-- Permite cargar codigo dinamico (necesario para Electron) -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+
+    <!-- Permite conexiones de red salientes -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+
+    <!-- Permite acceso a la camara (para escaneo QR) -->
+    <key>com.apple.security.device.camera</key>
+    <true/>
+
+    <!-- Permite acceso al microfono (opcional) -->
+    <key>com.apple.security.device.microphone</key>
+    <false/>
+
+    <!-- Permite acceso a archivos seleccionados por el usuario -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+
+    <!-- Permite acceso a la carpeta de Descargas -->
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+
+    <!-- Permite imprimir documentos -->
+    <key>com.apple.security.print</key>
+    <true/>
+</dict>
+</plist>
