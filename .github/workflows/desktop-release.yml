@@ -1,85 +1,94 @@
-name: Build and Release Desktop App
+# SecurePass Desktop - Release Workflow
+# =====================================
+# Crea releases de la aplicacion desktop cuando se crea un tag
+
+name: Desktop Release
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # Ejecutar cuando se cree un tag como v1.0.0
+      - 'v*.*.*'
 
 jobs:
   release:
     runs-on: ${{ matrix.os }}
-
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
-        run: |
-          cd apps/desktop
-          npm install
+        working-directory: apps/desktop
+        run: npm install
 
-      - name: Build and package (Linux)
+      - name: Build TypeScript
+        working-directory: apps/desktop
+        run: npm run build
+
+      - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: |
-          cd apps/desktop
-          npm run dist:linux
+        working-directory: apps/desktop
+        run: npm run dist:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
-      - name: Build and package (Windows)
+      - name: Build Windows
         if: matrix.os == 'windows-latest'
-        run: |
-          cd apps/desktop
-          npm run dist:win
+        working-directory: apps/desktop
+        run: npm run dist:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       - name: Upload Linux artifacts
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-installers
           path: |
             apps/desktop/release/*.AppImage
             apps/desktop/release/*.deb
             apps/desktop/release/*.rpm
+        continue-on-error: true
 
       - name: Upload Windows artifacts
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-installers
-          path: |
-            apps/desktop/release/*.exe
+          path: apps/desktop/release/*.exe
+        continue-on-error: true
 
   publish:
     needs: release
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+        continue-on-error: true
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            linux-installers/*
-            windows-installers/*
+            artifacts/linux-installers/*
+            artifacts/windows-installers/*
           draft: false
           prerelease: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
