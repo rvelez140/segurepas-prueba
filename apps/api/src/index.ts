@@ -105,6 +105,36 @@ app.use('/api/setup', setupRoutes);
 // Configurar error handler de Sentry (debe ser después de las rutas)
 setupSentryErrorHandler(app);
 
+// Health check endpoint para Docker y monitoreo
+// ISO 27001 - A.12.1.3: Gestión de capacidad
+app.get('/health', async (req, res) => {
+  try {
+    // Verificar conexión a MongoDB
+    const mongoStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+
+    const healthData = {
+      status: mongoStatus === 'connected' ? 'healthy' : 'degraded',
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || '1.0.0',
+      uptime: process.uptime(),
+      services: {
+        api: 'running',
+        mongodb: mongoStatus,
+      },
+      environment: process.env.NODE_ENV || 'development',
+    };
+
+    const statusCode = mongoStatus === 'connected' ? 200 : 503;
+    res.status(statusCode).json(healthData);
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: 'Health check failed',
+    });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send(
     `<!DOCTYPE html>
