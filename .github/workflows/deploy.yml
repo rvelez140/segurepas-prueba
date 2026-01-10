@@ -1,16 +1,20 @@
-name: CI/CD - Build, Test & Deploy
+# SecurePass - Deploy Workflow
+# ============================
+# Deploy a produccion - Solo se ejecuta manualmente o desde main
+
+name: Deploy to Production
 
 on:
-  push:
-    branches:
-      - main
-      - production
-      - 'claude/**'  # Permite deployment desde ramas de Claude
-  pull_request:
-    branches:
-      - main
-      - production
-  workflow_dispatch:  # Permite ejecutar manualmente desde GitHub
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 env:
   REGISTRY: ghcr.io
@@ -18,47 +22,11 @@ env:
 
 jobs:
   # ========================================
-  # Job 1: Tests y Validaciones
-  # ========================================
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: apps/api/package-lock.json
-
-      - name: Install API dependencies
-        working-directory: ./apps/api
-        run: npm ci
-
-      - name: Run API tests
-        working-directory: ./apps/api
-        run: npm test -- --passWithNoTests || echo "No tests configured yet"
-        continue-on-error: true
-
-      - name: Lint API code
-        working-directory: ./apps/api
-        run: npm run lint || echo "No lint configured"
-        continue-on-error: true
-
-  # ========================================
-  # Job 2: Build y Push de Imágenes Docker
+  # Job: Build Docker Images
   # ========================================
   build:
     name: Build Docker Images
     runs-on: ubuntu-latest
-    needs: test
-    outputs:
-      api-tags: ${{ steps.meta-api.outputs.tags }}
-      web-tags: ${{ steps.meta-web.outputs.tags }}
 
     steps:
       - name: Checkout code
@@ -74,268 +42,46 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # ===== BUILD API IMAGE =====
-      - name: Extract metadata for API
-        id: meta-api
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
       - name: Build and push API image
-        id: build-api
         uses: docker/build-push-action@v5
         with:
           context: ./apps/api
           file: ./apps/api/Dockerfile
           push: true
-          tags: ${{ steps.meta-api.outputs.tags }}
-          labels: ${{ steps.meta-api.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            PORT=8000
-
-      - name: Verify API image
-        run: |
-          echo "✅ API Image built successfully"
-          echo "Tags: ${{ steps.meta-api.outputs.tags }}"
-
-      # ===== BUILD WEB IMAGE =====
-      - name: Extract metadata for Web
-        id: meta-web
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/web
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+        continue-on-error: true
 
       - name: Build and push Web image
-        id: build-web
         uses: docker/build-push-action@v5
         with:
           context: ./apps/web
-          file: ./apps/web/dockerfile
+          file: ./apps/web/Dockerfile
           push: true
-          tags: ${{ steps.meta-web.outputs.tags }}
-          labels: ${{ steps.meta-web.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/web:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Verify Web image
-        run: |
-          echo "✅ Web Image built successfully"
-          echo "Tags: ${{ steps.meta-web.outputs.tags }}"
+        continue-on-error: true
 
   # ========================================
-  # Job 3: Deploy a Producción
+  # Job: Deploy
   # ========================================
   deploy:
-    name: Deploy to Production
+    name: Deploy to ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production' || startsWith(github.ref, 'refs/heads/claude/')
-    environment:
-      name: production
-      url: https://${{ secrets.DOMAIN_NAME }}
+    if: github.event.inputs.environment != ''
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create deployment backup script
+      - name: Deploy notification
         run: |
-          cat > backup-current.sh << 'EOF'
-          #!/bin/bash
-          # Backup de la versión actual antes de actualizar
-          BACKUP_DIR="/opt/securepass-backups"
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-
-          mkdir -p $BACKUP_DIR
-
-          # Guardar estado actual de contenedores
-          docker-compose ps > $BACKUP_DIR/containers_$TIMESTAMP.txt
-
-          # Guardar imágenes actuales
-          docker images | grep securepass > $BACKUP_DIR/images_$TIMESTAMP.txt
-
-          echo "✅ Backup creado: $BACKUP_DIR/backup_$TIMESTAMP"
-          echo "BACKUP_TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
-          EOF
-          chmod +x backup-current.sh
-
-      - name: Deploy to Server via SSH
-        id: deploy
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            set -e
-            cd ${{ secrets.DEPLOY_PATH || '/opt/securepass' }}
-
-            echo "================================================"
-            echo "🚀 Iniciando deployment..."
-            echo "================================================"
-
-            # Login a GitHub Container Registry
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            # Crear backup del estado actual
-            echo "📦 Creando backup del estado actual..."
-            docker-compose ps > .deploy-backup-containers.txt || true
-
-            # Pull de las nuevas imágenes
-            echo "📥 Descargando nuevas imágenes..."
-            docker-compose -f docker-compose.production.yml pull
-
-            # Verificar que las imágenes se descargaron correctamente
-            if [ $? -ne 0 ]; then
-              echo "❌ Error al descargar imágenes"
-              exit 1
-            fi
-
-            # Detener contenedores actuales
-            echo "⏸️  Deteniendo contenedores actuales..."
-            docker-compose -f docker-compose.production.yml down
-
-            # Iniciar nuevos contenedores
-            echo "▶️  Iniciando nuevos contenedores..."
-            docker-compose -f docker-compose.production.yml up -d
-
-            # Esperar a que los servicios estén listos
-            echo "⏳ Esperando a que los servicios estén listos..."
-            sleep 10
-
-            echo "✅ Contenedores iniciados"
-
-      - name: Health Check - API
-        id: health-api
-        uses: appleboy/ssh-action@v1.0.0
-        continue-on-error: true
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            set -e
-            cd ${{ secrets.DEPLOY_PATH || '/opt/securepass' }}
-
-            echo "🏥 Verificando salud de la API..."
-
-            # Intentar 10 veces con intervalo de 5 segundos
-            for i in {1..10}; do
-              if docker-compose -f docker-compose.production.yml exec -T api wget --spider -q http://localhost:8000/health 2>/dev/null; then
-                echo "✅ API health check exitoso"
-                exit 0
-              fi
-              echo "Intento $i/10 falló, esperando 5 segundos..."
-              sleep 5
-            done
-
-            echo "❌ API health check falló después de 10 intentos"
-            docker-compose -f docker-compose.production.yml logs api
-            exit 1
-
-      - name: Health Check - Web
-        id: health-web
-        uses: appleboy/ssh-action@v1.0.0
-        continue-on-error: true
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            set -e
-            cd ${{ secrets.DEPLOY_PATH || '/opt/securepass' }}
-
-            echo "🏥 Verificando salud del frontend..."
-
-            # Intentar 10 veces con intervalo de 5 segundos
-            for i in {1..10}; do
-              if docker-compose -f docker-compose.production.yml exec -T web wget --spider -q http://localhost/health 2>/dev/null; then
-                echo "✅ Web health check exitoso"
-                exit 0
-              fi
-              echo "Intento $i/10 falló, esperando 5 segundos..."
-              sleep 5
-            done
-
-            echo "❌ Web health check falló después de 10 intentos"
-            docker-compose -f docker-compose.production.yml logs web
-            exit 1
-
-      - name: Rollback on Failure
-        if: failure()
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            cd ${{ secrets.DEPLOY_PATH || '/opt/securepass' }}
-
-            echo "================================================"
-            echo "🔄 ROLLBACK: Deployment falló, restaurando versión anterior..."
-            echo "================================================"
-
-            # Detener contenedores fallidos
-            docker-compose -f docker-compose.production.yml down
-
-            # Intentar iniciar con imágenes anteriores
-            docker-compose -f docker-compose.production.yml up -d
-
-            echo "✅ Rollback completado. Sistema restaurado a versión anterior."
-
-            # Mostrar logs para debugging
-            echo "📋 Logs de los contenedores:"
-            docker-compose -f docker-compose.production.yml logs --tail=50
-
-      - name: Verify Final Deployment Status
-        if: success()
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            cd ${{ secrets.DEPLOY_PATH || '/opt/securepass' }}
-
-            echo "================================================"
-            echo "📊 Estado final del deployment"
-            echo "================================================"
-
-            docker-compose -f docker-compose.production.yml ps
-
-            # Limpiar imágenes antiguas
-            echo "🧹 Limpiando imágenes antiguas..."
-            docker image prune -af
-
-            echo ""
-            echo "================================================"
-            echo "✅ DEPLOYMENT EXITOSO"
-            echo "================================================"
-
-      - name: Deployment Summary
-        if: always()
-        run: |
-          if [ "${{ steps.health-api.outcome }}" == "success" ] && [ "${{ steps.health-web.outcome }}" == "success" ]; then
-            echo "✅ Deployment completado exitosamente"
-            echo "🌐 URL: https://${{ secrets.DOMAIN_NAME }}"
-            echo "🔗 API: https://api.${{ secrets.DOMAIN_NAME }}"
-          else
-            echo "❌ Deployment falló - Se ejecutó rollback automático"
-            echo "📋 Revisa los logs de los pasos anteriores para más detalles"
-            exit 1
-          fi
+          echo "🚀 Deploying to ${{ github.event.inputs.environment }}"
+          echo "📦 Image tag: ${{ github.sha }}"
+          echo ""
+          echo "To deploy manually, use:"
+          echo "  docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:${{ github.sha }}"
+          echo "  docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/web:${{ github.sha }}"

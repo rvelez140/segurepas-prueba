@@ -1,0 +1,80 @@
+# SecurePass Mobile - Git Ignore
+
+# Dependencias
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Proyectos nativos generados (se regeneran con prebuild)
+ios/
+android/
+
+# Metro bundler
+.metro-health-check*
+
+# Debug logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# Variables de entorno locales
+.env
+.env.local
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# ===================================
+# ARCHIVOS SENSIBLES - NUNCA SUBIR
+# ===================================
+
+# Keystores de Android (MUY IMPORTANTE)
+*.keystore
+*.jks
+android/app/keystore/
+
+# Certificados iOS
+*.p12
+*.p8
+*.mobileprovision
+*.cer
+
+# Google Services (contiene API keys)
+google-services.json
+google-services-prod.json
+GoogleService-Info.plist
+
+# Credenciales de Firebase
+firebase-credentials.json
+firebase-admin*.json
+
+# Credenciales de cuentas de servicio
+*-service-account.json
+service-account*.json
+
+# Expo secrets
+.expo-shared/
+
+# EAS local credentials
+credentials.json
+eas-credentials/
+
+# ===================================
+# Builds locales
+# ===================================
+*.apk
+*.aab
+*.ipa
+*.app
+releases/
