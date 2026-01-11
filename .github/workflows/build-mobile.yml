@@ -1,0 +1,136 @@
+# SecurePass Mobile - Build Workflow
+# ===================================
+# Compila la aplicacion movil para iOS y Android usando EAS Build
+# Solo se ejecuta en releases o manualmente
+
+name: Build Mobile App
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+          - all
+          - ios
+          - android
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # =====================
+  # Build Android
+  # =====================
+  build-android:
+    if: github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || github.event_name == 'release'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+        continue-on-error: true
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Determine build profile
+        id: profile
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "profile=production" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.profile }}" != "" ]; then
+            echo "profile=${{ github.event.inputs.profile }}" >> $GITHUB_OUTPUT
+          else
+            echo "profile=preview" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Android APK/AAB
+        if: env.EXPO_TOKEN != ''
+        run: eas build --platform android --profile ${{ steps.profile.outputs.profile }} --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        continue-on-error: true
+
+      - name: Build skipped notice
+        if: env.EXPO_TOKEN == ''
+        run: echo "⚠️ Build skipped - EXPO_TOKEN not configured"
+
+  # =====================
+  # Build iOS
+  # =====================
+  build-ios:
+    if: github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios' || github.event_name == 'release'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+        continue-on-error: true
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Determine build profile
+        id: profile
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "profile=production" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.profile }}" != "" ]; then
+            echo "profile=${{ github.event.inputs.profile }}" >> $GITHUB_OUTPUT
+          else
+            echo "profile=preview" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build iOS IPA
+        if: env.EXPO_TOKEN != ''
+        run: eas build --platform ios --profile ${{ steps.profile.outputs.profile }} --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        continue-on-error: true
+
+      - name: Build skipped notice
+        if: env.EXPO_TOKEN == ''
+        run: echo "⚠️ Build skipped - EXPO_TOKEN not configured"

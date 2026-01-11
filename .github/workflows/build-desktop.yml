@@ -1,0 +1,180 @@
+# SecurePass Desktop - Build Workflow
+# ====================================
+# Compila la aplicacion de escritorio para Windows, macOS y Linux
+# Solo se ejecuta en releases o manualmente
+
+name: Build Desktop App
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - windows
+          - macos
+          - linux
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # =====================
+  # Build para Windows
+  # =====================
+  build-windows:
+    if: github.event.inputs.platform == 'all' || github.event.inputs.platform == 'windows' || github.event_name == 'release'
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/desktop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Build Windows installers
+        run: npm run dist:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: windows-installers
+          path: |
+            apps/desktop/release/*.exe
+            apps/desktop/release/*.zip
+          retention-days: 30
+
+  # =====================
+  # Build para macOS
+  # =====================
+  build-macos:
+    if: github.event.inputs.platform == 'all' || github.event.inputs.platform == 'macos' || github.event_name == 'release'
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: apps/desktop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Build macOS installers
+        run: npm run dist:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: macos-installers
+          path: |
+            apps/desktop/release/*.dmg
+            apps/desktop/release/*.zip
+          retention-days: 30
+
+  # =====================
+  # Build para Linux
+  # =====================
+  build-linux:
+    if: github.event.inputs.platform == 'all' || github.event.inputs.platform == 'linux' || github.event_name == 'release'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/desktop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Build Linux installers
+        run: npm run dist:linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: linux-installers
+          path: |
+            apps/desktop/release/*.AppImage
+            apps/desktop/release/*.deb
+            apps/desktop/release/*.rpm
+            apps/desktop/release/*.tar.gz
+          retention-days: 30
+
+  # =====================
+  # Publicar Release
+  # =====================
+  publish-release:
+    if: github.event_name == 'release'
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+        continue-on-error: true
+
+      - name: List artifacts
+        run: ls -R artifacts || echo "No artifacts found"
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/windows-installers/*
+            artifacts/macos-installers/*
+            artifacts/linux-installers/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
