@@ -149,10 +149,10 @@ export async function initAdminUser(): Promise<void> {
 
     // Registrar evento de auditoría si existe el servicio
     try {
-      const { AuditService } = await import('../services/AuditService');
-      await AuditService.log({
-        action: 'FACTORY_USER_CREATED',
-        severity: 'HIGH',
+      const { AuditLogService } = await import('../services/AuditLogService');
+      await AuditLogService.log({
+        action: 'USER_CREATE' as any, // Ajuste temporal si AuditAction no es accesible
+        severity: 'HIGH' as any,
         resource: 'User',
         resourceId: adminUser._id?.toString() || 'unknown',
         details: {
@@ -165,9 +165,9 @@ export async function initAdminUser(): Promise<void> {
         ipAddress: '127.0.0.1',
         userAgent: 'SecurePass-Init',
       });
-    } catch {
+    } catch (e) {
       // Si el servicio de auditoría no está disponible, continuamos
-      console.log('ℹ️  Servicio de auditoría no disponible durante inicialización');
+      console.log('ℹ️  Servicio de auditoría no disponible durante inicialización', e);
     }
   } catch (error: any) {
     console.error('');
