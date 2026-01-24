@@ -2,8 +2,6 @@ import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserService } from '../services/UserService';
 import { AuthenticatedRequest } from '../types/auth.types';
-import { cacheService, CacheKeys, CacheTTL } from '../services/CacheService';
-import { User } from '../models/User';
 
 export const authMiddleware = async (
   req: AuthenticatedRequest,
@@ -19,29 +17,7 @@ export const authMiddleware = async (
     }
 
     const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`) as { id: string };
-
-    // Intentar obtener usuario desde caché
-    let user = null;
-    const cacheKey = CacheKeys.userById(decoded.id);
-
-    if (cacheService.isAvailable()) {
-      const cachedUser = await cacheService.get<any>(cacheKey);
-      if (cachedUser) {
-        // Hidratar modelo de Mongoose desde objeto plano
-        user = User.hydrate(cachedUser);
-      }
-    }
-
-    // Si no está en caché, buscar en BD
-    if (!user) {
-      user = await UserService.findById(decoded.id);
-
-      // Guardar en caché si se encontró
-      if (user && cacheService.isAvailable()) {
-        // Guardar solo los datos necesarios (toJSON/toObject)
-        await cacheService.set(cacheKey, user, CacheTTL.medium);
-      }
-    }
+    const user = await UserService.findById(decoded.id);
 
     if (!user) {
       res.status(401).json({ error: 'Usuario no encontrado' });
