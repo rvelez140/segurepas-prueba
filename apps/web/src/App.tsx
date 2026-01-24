@@ -8,6 +8,8 @@ import Home from './pages/login/Home';
 import Report from './pages/main/Report';
 import Setup from './pages/setup/Setup';
 import CreateAdmin from './pages/setup/CreateAdmin';
+import Subscriptions from './pages/main/Subscriptions';
+import Analytics from './pages/main/Analytics';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './styles/theme.css';
 
@@ -24,6 +26,8 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/visit-history" element={<History />} />
           <Route path="/admin/report" element={<Report />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/admin/analytics" element={<Analytics />} />
         </Routes>
       </SidebarProvider>
     </ThemeProvider>

@@ -1,5 +1,5 @@
 import styles from '../../styles/visits.module.css';
-import { FaHome, FaUserShield, FaHistory, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaUserShield, FaHistory, FaCog, FaSignOutAlt, FaChartLine, FaCreditCard } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../contexts/SidebarContext';
 import { SidebarProps } from '../../types/types';
@@ -127,6 +127,56 @@ const Sidebar: React.FC<SidebarProps> = ({ setShowLogoutModal }) => {
                   }`}
                 >
                   Ajustes
+                </span>
+              </li>
+            </Link>
+            <Link
+              to="/subscriptions"
+              className={`${styles.navLink} ${isOpen ? styles.navLinkOpen : styles.navLinkClosed}`}
+            >
+              <li
+                className={
+                  location.pathname === '/subscriptions'
+                    ? `${styles.activeNavItem} ${
+                        isOpen ? styles.activeNavItemOpen : styles.activeNavItemClosed
+                      }`
+                    : `${styles.navItem} ${isOpen ? styles.navItemOpen : styles.navItemClosed}`
+                }
+              >
+                <FaCreditCard
+                  className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`}
+                />{' '}
+                <span
+                  className={`${styles.navText} ${
+                    isOpen ? styles.navTextOpen : styles.navTextClosed
+                  }`}
+                >
+                  Planes
+                </span>
+              </li>
+            </Link>
+            <Link
+              to="/admin/analytics"
+              className={`${styles.navLink} ${isOpen ? styles.navLinkOpen : styles.navLinkClosed}`}
+            >
+              <li
+                className={
+                  location.pathname === '/admin/analytics'
+                    ? `${styles.activeNavItem} ${
+                        isOpen ? styles.activeNavItemOpen : styles.activeNavItemClosed
+                      }`
+                    : `${styles.navItem} ${isOpen ? styles.navItemOpen : styles.navItemClosed}`
+                }
+              >
+                <FaChartLine
+                  className={`${styles.Fa} ${isOpen ? styles.FaOpen : styles.FaClosed}`}
+                />{' '}
+                <span
+                  className={`${styles.navText} ${
+                    isOpen ? styles.navTextOpen : styles.navTextClosed
+                  }`}
+                >
+                  Analytics
                 </span>
               </li>
             </Link>
