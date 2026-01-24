@@ -157,9 +157,7 @@ describe('authController', () => {
 
       await authController.loginUser(req as any, res as any);
 
-      expect(User.findOne).toHaveBeenCalledWith({
-        $or: [{ 'auth.email': 'test@example.com' }, { 'auth.username': 'test@example.com' }],
-      });
+      expect(User.findOne).toHaveBeenCalledWith({ 'auth.email': 'test@example.com' });
       expect(comparePasswordMock).toHaveBeenCalledWith('password123');
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
