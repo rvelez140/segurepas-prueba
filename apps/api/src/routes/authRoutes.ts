@@ -23,7 +23,9 @@ router.post(
 );
 
 // Ruta de testeo para forzar el registro de un usuario sin validación de autenticación
-router.post('/auth/register/force', createLimiter, authController.registerUser);
+if (process.env.NODE_ENV === 'development') {
+  router.post('/auth/register/force', createLimiter, authController.registerUser);
+}
 
 // Ruta para consultar el usuario autenticado actual
 router.get('/auth/me', authMiddleware, authController.getCurrentUser);
